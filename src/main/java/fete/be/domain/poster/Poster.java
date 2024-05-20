@@ -1,10 +1,16 @@
 package fete.be.domain.poster;
 
+import fete.be.domain.participant.Participant;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 public class Poster {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +31,8 @@ public class Poster {
     private String ticketPrice;  // 티켓 가격
     private String detailInfo;  // 이벤트 관련 상세 설명
     private String posterImgUrl;  // 포스터 이미지
+
+    @OneToMany(mappedBy = "poster", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participant> participants = new ArrayList<>();  // 참여자 목록
+
 }
