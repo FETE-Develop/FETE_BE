@@ -1,17 +1,22 @@
 package fete.be.domain.member;
 
 import fete.be.domain.Status;
+import fete.be.domain.event.Participant;
+import fete.be.domain.payment.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id")
     private Long memberId;
 
     private String email;
@@ -19,7 +24,13 @@ public class Member {
     private String userName;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role;  // 권한
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Participant> participants = new ArrayList<>();  // 유저가 참여한 이벤트 리스트
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Payment> payments = new ArrayList<>();  // 유저의 결제 정보 리스트
 
     private String createdAt;
     private String updatedAt;
