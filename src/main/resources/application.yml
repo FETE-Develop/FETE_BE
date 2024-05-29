@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:fete;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+jwt:
+  header: Authorization
+  secret: 677ce9a1da08286bcee0c09f1fce20d37427a39e78e9b7360b4d1a98980b4970
+#  token-validity-in-seconds: 86400
+
+logging.level:
+  org.hibernate.SQL: info
