@@ -3,7 +3,7 @@ package fete.be.domain.event;
 import fete.be.domain.payment.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
-import fete.be.domain.member.Member;
+import fete.be.domain.member.persistence.Member;
 
 @Entity
 @Getter

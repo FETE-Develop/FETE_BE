@@ -1,4 +1,4 @@
-package fete.be.api;
+package fete.be.global.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
