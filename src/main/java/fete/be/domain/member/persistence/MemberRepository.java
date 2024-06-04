@@ -1,6 +1,7 @@
 package fete.be.domain.member.persistence;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,7 @@ public class MemberRepository {
 
     /**
      * 회원가입 API
-     * @param member
+     * @param Member member
      */
     public void save(Member member) {
         if (member.getMemberId() == null) {
@@ -34,4 +35,16 @@ public class MemberRepository {
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class).getResultList();
     }
+
+    public Boolean isExistEmail(String email) {
+        try {
+            Member member = em.createQuery("select m.email from Member m where m.email = :email", Member.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+            return true;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
 }

@@ -27,4 +27,23 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional
+    public JwtToken login(String id, String password) {
+        // 1. id, password를 기반으로 Authentication 객체 생성
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
+
+        // 2. 실제 검증이 이루어지는 코드
+        // authenticate 메서드가 실행될 때, 우리가 만들어준 CustomUserDetailService에서 만든 loadUserByUsername 메서드가 실행된다.
+        // loadUserByUsername 메서드에 우리가 직접 검증 코드를 작성해줘야 한다.
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 3. 검증된 authentication 정보로 JWT 토큰 생성
+        JwtToken token = jwtProvider.generateToken(authentication);
+        return token;
+    }
+
+    public boolean isDuplicateEmail(String email) {
+        return memberRepository.isExistEmail(email);
+    }
+
 }
