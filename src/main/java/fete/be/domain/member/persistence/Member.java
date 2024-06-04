@@ -5,6 +5,9 @@ import fete.be.domain.event.Participant;
 import fete.be.domain.member.Role;
 import fete.be.domain.payment.Payment;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -20,8 +23,17 @@ public class Member {
     @Column(name = "member_id")
     private Long memberId;
 
+    @NotBlank
+    @Email
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @NotBlank
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
+
+    @NotBlank
+    @Column(nullable = false, length = 20)
     private String userName;
 
     @Enumerated(EnumType.STRING)
@@ -35,6 +47,7 @@ public class Member {
 
     private String createdAt;
     private String updatedAt;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
