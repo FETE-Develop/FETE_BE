@@ -43,7 +43,7 @@ public class MemberService {
     }
 
     public boolean isDuplicateEmail(String email) {
-        return memberRepository.isExistEmail(email);
+        return memberRepository.existsByEmail(email);
     }
 
 }

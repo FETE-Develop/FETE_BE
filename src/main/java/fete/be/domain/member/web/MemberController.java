@@ -3,6 +3,7 @@ package fete.be.domain.member.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.domain.member.persistence.Member;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
@@ -24,6 +25,7 @@ public class MemberController {
 
     /**
      * 회원가입 API
+     *
      * @param SignupRequestDto request
      * @return ApiResponse
      */
@@ -43,11 +45,12 @@ public class MemberController {
 
     /**
      * 로그인 API
+     *
      * @param LoginRequestDto request
-     * @return ApiResponse
+     * @return ApiResponse<LoginResponseDto>
      */
     @PostMapping("/login")
-    public ApiResponse login(@RequestBody LoginRequestDto request) {
+    public ApiResponse<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
         // 로그인 검증 이후, 토큰 발급
         JwtToken token = memberService.login(request.getEmail(), request.getPassword());
 
@@ -56,7 +59,8 @@ public class MemberController {
             return new ApiResponse(ResponseMessage.LOGIN_FAILURE.getCode(), ResponseMessage.LOGIN_FAILURE.getMessage());
         }
 
-        // 일치하는 유저가 있는 경우 - 로그인 로직
-        return new ApiResponse(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage());
+        // 일치하는 유저가 있는 경우 - 정상 로그인 로직
+        LoginResponseDto result = new LoginResponseDto(token);
+        return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
     }
 }
