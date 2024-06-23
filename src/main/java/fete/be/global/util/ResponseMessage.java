@@ -2,7 +2,7 @@ package fete.be.global.util;
 
 public enum ResponseMessage {
 
-    SUCCESS(200, "API 요청이 성공했습니다."),
+    SUCCESS(200, "API 요청이 성공하였습니다."),
     INVALID_REQUEST(201, "불가능한 요청입니다."),
     INTERNAL_ERROR(500, "내부 오류가 발생했습니다."),
 
@@ -11,7 +11,13 @@ public enum ResponseMessage {
 
     // LOGIN
     LOGIN_SUCCESS(2000, "로그인에 성공하였습니다."),
-    LOGIN_FAILURE(2001, "아이디 또는 비밀번호가 일치하지 않습니다.");
+    LOGIN_FAILURE(2001, "아이디 또는 비밀번호가 일치하지 않습니다."),
+
+    // POSTER
+    POSTER_SUCCESS(3000, "포스터 API 요청이 성공하였습니다."),
+    POSTER_FAILURE(3001, "포스터 API 요청이 실패하였습니다."),
+    POSTER_INVALID_POSTER(3002, "해당 포스터가 존재하지 않습니다."),
+    POSTER_INVALID_USER(3003, "해당 포스터의 작성자가 아닙니다."),;
 
     private int code;
     private String message;
