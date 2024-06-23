@@ -4,6 +4,8 @@ import fete.be.domain.payment.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,4 +31,23 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();  // 결제 상태 리스트
+
+
+    // 생성 메서드
+    public static Event createEvent(EventDto request) {
+        Event event = new Event();
+
+        event.eventType = request.getEventType();
+        event.startDate = request.getStartDate();
+        event.endDate = request.getEndDate();
+        event.address = request.getAddress();
+        event.description = request.getDescription();
+        event.mood = request.getMood();
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        event.createdAt = currentTime;
+        event.updatedAt = currentTime;
+
+        return event;
+    }
 }
