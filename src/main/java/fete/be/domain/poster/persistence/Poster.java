@@ -2,6 +2,7 @@ package fete.be.domain.poster.persistence;
 
 import fete.be.domain.event.Event;
 import fete.be.domain.member.persistence.Member;
+import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -56,6 +57,24 @@ public class Poster {
 
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         poster.createdAt = currentTime;
+        poster.updatedAt = currentTime;
+
+        return poster;
+    }
+
+    // 업데이트 메서드
+    public static Poster updatePoster(Poster poster, ModifyPosterRequest request) {
+        poster.title = request.getTitle();
+        poster.posterImgUrl = request.getPosterImgUrl();
+        poster.institution = request.getInstitution();
+        poster.manager = request.getManager();
+        poster.managerContact = request.getManagerContact();
+        poster.ticketName = request.getTicketName();
+        poster.ticketPrice = request.getTicketPrice();
+
+        poster.event = Event.updateEvent(poster.event, request.getEvent());
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         poster.updatedAt = currentTime;
 
         return poster;

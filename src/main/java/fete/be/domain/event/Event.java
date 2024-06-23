@@ -50,4 +50,19 @@ public class Event {
 
         return event;
     }
+
+    // 업데이트 메서드
+    public static Event updateEvent(Event event, EventDto request) {
+        event.eventType = request.getEventType();
+        event.startDate = request.getStartDate();
+        event.endDate = request.getEndDate();
+        event.address = request.getAddress();
+        event.description = request.getDescription();
+        event.mood = request.getMood();
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        event.updatedAt = currentTime;
+
+        return event;
+    }
 }
