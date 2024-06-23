@@ -46,4 +46,9 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+    public Member findMemberByEmail(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        return member;
+    }
+
 }

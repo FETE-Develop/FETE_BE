@@ -4,6 +4,7 @@ import fete.be.domain.Status;
 import fete.be.domain.event.Participant;
 import fete.be.domain.member.Role;
 import fete.be.domain.payment.Payment;
+import fete.be.domain.poster.persistence.Poster;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Payment> payments = new ArrayList<>();  // 유저의 결제 정보 리스트
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Poster> posters = new ArrayList<>();  // 유저가 등록한 프스터 리스트
 
     private String createdAt;
     private String updatedAt;
