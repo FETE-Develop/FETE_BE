@@ -4,6 +4,7 @@ import fete.be.domain.event.Event;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
+import fete.be.global.util.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -39,6 +40,9 @@ public class Poster {
     private String createdAt;  // 생성일자
     private String updatedAt;  // 수정일자
 
+    @Enumerated(EnumType.STRING)
+    private Status status;  // 포스터 상태
+
 
     // 생성 메서드
     public static Poster createPoster(Member member, WritePosterRequest request) {
@@ -59,6 +63,8 @@ public class Poster {
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;
 
+        poster.status = Status.WAIT;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
+
         return poster;
     }
 
@@ -73,6 +79,17 @@ public class Poster {
         poster.ticketPrice = request.getTicketPrice();
 
         poster.event = Event.updateEvent(poster.event, request.getEvent());
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        poster.updatedAt = currentTime;
+
+        return poster;
+    }
+
+    // 삭제 메서드
+    public static Poster deletePoster(Poster poster) {
+        // status를 DELETE로 변경
+        poster.status = Status.DELETE;
 
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         poster.updatedAt = currentTime;
