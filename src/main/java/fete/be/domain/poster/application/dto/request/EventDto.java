@@ -1,5 +1,6 @@
-package fete.be.domain.event;
+package fete.be.domain.poster.application.dto.request;
 
+import fete.be.domain.event.persistence.EventType;
 import lombok.Getter;
 
 @Getter

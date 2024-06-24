@@ -1,7 +1,5 @@
 package fete.be.domain.poster.application.dto.request;
 
-import fete.be.domain.event.EventDto;
-
 import lombok.Getter;
 
 @Getter

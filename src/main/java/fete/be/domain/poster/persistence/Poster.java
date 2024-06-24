@@ -1,6 +1,6 @@
 package fete.be.domain.poster.persistence;
 
-import fete.be.domain.event.Event;
+import fete.be.domain.event.persistence.Event;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
