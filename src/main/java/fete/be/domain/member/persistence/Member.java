@@ -1,8 +1,7 @@
 package fete.be.domain.member.persistence;
 
-import fete.be.domain.Status;
+import fete.be.global.util.Status;
 import fete.be.domain.event.Participant;
-import fete.be.domain.member.Role;
 import fete.be.domain.payment.Payment;
 import fete.be.domain.poster.persistence.Poster;
 import jakarta.persistence.*;

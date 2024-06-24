@@ -1,6 +1,7 @@
-package fete.be.domain;
+package fete.be.global.util;
 
 public enum Status {
+    WAIT("WAIT"),
     ACTIVE("ACTIVE"),
     DELETE("DELETE"),
     REPORT("REPORT");

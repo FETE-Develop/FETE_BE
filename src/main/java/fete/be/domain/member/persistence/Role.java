@@ -1,4 +1,4 @@
-package fete.be.domain.member;
+package fete.be.domain.member.persistence;
 
 public enum Role {
     USER("ROLE_USER"),  // 일반 유저
