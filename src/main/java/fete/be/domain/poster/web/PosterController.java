@@ -5,7 +5,6 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
-import fete.be.domain.poster.persistence.Poster;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.SecurityUtil;
@@ -24,6 +23,7 @@ public class PosterController {
 
     /**
      * 포스터 등록 API
+     *
      * @param WritePosterRequest request
      * @return ApiResponse
      */
@@ -43,7 +43,8 @@ public class PosterController {
 
     /**
      * 포스터 수정 API
-     * @param Long posterId
+     *
+     * @param Long                posterId
      * @param ModifyPosterRequest request
      * @return ApiResponse
      */
@@ -65,6 +66,19 @@ public class PosterController {
 
     /**
      * 포스터 삭제 API
+     *
+     * @param Long posterId
+     * @return ApiResponse
      */
+    @DeleteMapping("/{posterId}")
+    public ApiResponse deletePoster(@PathVariable("posterId") Long posterId) {
+        try {
+            // posterId로 포스터를 찾아 삭제 (소프트 삭제 방식)
+            posterService.deletePoster(posterId);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
 
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
+    }
 }
