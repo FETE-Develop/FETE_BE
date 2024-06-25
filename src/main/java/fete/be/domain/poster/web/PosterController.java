@@ -5,12 +5,19 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
+import fete.be.domain.poster.application.dto.response.GetPostersResponse;
+import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,6 +27,7 @@ public class PosterController {
 
     private final MemberService memberService;
     private final PosterService posterService;
+
 
     /**
      * 포스터 등록 API
@@ -81,4 +89,26 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
+
+
+    /**
+     * 포스터 전체 조회 API
+     *
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetPostersResponse>
+     */
+    @GetMapping
+    public ApiResponse<GetPostersResponse> getPosters(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        // 전체 포스터 페이징 처리해서 가져오기
+        Pageable pageable = PageRequest.of(page, size);
+        List<PosterDto> posters = posterService.getPosters(pageable).getContent();
+        GetPostersResponse result = new GetPostersResponse(posters);
+
+        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+    }
+
 }

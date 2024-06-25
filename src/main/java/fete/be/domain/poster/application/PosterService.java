@@ -4,13 +4,19 @@ import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
+import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.poster.persistence.PosterRepository;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.SecurityUtil;
+import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -72,4 +78,23 @@ public class PosterService {
         return deletePoster.getPosterId();
     }
 
+    public Page<PosterDto> getPosters(Pageable pageable) {
+        // status가 ACTIVE인 Poster만 가져오기
+        return posterRepository.findByStatus(Status.ACTIVE, pageable)
+                .map(poster -> new PosterDto(
+                        poster.getTitle(),
+                        poster.getPosterImgUrl(),
+                        poster.getInstitution(),
+                        poster.getManager(),
+                        poster.getManagerContact(),
+                        poster.getTicketName(),
+                        poster.getTicketPrice(),
+                        poster.getEvent().getEventType(),
+                        poster.getEvent().getStartDate(),
+                        poster.getEvent().getEndDate(),
+                        poster.getEvent().getAddress(),
+                        poster.getEvent().getDescription(),
+                        poster.getEvent().getMood()
+                ));
+    }
 }
