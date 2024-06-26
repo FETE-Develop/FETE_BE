@@ -2,6 +2,7 @@ package fete.be.domain.poster.application;
 
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
+import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -82,6 +84,7 @@ public class PosterService {
         // status가 ACTIVE인 Poster만 가져오기
         return posterRepository.findByStatus(Status.ACTIVE, pageable)
                 .map(poster -> new PosterDto(
+                        poster.getPosterId(),
                         poster.getTitle(),
                         poster.getPosterImgUrl(),
                         poster.getInstitution(),
@@ -96,5 +99,20 @@ public class PosterService {
                         poster.getEvent().getDescription(),
                         poster.getEvent().getMood()
                 ));
+    }
+
+    @Transactional
+    public void approvePosters(ApprovePostersRequest request) {
+        List<Long> posterIds = request.getPosterIds();
+        List<Poster> posters = posterRepository.findAllById(posterIds);  // posterIds로 한번에 대량 조회
+
+        // 승인 요청한 포스터의 수와 찾은 포스터의 수가 일치하지 않는 경우
+        if (posters.size() != posterIds.size()) {
+            throw new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage());
+        }
+
+        for (Poster poster : posters) {
+            Poster.approvePoster(poster);  // 관리자 승인 메서드 실행
+        }
     }
 }

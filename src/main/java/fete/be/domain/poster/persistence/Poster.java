@@ -96,4 +96,9 @@ public class Poster {
 
         return poster;
     }
+
+    // 관리자 승인 메서드
+    public static void approvePoster(Poster poster) {
+        poster.status = Status.ACTIVE;  // WAIT -> ACTIVE로 전환
+    }
 }

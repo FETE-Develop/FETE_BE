@@ -3,6 +3,7 @@ package fete.be.domain.poster.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;
@@ -111,4 +112,20 @@ public class PosterController {
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
     }
 
+    /**
+     * 관리자의 포스터 승인 API
+     * : ADMIN 권한을 받은 후, 재 로그인 과정 필요
+     *
+     * @param ApprovePostersRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/approve")
+    public ApiResponse approvePosters(@RequestBody ApprovePostersRequest request) {
+        try {
+            posterService.approvePosters(request);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
+    }
 }
