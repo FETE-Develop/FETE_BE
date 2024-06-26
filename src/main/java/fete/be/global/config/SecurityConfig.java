@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers("/members").permitAll()
                 .requestMatchers("/members/test").hasRole("USER")
+                .requestMatchers("/posters/approve").hasRole("ADMIN")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
