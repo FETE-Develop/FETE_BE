@@ -7,6 +7,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PosterDto {
+    private Long posterId;  // 포스터 아이디
     private String title;  // 포스터 제목
     private String posterImgUrl;  // 포스터 이미지
     private String institution;  // 기관명
