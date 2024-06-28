@@ -46,7 +46,7 @@ public class PosterController {
         Long savedPosterId = posterService.writePoster(findMember, request);
         log.info("savedPosterId={}", savedPosterId);
 
-        return new ApiResponse<>(ResponseMessage.SUCCESS.getCode(), ResponseMessage.SUCCESS.getMessage());
+        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
     }
 
 

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,7 +36,7 @@ public class PosterService {
 
     public Poster findPosterByPosterId(Long posterId) {
         return posterRepository.findById(posterId).orElseThrow(
-                () -> new IllegalArgumentException("해당 포스터가 존재하지 않습니다."));
+                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage()));
     }
 
     @Transactional
@@ -47,8 +46,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail(email);
 
         // posterId로 포스터 찾기
-        Poster poster = posterRepository.findById(posterId).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage()));
+        Poster poster = findPosterByPosterId(posterId);
 
         // 수정을 요청한 사용자가 해당 포스터의 작성자가 아닌 경우
         if (!poster.getMember().equals(member)) {
@@ -67,8 +65,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail(email);
 
         // posterId로 포스터 찾기
-        Poster poster = posterRepository.findById(posterId).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage()));
+        Poster poster = findPosterByPosterId(posterId);
 
         // 삭제를 요청한 사용자가 해당 포스터의 작성자가 아닌 경우
         if (!poster.getMember().equals(member)) {
@@ -90,12 +87,12 @@ public class PosterService {
                         poster.getInstitution(),
                         poster.getManager(),
                         poster.getManagerContact(),
-                        poster.getTicketName(),
-                        poster.getTicketPrice(),
                         poster.getEvent().getEventType(),
                         poster.getEvent().getStartDate(),
                         poster.getEvent().getEndDate(),
                         poster.getEvent().getAddress(),
+                        poster.getEvent().getTicketName(),
+                        poster.getEvent().getTicketPrice(),
                         poster.getEvent().getDescription(),
                         poster.getEvent().getMood()
                 ));
