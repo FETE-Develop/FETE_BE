@@ -16,6 +16,13 @@ spring:
       enabled: true
       path: /h2-console
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
 jwt:
   header: Authorization
   secret: 677ce9a1da08286bcee0c09f1fce20d37427a39e78e9b7360b4d1a98980b4970
