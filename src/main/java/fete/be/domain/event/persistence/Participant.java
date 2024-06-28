@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import fete.be.domain.member.persistence.Member;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Entity
 @Getter
 public class Participant {
@@ -25,8 +28,27 @@ public class Participant {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
-    private Payment paymentState;  // 결제 상태
+    private Payment payment;  // 결제 상태
+
+//    private UUID code;  // QR 코드
 
     private String createdAt;  // 생성일자
     private String updatedAt;  // 수정일자
+
+
+    // 생성 메서드
+    public static Participant createParticipant(Member member, Event event) {
+        Participant participant = new Participant();
+
+        participant.member = member;
+        participant.event = event;
+
+        participant.payment = Payment.createPayment(member, event);
+
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        participant.createdAt = currentTime;
+        participant.updatedAt = currentTime;
+
+        return participant;
+    }
 }
