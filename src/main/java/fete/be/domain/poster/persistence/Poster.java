@@ -30,8 +30,6 @@ public class Poster {
     private String institution;  // 기관명
     private String manager;  // 담당자
     private String managerContact;  // 담당자 연락처
-    private String ticketName;  // 티켓 이름
-    private int ticketPrice;  // 티켓 가격
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "event_id")
@@ -54,8 +52,6 @@ public class Poster {
         poster.institution = request.getInstitution();
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
-        poster.ticketName = request.getTicketName();
-        poster.ticketPrice = request.getTicketPrice();
 
         poster.event = Event.createEvent(request.getEvent());
 
@@ -63,7 +59,7 @@ public class Poster {
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;
 
-        poster.status = Status.WAIT;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
+        poster.status = Status.ACTIVE;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
 
         return poster;
     }
@@ -75,8 +71,6 @@ public class Poster {
         poster.institution = request.getInstitution();
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
-        poster.ticketName = request.getTicketName();
-        poster.ticketPrice = request.getTicketPrice();
 
         poster.event = Event.updateEvent(poster.event, request.getEvent());
 
