@@ -137,8 +137,7 @@ public class QRCodeService {
 
     private boolean isValid(ParticipantDto compare, Participant original) {
         // 유저 일치 확인
-        String email = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberService.findMemberByEmail(email);
+        Member member = memberService.findMemberByEmail();
         if (!original.getMember().equals(member)) {
             return false;
         }

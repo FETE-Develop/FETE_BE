@@ -39,8 +39,7 @@ public class PosterController {
     @PostMapping
     public ApiResponse writePoster(@RequestBody WritePosterRequest request) {
         // 현재 요청한 Member의 email을 추출해서 member 찾아오기
-        String email = SecurityUtil.getCurrentMemberEmail();
-        Member findMember = memberService.findMemberByEmail(email);
+        Member findMember = memberService.findMemberByEmail();
 
         // request 정보, 찾은 member 정보를 서비스 단으로 넘겨서 포스터 생성 및 저장
         Long savedPosterId = posterService.writePoster(findMember, request);

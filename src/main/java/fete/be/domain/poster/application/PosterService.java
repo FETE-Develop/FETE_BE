@@ -42,8 +42,7 @@ public class PosterService {
     @Transactional
     public Long updatePoster(Long posterId, ModifyPosterRequest request) {
         // 현재 API 요청을 보낸 Member 찾기
-        String email = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberService.findMemberByEmail(email);
+        Member member = memberService.findMemberByEmail();
 
         // posterId로 포스터 찾기
         Poster poster = findPosterByPosterId(posterId);
@@ -61,8 +60,7 @@ public class PosterService {
     @Transactional
     public Long deletePoster(Long posterId) {
         // 현재 API 요청을 보낸 Member 찾기
-        String email = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberService.findMemberByEmail(email);
+        Member member = memberService.findMemberByEmail();
 
         // posterId로 포스터 찾기
         Poster poster = findPosterByPosterId(posterId);
