@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/api/members")
 public class MemberController {
 
     private final MemberService memberService;
@@ -63,4 +63,5 @@ public class MemberController {
         LoginResponseDto result = new LoginResponseDto(token);
         return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
     }
+
 }

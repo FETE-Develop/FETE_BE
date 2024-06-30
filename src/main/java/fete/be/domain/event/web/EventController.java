@@ -15,7 +15,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/events")
+@RequestMapping("/api/events")
 public class EventController {
 
     private final EventService eventService;
