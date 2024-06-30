@@ -49,9 +49,9 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .requestMatchers("/members").permitAll()
-                .requestMatchers("/members/test").hasRole("USER")
-                .requestMatchers("/posters/approve").hasRole("ADMIN")
+                .requestMatchers("/api/members").permitAll()
+                .requestMatchers("/api/members/test").hasRole("USER")
+                .requestMatchers("/api/posters/approve").hasRole("ADMIN")
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
