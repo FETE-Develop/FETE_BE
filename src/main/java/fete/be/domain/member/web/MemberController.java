@@ -1,6 +1,7 @@
 package fete.be.domain.member.web;
 
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
@@ -10,6 +11,7 @@ import fete.be.global.util.ApiResponse;
 import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,4 +66,19 @@ public class MemberController {
         return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
     }
 
+    /**
+     * ADMIN 요청 API
+     *
+     * @param GrantAdminRequestDto request
+     * @return ApiResponse
+     */
+    @PostMapping("/admin")
+    public ApiResponse grantAdmin(@RequestBody GrantAdminRequestDto request) {
+        try {
+            Long grantedMemberId = memberService.grantAdmin(request);
+            return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_OK.getCode(), ResponseMessage.MEMBER_ADMIN_OK.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_REJECT.getCode(), e.getMessage());
+        }
+    }
 }
