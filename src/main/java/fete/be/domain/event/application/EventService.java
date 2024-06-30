@@ -30,8 +30,7 @@ public class EventService {
 
     public String applyEvent(Long posterId) throws Exception {
         // 현재 API 요청을 보낸 Member 찾기
-        String email = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberService.findMemberByEmail(email);
+        Member member = memberService.findMemberByEmail();
 
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);

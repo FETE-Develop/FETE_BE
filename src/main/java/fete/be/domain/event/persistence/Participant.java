@@ -30,8 +30,6 @@ public class Participant {
     @JoinColumn(name = "payment_id")
     private Payment payment;  // 결제 상태
 
-//    private UUID code;  // QR 코드
-
     private String createdAt;  // 생성일자
     private String updatedAt;  // 수정일자
 

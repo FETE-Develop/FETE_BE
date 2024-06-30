@@ -4,6 +4,7 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
+import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -46,7 +47,8 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    public Member findMemberByEmail(String email) {
+    public Member findMemberByEmail() {
+        String email = SecurityUtil.getCurrentMemberEmail();
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
         return member;
     }
