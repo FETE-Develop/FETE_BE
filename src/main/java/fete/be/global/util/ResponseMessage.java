@@ -6,6 +6,11 @@ public enum ResponseMessage {
     INVALID_REQUEST(201, "불가능한 요청입니다."),
     INTERNAL_ERROR(500, "내부 오류가 발생했습니다."),
 
+    // MEMBER
+    MEMBER_ADMIN_OK(600, "관리자 권한을 획득하였습니다."),
+    MEMBER_ADMIN_REJECT(601, "관리자 권한 요청이 거부되었습니다."),
+    MEMBER_ALREADY_ADMIN(601, "관리자 권한을 획득한 상태입니다."),
+
     // SIGNUP
     SIGNUP_DUPLICATE_EMAIL(1000, "중복된 이메일 입니다."),
 
