@@ -71,4 +71,9 @@ public class Member {
         return member;
     }
 
+    // ADMIN 권한 부여
+    public static Member grantAdmin(Member member) {
+        member.role = Role.ADMIN;
+        return member;
+    }
 }
