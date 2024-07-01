@@ -111,6 +111,23 @@ public class PosterController {
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
     }
 
+
+    /**
+     * 포스터 단건 조회 API
+     *
+     * @param Long posterId
+     * @return ApiResponse<PosterDto>
+     */
+    public ApiResponse<PosterDto> getPoster(@PathVariable("posterId") Long posterId) {
+        try {
+            PosterDto result = posterService.getPoster(posterId);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_INVALID_POSTER.getCode(), ResponseMessage.POSTER_INVALID_POSTER.getMessage());
+        }
+    }
+
+
     /**
      * 관리자의 포스터 승인 API
      * : ADMIN 권한을 받은 후, 재 로그인 과정 필요
@@ -127,4 +144,6 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
+
+
 }

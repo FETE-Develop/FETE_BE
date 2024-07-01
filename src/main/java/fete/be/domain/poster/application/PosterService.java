@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -96,6 +97,31 @@ public class PosterService {
                 ));
     }
 
+    public PosterDto getPoster(Long posterId) {
+        // posterId로 해당 Poster 찾아오기
+        Poster poster = posterRepository.findById(posterId).orElseThrow(
+                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
+        );
+
+        // 찾은 Poster를 PosterDto에 담기
+        PosterDto posterDto = new PosterDto(poster.getPosterId(),
+                poster.getTitle(),
+                poster.getPosterImgUrl(),
+                poster.getInstitution(),
+                poster.getManager(),
+                poster.getManagerContact(),
+                poster.getEvent().getEventType(),
+                poster.getEvent().getStartDate(),
+                poster.getEvent().getEndDate(),
+                poster.getEvent().getAddress(),
+                poster.getEvent().getTicketName(),
+                poster.getEvent().getTicketPrice(),
+                poster.getEvent().getDescription(),
+                poster.getEvent().getMood());
+
+        return posterDto;
+    }
+
     @Transactional
     public void approvePosters(ApprovePostersRequest request) {
         List<Long> posterIds = request.getPosterIds();
@@ -110,4 +136,6 @@ public class PosterService {
             Poster.approvePoster(poster);  // 관리자 승인 메서드 실행
         }
     }
+
+
 }
