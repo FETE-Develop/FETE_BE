@@ -1,6 +1,7 @@
 package fete.be.domain.member.application;
 
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
+import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
 import fete.be.domain.member.persistence.Role;
@@ -33,7 +34,14 @@ public class MemberService {
     private String adminKey;
 
     @Transactional
-    public void signup(Member member) {
+    public void signup(SignupRequestDto request) {
+        // email 중복 검사
+        if (isDuplicateEmail(request.getEmail())) {
+            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 검증에 성공할 경우
+        Member member = Member.createMember(request.getEmail(), request.getPassword(), request.getUserName());
         memberRepository.save(member);
     }
 

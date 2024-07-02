@@ -33,16 +33,12 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public ApiResponse signup(@RequestBody SignupRequestDto request) {
-        // email 중복 검사
-        if (memberService.isDuplicateEmail(request.getEmail())) {
-            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        try {
+            memberService.signup(request);
+            return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
         }
-
-        // 검증에 성공할 경우
-        Member member = Member.createMember(request.getEmail(), request.getPassword(), request.getUserName());
-        memberService.signup(member);
-
-        return new ApiResponse<>(ResponseMessage.SUCCESS.getCode(), ResponseMessage.SUCCESS.getMessage());
     }
 
     /**
