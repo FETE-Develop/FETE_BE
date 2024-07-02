@@ -12,7 +12,8 @@ public enum ResponseMessage {
     MEMBER_ALREADY_ADMIN(601, "관리자 권한을 획득한 상태입니다."),
 
     // SIGNUP
-    SIGNUP_DUPLICATE_EMAIL(1000, "중복된 이메일 입니다."),
+    SIGNUP_SUCCESS(1000, "성공적으로 회원가입 하였습니다."),
+    SIGNUP_DUPLICATE_EMAIL(1001, "중복된 이메일 입니다."),
 
     // LOGIN
     LOGIN_SUCCESS(2000, "로그인에 성공하였습니다."),

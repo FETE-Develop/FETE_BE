@@ -24,6 +24,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     /**
      *  H2 Security 통과하도록 하는 코드
@@ -49,9 +50,11 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/members").permitAll()
-                .requestMatchers("/api/members/test").hasRole("USER")
+                .requestMatchers("/api/members/**").permitAll()
                 .requestMatchers("/api/posters/approve").hasRole("ADMIN")
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
