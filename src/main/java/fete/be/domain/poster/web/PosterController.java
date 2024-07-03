@@ -9,6 +9,7 @@ import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.global.util.ApiResponse;
+import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -38,12 +39,14 @@ public class PosterController {
      */
     @PostMapping
     public ApiResponse writePoster(@RequestBody WritePosterRequest request) {
+        log.info("WritePoster request: {}", request);
+        Logging.time();
+
         // 현재 요청한 Member의 email을 추출해서 member 찾아오기
         Member findMember = memberService.findMemberByEmail();
 
         // request 정보, 찾은 member 정보를 서비스 단으로 넘겨서 포스터 생성 및 저장
         Long savedPosterId = posterService.writePoster(findMember, request);
-        log.info("savedPosterId={}", savedPosterId);
 
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
     }
@@ -62,6 +65,9 @@ public class PosterController {
             @RequestBody ModifyPosterRequest request
     ) {
         try {
+            log.info("ModifyPoster request: {}", request);
+            Logging.time();
+
             // posterId로 포스터를 찾아 수정사항 업데이트
             Long updatePosterId = posterService.updatePoster(posterId, request);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
@@ -81,6 +87,9 @@ public class PosterController {
     @DeleteMapping("/{posterId}")
     public ApiResponse deletePoster(@PathVariable("posterId") Long posterId) {
         try {
+            log.info("DeletePoster request: {}", posterId);
+            Logging.time();
+
             // posterId로 포스터를 찾아 삭제 (소프트 삭제 방식)
             posterService.deletePoster(posterId);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
@@ -103,6 +112,9 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
+        log.info("GetPosters request");
+        Logging.time();
+
         // 전체 포스터 페이징 처리해서 가져오기
         Pageable pageable = PageRequest.of(page, size);
         List<PosterDto> posters = posterService.getPosters(pageable).getContent();
@@ -120,6 +132,9 @@ public class PosterController {
      */
     public ApiResponse<PosterDto> getPoster(@PathVariable("posterId") Long posterId) {
         try {
+            log.info("GetPoster request: {}", posterId);
+            Logging.time();
+
             PosterDto result = posterService.getPoster(posterId);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
@@ -138,6 +153,9 @@ public class PosterController {
     @PostMapping("/approve")
     public ApiResponse approvePosters(@RequestBody ApprovePostersRequest request) {
         try {
+            log.info("ApprovePosters request: {}", request);
+            Logging.time();
+
             posterService.approvePosters(request);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {

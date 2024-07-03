@@ -1,8 +1,10 @@
 package fete.be.domain.poster.application.dto.request;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class ModifyPosterRequest {
     private String title;  // 포스터 제목
     private String posterImgUrl;  // 포스터 이미지

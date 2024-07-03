@@ -5,17 +5,19 @@ import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
-import fete.be.domain.member.persistence.Member;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
+import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
@@ -34,6 +36,8 @@ public class MemberController {
     @PostMapping("/signup")
     public ApiResponse signup(@RequestBody SignupRequestDto request) {
         try {
+            log.info("Signup request: {}", request);
+            Logging.time();
             memberService.signup(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {
@@ -49,6 +53,9 @@ public class MemberController {
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+        log.info("Login request: {}", request);
+        Logging.time();
+
         // 로그인 검증 이후, 토큰 발급
         JwtToken token = memberService.login(request.getEmail(), request.getPassword());
 
@@ -71,6 +78,9 @@ public class MemberController {
     @PostMapping("/admin")
     public ApiResponse grantAdmin(@RequestBody GrantAdminRequestDto request) {
         try {
+            log.info("GrantAdmin request: {}", request);
+            Logging.time();
+
             Long grantedMemberId = memberService.grantAdmin(request);
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_OK.getCode(), ResponseMessage.MEMBER_ADMIN_OK.getMessage());
         } catch (IllegalArgumentException e) {

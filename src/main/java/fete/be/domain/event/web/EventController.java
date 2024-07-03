@@ -4,6 +4,7 @@ import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.global.util.ApiResponse;
+import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,9 @@ public class EventController {
     @PostMapping("/{posterId}")
     public ApiResponse<String> applyEvent(@PathVariable("posterId") Long posterId) {
         try {
+            log.info("ApplyEvent request: {}", posterId);
+            Logging.time();
+
             // 해당 posterId로 이벤트 신청 후, QR 코드 발급하기
             String qrCode = eventService.applyEvent(posterId);
             return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), qrCode);
@@ -53,6 +57,9 @@ public class EventController {
             @RequestPart("file") MultipartFile file,
             @RequestPart("posterId") Long posterId) {
         try {
+            log.info("VerifyQRCode request: {}", posterId);
+            Logging.time();
+
             // 유저의 QR 코드 검증, 이벤트 장소 검증
             Long participantId = qrCodeService.verifyQRCode(file, posterId);
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
