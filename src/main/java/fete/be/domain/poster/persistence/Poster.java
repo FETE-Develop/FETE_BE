@@ -59,7 +59,7 @@ public class Poster {
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;
 
-        poster.status = Status.ACTIVE;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
+        poster.status = Status.WAIT;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
 
         return poster;
     }

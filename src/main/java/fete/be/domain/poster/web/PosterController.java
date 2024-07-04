@@ -11,7 +11,6 @@ import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
-import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -130,6 +129,7 @@ public class PosterController {
      * @param Long posterId
      * @return ApiResponse<PosterDto>
      */
+    @GetMapping("/{posterId}")
     public ApiResponse<PosterDto> getPoster(@PathVariable("posterId") Long posterId) {
         try {
             log.info("GetPoster request: {}", posterId);
@@ -162,6 +162,5 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
-
 
 }

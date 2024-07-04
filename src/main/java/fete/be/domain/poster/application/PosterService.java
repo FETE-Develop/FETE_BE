@@ -9,7 +9,6 @@ import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.poster.persistence.PosterRepository;
 import fete.be.global.util.ResponseMessage;
-import fete.be.global.util.SecurityUtil;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,8 +96,8 @@ public class PosterService {
     }
 
     public PosterDto getPoster(Long posterId) {
-        // posterId로 해당 Poster 찾아오기
-        Poster poster = posterRepository.findById(posterId).orElseThrow(
+        // posterId로 해당 Poster 찾아오기(ACTIVE 상태인 것만)
+        Poster poster = posterRepository.findByStatusAndPosterId(Status.ACTIVE, posterId).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
         );
 
