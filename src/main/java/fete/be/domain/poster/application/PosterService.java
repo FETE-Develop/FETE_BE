@@ -74,9 +74,9 @@ public class PosterService {
         return deletePoster.getPosterId();
     }
 
-    public Page<PosterDto> getPosters(Pageable pageable) {
-        // status가 ACTIVE인 Poster만 가져오기
-        return posterRepository.findByStatus(Status.ACTIVE, pageable)
+    public Page<PosterDto> getPosters(Status status, Pageable pageable) {
+        // 조건에 맞는 Poster 가져오기
+        return posterRepository.findByStatus(status, pageable)
                 .map(poster -> new PosterDto(
                         poster.getPosterId(),
                         poster.getTitle(),

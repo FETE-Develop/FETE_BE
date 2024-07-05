@@ -11,6 +11,7 @@ import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
+import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -108,6 +109,7 @@ public class PosterController {
      */
     @GetMapping
     public ApiResponse<GetPostersResponse> getPosters(
+            @RequestParam(name = "status", defaultValue = "ACTIVE") String status,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
@@ -116,7 +118,10 @@ public class PosterController {
 
         // 전체 포스터 페이징 처리해서 가져오기
         Pageable pageable = PageRequest.of(page, size);
-        List<PosterDto> posters = posterService.getPosters(pageable).getContent();
+        // status를 Status enum 타입으로 변환
+        Status findStatus = Status.valueOf(status);
+
+        List<PosterDto> posters = posterService.getPosters(findStatus, pageable).getContent();
         GetPostersResponse result = new GetPostersResponse(posters);
 
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
