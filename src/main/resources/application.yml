@@ -4,6 +4,10 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+#    url: jdbc:mysql://fete-db.cfcem2ym6hsx.ap-northeast-2.rds.amazonaws.com:3306/스키마
+#    username: fete
+#    password: fete0626!
+#    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     open-in-view: false
