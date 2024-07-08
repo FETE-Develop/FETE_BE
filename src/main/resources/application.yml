@@ -1,13 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:fete;MODE=MySQL
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-#    url: jdbc:mysql://fete-db.cfcem2ym6hsx.ap-northeast-2.rds.amazonaws.com:3306/스키마
-#    username: fete
-#    password: fete0626!
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+  config:
+    import: application-secret.yml
 
   jpa:
     open-in-view: false
@@ -25,15 +18,6 @@ spring:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
-
-
-jwt:
-  header: Authorization
-  secret: 677ce9a1da08286bcee0c09f1fce20d37427a39e78e9b7360b4d1a98980b4970
-#  token-validity-in-seconds: 86400
-
-admin:
-  key: jsHidcqd8ZPr0JqyETHpkqfjpBf6eKhGDRiDgEh6tXx3PDEvjSfmeualm7FNsJeKRvoqUSbkZm0qXyIVCDK7nQ==  # openssl rand -base64 64
 
 logging.level:
   org.hibernate.SQL: info
