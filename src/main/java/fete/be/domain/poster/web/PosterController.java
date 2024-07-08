@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -116,12 +117,10 @@ public class PosterController {
         log.info("GetPosters request");
         Logging.time();
 
-        // 전체 포스터 페이징 처리해서 가져오기
-        Pageable pageable = PageRequest.of(page, size);
         // status를 Status enum 타입으로 변환
         Status findStatus = Status.valueOf(status);
 
-        List<PosterDto> posters = posterService.getPosters(findStatus, pageable).getContent();
+        List<PosterDto> posters = posterService.getPosters(findStatus, page, size).getContent();
         GetPostersResponse result = new GetPostersResponse(posters);
 
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);

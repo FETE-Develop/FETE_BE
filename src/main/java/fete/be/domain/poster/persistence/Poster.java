@@ -35,8 +35,8 @@ public class Poster {
     @JoinColumn(name = "event_id")
     private Event event;  // 등록할 이벤트
 
-    private String createdAt;  // 생성일자
-    private String updatedAt;  // 수정일자
+    private LocalDateTime createdAt;  // 생성일자
+    private LocalDateTime updatedAt;  // 수정일자
 
     @Enumerated(EnumType.STRING)
     private Status status;  // 포스터 상태
@@ -55,7 +55,8 @@ public class Poster {
 
         poster.event = Event.createEvent(request.getEvent());
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+//        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;
 
@@ -74,7 +75,7 @@ public class Poster {
 
         poster.event = Event.updateEvent(poster.event, request.getEvent());
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;
 
         return poster;
@@ -85,7 +86,7 @@ public class Poster {
         // status를 DELETE로 변경
         poster.status = Status.DELETE;
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;
 
         return poster;

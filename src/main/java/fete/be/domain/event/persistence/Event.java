@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +13,21 @@ import java.util.List;
 @Getter
 public class Event {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "event_id")
     private Long eventId;
 
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
-    private String startDate;  // 이벤트 시작일
-    private String endDate;  // 이벤트 종료일
+    private LocalDateTime startDate;  // 이벤트 시작일
+    private LocalDateTime endDate;  // 이벤트 종료일
     private String address;  // 주소
     private String ticketName;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
     private int ticketPrice;  // 티켓 가격
     private String description;  // 이벤트 관련 상세 설명
     private String mood;  // 이벤트 분위기
-    private String createdAt;  // 생성일자
-    private String updatedAt;  // 수정일자
+    private LocalDateTime createdAt;  // 생성일자
+    private LocalDateTime updatedAt;  // 수정일자
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participant> participants = new ArrayList<>();  // 이벤트 참여자 목록
@@ -49,7 +49,7 @@ public class Event {
         event.description = request.getDescription();
         event.mood = request.getMood();
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         event.createdAt = currentTime;
         event.updatedAt = currentTime;
 
@@ -67,7 +67,7 @@ public class Event {
         event.description = request.getDescription();
         event.mood = request.getMood();
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;
 
         return event;

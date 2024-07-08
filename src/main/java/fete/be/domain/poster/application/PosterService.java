@@ -12,7 +12,9 @@ import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,7 +76,17 @@ public class PosterService {
         return deletePoster.getPosterId();
     }
 
-    public Page<PosterDto> getPosters(Status status, Pageable pageable) {
+    public Page<PosterDto> getPosters(Status status, int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.asc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
+                        Sort.Order.asc("title")  // 두 번째 정렬 기준: 이벤트 이름
+                )
+        );
+
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
                 .map(poster -> new PosterDto(
