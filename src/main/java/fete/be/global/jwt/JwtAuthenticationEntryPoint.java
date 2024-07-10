@@ -1,4 +1,4 @@
-package fete.be.global.config;
+package fete.be.global.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fete.be.global.util.ApiResponse;

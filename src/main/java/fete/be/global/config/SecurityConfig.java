@@ -1,6 +1,7 @@
 package fete.be.global.config;
 
 
+import fete.be.global.jwt.JwtAuthenticationEntryPoint;
 import fete.be.global.jwt.JwtAuthenticationFilter;
 import fete.be.global.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.SecurityBuilder;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
