@@ -13,8 +13,6 @@ public class PosterDto {
     private String title;  // 포스터 제목
     private String posterImgUrl;  // 포스터 이미지
     private String institution;  // 기관명
-    private String manager;  // 담당자
-    private String managerContact;  // 담당자 연락처
 
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
     private LocalDateTime startDate;  // 이벤트 시작일
