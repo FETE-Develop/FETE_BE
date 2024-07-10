@@ -2,7 +2,7 @@ package fete.be.domain.member.persistence;
 
 import fete.be.global.util.Status;
 import fete.be.domain.event.persistence.Participant;
-import fete.be.domain.payment.Payment;
+import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.persistence.Poster;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package fete.be.domain.payment;
+package fete.be.domain.payment.persistence;
 
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Participant;
@@ -31,9 +31,9 @@ public class Payment {
     @Column(name = "is_paid")
     private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
     @Column(name = "created_at")
-    private String createdAt;  // 생성일자
+    private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
-    private String updatedAt;  // 수정일자
+    private LocalDateTime updatedAt;  // 수정일자
 
 
     // 생성 메서드
@@ -44,7 +44,7 @@ public class Payment {
         payment.event = event;
         payment.isPaid = false;  // 처음 생성 시, 결제 미완료 상태로 저장
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         payment.createdAt = currentTime;
         payment.updatedAt = currentTime;
 

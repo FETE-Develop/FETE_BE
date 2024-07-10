@@ -1,6 +1,5 @@
 package fete.be.domain.event.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
@@ -15,21 +14,17 @@ import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
-import fete.be.global.util.ApiResponse;
 import fete.be.global.util.ResponseMessage;
-import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -42,6 +37,9 @@ public class QRCodeService {
     private final MemberService memberService;
     private final PosterService posterService;
 
+    /**
+     * QR 코드 발급
+     */
     public String generateQRCodeBase64(Participant obj, int width, int height) throws Exception {
         // Participant 객체가 엔티티이기 때문에 DTO로 만들어서 QR 코드 생성
         ParticipantDto participantDto = new ParticipantDto(obj.getParticipantId(), obj.getMember().getMemberId(), obj.getEvent().getEventId(), obj.getPayment().getPaymentId());
@@ -60,7 +58,7 @@ public class QRCodeService {
     }
 
     /**
-     * QR 코드 검증 API
+     * QR 코드 검증
      */
     @Transactional
     public Long verifyQRCode(MultipartFile file, Long posterId) throws IOException, NotFoundException {

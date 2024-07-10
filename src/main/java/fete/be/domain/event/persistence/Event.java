@@ -1,7 +1,7 @@
 package fete.be.domain.event.persistence;
 
 import fete.be.domain.poster.application.dto.request.EventDto;
-import fete.be.domain.payment.Payment;
+import fete.be.domain.payment.persistence.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
 
