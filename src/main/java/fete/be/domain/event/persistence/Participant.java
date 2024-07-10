@@ -30,8 +30,9 @@ public class Participant {
     @JoinColumn(name = "payment_id")
     private Payment payment;  // 결제 상태
 
-    private String createdAt;  // 생성일자
-    private String updatedAt;  // 수정일자
+    private Boolean isParticipated;  // 참여 여부
+    private LocalDateTime createdAt;  // 생성일자
+    private LocalDateTime updatedAt;  // 수정일자
 
 
     // 생성 메서드
@@ -43,10 +44,16 @@ public class Participant {
 
         participant.payment = Payment.createPayment(member, event);
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        participant.isParticipated = false;  // 초기에는 QR 코드를 생성한 상태이기 때문에 false 상태 -> QR 코드 인증 시 true로 변경
+        LocalDateTime currentTime = LocalDateTime.now();
         participant.createdAt = currentTime;
         participant.updatedAt = currentTime;
 
         return participant;
+    }
+
+    // 참여 완료 메서드
+    public static void completeParticipant(Participant participant) {
+        participant.isParticipated = true;
     }
 }

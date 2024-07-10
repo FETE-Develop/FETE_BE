@@ -62,6 +62,7 @@ public class QRCodeService {
     /**
      * QR 코드 검증 API
      */
+    @Transactional
     public Long verifyQRCode(MultipartFile file, Long posterId) throws IOException, NotFoundException {
         // QR 코드 이미지 파일을 읽기
         InputStream inputStream = file.getInputStream();
@@ -72,7 +73,6 @@ public class QRCodeService {
 
         Result result = new MultiFormatReader().decode(bitmap);
         String base64Image = result.getText();
-
 
         // Base64 디코딩하여 BufferedImage로 변환
         bufferedImage = decodeQRCodeImage(base64Image);
@@ -87,39 +87,18 @@ public class QRCodeService {
         // 역직렬화
         ParticipantDto participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
 
-
-        // QR 코드 이미지 파일을 읽기
-//        InputStream inputStream = file.getInputStream();
-//        BufferedImage bufferedImage = ImageIO.read(inputStream);
-//
-//        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-//        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-//
-//        Result result = new MultiFormatReader().decode(bitmap);
-//        String qrCodeText = result.getText();
-//        log.info("QR_STRING={}", qrCodeText);  // 여기까진 QR 코드가 원본과 같은 값으로 도착함
-//
-//        // 받은 json 문자열을 ParticipantDto 객체로 역직렬화
-//        ParticipantDto participantDto;
-//        try {
-//            participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
-//            log.info("QR_mapper START");
-//            log.info("QR_mapper={}", participantDto.getParticipantId());
-//        } catch (JsonProcessingException e) {
-//            log.error("Failed to deserialize QR code text to ParticipantDto: {}", e.getMessage());
-//            throw new IllegalArgumentException("Invalid QR code format");
-//        }
-//
-//        ParticipantDto participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
-//        log.info("QR_mapper START");
-//        log.info("QR_mapper={}", participantDto.getParticipantId());
-
         // DB에서 원본 데이터를 조회
         Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
 
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
+
+        // 검증 로직
+        // 해당 QR 코드가 사용된 적 있는지 확인
+        if (originalParticipant.getIsParticipated()) {
+            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+        }
 
         // 해당 QR 코드가 올바른 이벤트 장소에서 대조하고 있는지 확인
         if (!poster.getEvent().getEventId().equals(participantDto.getEventId())) {
@@ -131,7 +110,8 @@ public class QRCodeService {
             throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
         }
 
-        // 정상 로직일 경우
+        // 정상 로직일 경우, 이벤트 참여 완료 처리
+        Participant.completeParticipant(originalParticipant);
         return participantDto.getParticipantId();
     }
 
@@ -176,21 +156,4 @@ public class QRCodeService {
 
         return bufferedImage;
     }
-
-//    public Long verifyQRCode(String base64Image, Long posterId) throws IOException, NotFoundException {
-//        // Base64 디코딩하여 BufferedImage로 변환
-//        BufferedImage bufferedImage = decodeQRCodeImage(base64Image);
-//
-//        // QR 코드 이미지에서 QR 코드 텍스트 추출
-//        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-//        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-//
-//        Result result = new MultiFormatReader().decode(bitmap);
-//        String qrCodeText = result.getText();
-//
-//        // 여기서 qrCodeText를 이용해 추가 검증 로직을 수행
-//        // ...
-//
-//        return participantDto.getParticipantId();
-//    }
 }
