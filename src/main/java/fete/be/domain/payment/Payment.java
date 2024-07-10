@@ -28,8 +28,11 @@ public class Payment {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
     private Participant participant;  // 유저의 이벤트 참여 정보
 
+    @Column(name = "is_paid")
     private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
+    @Column(name = "created_at")
     private String createdAt;  // 생성일자
+    @Column(name = "updated_at")
     private String updatedAt;  // 수정일자
 
 

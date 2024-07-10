@@ -1,13 +1,11 @@
 package fete.be.domain.event.persistence;
 
-import fete.be.domain.event.persistence.Event;
 import fete.be.domain.payment.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import fete.be.domain.member.persistence.Member;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
@@ -30,8 +28,11 @@ public class Participant {
     @JoinColumn(name = "payment_id")
     private Payment payment;  // 결제 상태
 
+    @Column(name = "is_participated")
     private Boolean isParticipated;  // 참여 여부
+    @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;  // 수정일자
 
 

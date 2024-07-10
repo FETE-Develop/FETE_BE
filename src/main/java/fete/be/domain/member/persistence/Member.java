@@ -48,7 +48,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Poster> posters = new ArrayList<>();  // 유저가 등록한 프스터 리스트
 
+    @Column(name = "created_at")
     private String createdAt;
+    @Column(name = "updated_at")
     private String updatedAt;
 
     @Enumerated(EnumType.STRING)

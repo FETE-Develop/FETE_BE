@@ -18,15 +18,25 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
+    @Column(name = "event_type")
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
+    @Column(name = "start_date")
     private LocalDateTime startDate;  // 이벤트 시작일
+    @Column(name = "end_date")
     private LocalDateTime endDate;  // 이벤트 종료일
+    @Column(name = "address")
     private String address;  // 주소
+    @Column(name = "ticket_name")
     private String ticketName;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
+    @Column(name = "ticket_price")
     private int ticketPrice;  // 티켓 가격
+    @Column(name = "description", length = 500)
     private String description;  // 이벤트 관련 상세 설명
+    @Column(name = "mood")
     private String mood;  // 이벤트 분위기
+    @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;  // 수정일자
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

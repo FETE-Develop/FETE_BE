@@ -9,7 +9,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 
 @Entity
@@ -25,20 +24,26 @@ public class Poster {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(name = "title", nullable = false, length = 50)
     private String title;  // 포스터 제목
     private String posterImgUrl;  // 포스터 이미지
     private String institution;  // 주최 팀 or 주최자 명
+    @Column(name = "manager", nullable = false, length = 20)
     private String manager;  // 담당자 이름
+    @Column(name = "manager_contact", nullable = false, length = 20)
     private String managerContact;  // 담당자 연락처
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "event_id")
     private Event event;  // 등록할 이벤트
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;  // 수정일자
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status;  // 포스터 상태
 
 
