@@ -60,7 +60,6 @@ public class Poster {
 
         poster.event = Event.createEvent(request.getEvent());
 
-//        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime currentTime = LocalDateTime.now();
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;

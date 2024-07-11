@@ -89,5 +89,4 @@ public class MemberService {
         Member grantedMember = Member.grantAdmin(member);
         return grantedMember.getMemberId();
     }
-
 }

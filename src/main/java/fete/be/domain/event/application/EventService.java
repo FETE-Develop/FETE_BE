@@ -1,10 +1,10 @@
 package fete.be.domain.event.application;
 
-import fete.be.domain.event.persistence.Participant;
-import fete.be.domain.event.persistence.ParticipantRepository;
+import fete.be.domain.ticket.persistence.Participant;
+import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
-import fete.be.domain.payment.persistence.Payment;
+import fete.be.domain.ticket.persistence.Payment;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ public class EventService {
     private final ParticipantRepository participantRepository;
 
 
+    @Transactional
     public String applyEvent(Long posterId) throws Exception {
         // 현재 API 요청을 보낸 Member 찾기
         Member member = memberService.findMemberByEmail();
