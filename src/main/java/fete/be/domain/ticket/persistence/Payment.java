@@ -1,13 +1,11 @@
-package fete.be.domain.payment.persistence;
+package fete.be.domain.ticket.persistence;
 
 import fete.be.domain.event.persistence.Event;
-import fete.be.domain.event.persistence.Participant;
 import fete.be.domain.member.persistence.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Getter
