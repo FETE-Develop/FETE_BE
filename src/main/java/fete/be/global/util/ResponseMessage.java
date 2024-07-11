@@ -31,6 +31,10 @@ public enum ResponseMessage {
     EVENT_INVALID_QR(4002, "일치하는 정보가 존재하지 않습니다."),
     EVENT_VALID_QR(4003, "QR 코드가 인증되었습니다."),
     EVENT_INVALID_FILE(4004, "잘못된 파일입니다."),
+
+    // TICKET
+    TICKET_SUCCESS(5000, "티켓 조회에 성공하였습니다."),
+    TICKET_FAILURE(5001, "티켓 조회에 실패하였습니다."),
     ;
 
     private int code;
