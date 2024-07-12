@@ -11,7 +11,5 @@ public class ModifyPosterRequest {
     private String institution;  // 기관명
     private String manager;  // 담당자
     private String managerContact;  // 담당자 연락처
-    private String ticketName;  // 티켓 이름
-    private int ticketPrice;  // 티켓 가격
     private EventDto event;  // 등록할 이벤트
 }

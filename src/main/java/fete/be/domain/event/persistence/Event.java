@@ -19,6 +19,7 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "event_type")
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
     @Column(name = "start_date")
