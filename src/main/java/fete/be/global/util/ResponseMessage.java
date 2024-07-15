@@ -35,6 +35,7 @@ public enum ResponseMessage {
     // TICKET
     TICKET_SUCCESS(5000, "티켓 조회에 성공하였습니다."),
     TICKET_FAILURE(5001, "티켓 조회에 실패하였습니다."),
+    TICKET_NO_EXIST(5002, "존재하지 않는 티켓입니다."),
     ;
 
     private int code;
