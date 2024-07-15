@@ -105,9 +105,9 @@ public class PosterService {
                 ));
     }
 
-    public PosterDto getPoster(Long posterId) {
-        // posterId로 해당 Poster 찾아오기(ACTIVE 상태인 것만)
-        Poster poster = posterRepository.findByStatusAndPosterId(Status.ACTIVE, posterId).orElseThrow(
+    public PosterDto getPoster(Long posterId, Status status) {
+        // posterId로 해당 Poster 찾아오기
+        Poster poster = posterRepository.findByStatusAndPosterId(status, posterId).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
         );
 
