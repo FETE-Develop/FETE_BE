@@ -143,5 +143,34 @@ public class PosterService {
         }
     }
 
+    public Page<PosterDto> getMyPosters(int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.asc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
+                        Sort.Order.asc("title")  // 두 번째 정렬 기준: 이벤트 이름
+                )
+        );
 
+        // Member 찾기
+        Member member = memberService.findMemberByEmail();
+        // 조건에 맞는 데이터 조회
+        return posterRepository.findByMember(member, pageable)
+                .map(poster -> new PosterDto(
+                        poster.getPosterId(),
+                        poster.getTitle(),
+                        poster.getPosterImgUrl(),
+                        poster.getInstitution(),
+                        poster.getEvent().getEventType(),
+                        poster.getEvent().getStartDate(),
+                        poster.getEvent().getEndDate(),
+                        poster.getEvent().getAddress(),
+                        poster.getEvent().getTicketName(),
+                        poster.getEvent().getTicketPrice(),
+                        poster.getEvent().getDescription(),
+                        poster.getEvent().getMood()
+                ));
+    }
 }

@@ -169,4 +169,25 @@ public class PosterController {
         }
     }
 
+
+    /**
+     * 자신이 등록한 포스터 조회 API
+     *
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetPostersResponse>
+     */
+    @GetMapping("/my-posters")
+    public ApiResponse<GetPostersResponse> getMyPosters(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        log.info("GetMyPosters request");
+        Logging.time();
+
+        List<PosterDto> myPosters = posterService.getMyPosters(page, size).getContent();
+        GetPostersResponse result = new GetPostersResponse(myPosters);
+
+        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+    }
 }
