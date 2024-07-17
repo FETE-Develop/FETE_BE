@@ -32,7 +32,7 @@ public class Event {
     private String ticketName;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
     @Column(name = "ticket_price")
     private int ticketPrice;  // 티켓 가격
-    @Column(name = "description", length = 500)
+    @Column(name = "description", length = 300)
     private String description;  // 이벤트 관련 상세 설명
     @Column(name = "mood")
     private String mood;  // 이벤트 분위기

@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 public class WritePosterRequest {
     private String title;  // 포스터 제목
-    private String posterImgUrl;  // 포스터 이미지
+    private String[] posterImgUrls;  // 포스터 이미지
     private String institution;  // 기관명
     private String manager;  // 담당자
     private String managerContact;  // 담당자 연락처

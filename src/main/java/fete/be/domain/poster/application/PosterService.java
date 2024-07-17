@@ -7,6 +7,7 @@ import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.persistence.Poster;
+import fete.be.domain.poster.persistence.PosterImage;
 import fete.be.domain.poster.persistence.PosterRepository;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -92,7 +94,9 @@ public class PosterService {
                 .map(poster -> new PosterDto(
                         poster.getPosterId(),
                         poster.getTitle(),
-                        poster.getPosterImgUrl(),
+                        poster.getPosterImages().stream()
+                                .map(PosterImage::getImageUrl)
+                                .collect(Collectors.toList()),
                         poster.getInstitution(),
                         poster.getEvent().getEventType(),
                         poster.getEvent().getStartDate(),
@@ -114,7 +118,9 @@ public class PosterService {
         // 찾은 Poster를 PosterDto에 담기
         PosterDto posterDto = new PosterDto(poster.getPosterId(),
                 poster.getTitle(),
-                poster.getPosterImgUrl(),
+                poster.getPosterImages().stream()
+                        .map(PosterImage::getImageUrl)
+                        .collect(Collectors.toList()),
                 poster.getInstitution(),
                 poster.getEvent().getEventType(),
                 poster.getEvent().getStartDate(),
@@ -161,7 +167,9 @@ public class PosterService {
                 .map(poster -> new PosterDto(
                         poster.getPosterId(),
                         poster.getTitle(),
-                        poster.getPosterImgUrl(),
+                        poster.getPosterImages().stream()
+                                .map(PosterImage::getImageUrl)
+                                .collect(Collectors.toList()),
                         poster.getInstitution(),
                         poster.getEvent().getEventType(),
                         poster.getEvent().getStartDate(),

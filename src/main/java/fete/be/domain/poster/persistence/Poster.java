@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -24,9 +26,11 @@ public class Poster {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(name = "title", nullable = false, length = 50)
+    @Column(name = "title", nullable = false, length = 30)
     private String title;  // 포스터 제목
-    private String posterImgUrl;  // 포스터 이미지
+
+    @OneToMany(mappedBy = "poster", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PosterImage> posterImages = new ArrayList<>();  // 포스터 이미지 - 최대 10장
     private String institution;  // 주최 팀 or 주최자 명
     @Column(name = "manager", nullable = false, length = 20)
     private String manager;  // 담당자 이름
@@ -53,7 +57,12 @@ public class Poster {
 
         poster.member = member;
         poster.title = request.getTitle();
-        poster.posterImgUrl = request.getPosterImgUrl();
+
+        for (String posterImgUrl : request.getPosterImgUrls()) {
+            PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
+            poster.posterImages.add(posterImage);
+        }
+
         poster.institution = request.getInstitution();
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
@@ -72,7 +81,14 @@ public class Poster {
     // 업데이트 메서드
     public static Poster updatePoster(Poster poster, ModifyPosterRequest request) {
         poster.title = request.getTitle();
-        poster.posterImgUrl = request.getPosterImgUrl();
+
+        // 기존의 포스터 이미지를 삭제하고, 전달된 이미지를 추가
+        poster.posterImages.clear();
+        for (String posterImgUrl : request.getPosterImgUrls()) {
+            PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
+            poster.posterImages.add(posterImage);
+        }
+
         poster.institution = request.getInstitution();
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
