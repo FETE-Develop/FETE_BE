@@ -41,7 +41,7 @@ public class MemberService {
         }
 
         // 검증에 성공할 경우
-        Member member = Member.createMember(request.getEmail(), request.getPassword(), request.getUserName());
+        Member member = Member.createMember(request);
         memberRepository.save(member);
     }
 

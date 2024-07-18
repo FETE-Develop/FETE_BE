@@ -1,5 +1,6 @@
 package fete.be.domain.member.persistence;
 
+import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.Payment;
@@ -7,6 +8,7 @@ import fete.be.domain.poster.persistence.Poster;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
@@ -36,6 +38,18 @@ public class Member {
     @Column(nullable = false, length = 20)
     private String userName;
 
+    @NotBlank
+    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "생년월일 형식은 yyyy-MM-dd 입니다.")
+    private String birth;  // 생년월일(yyyy-MM-dd)
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private Gender gender;  // 성별(MALE / FEMALE)
+
+    @NotBlank
+    @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 10~11 자리의 숫자만 입력 가능합니다.")
+    private String phoneNumber;  // 휴대전화 번호
+
     @Enumerated(EnumType.STRING)
     private Role role;  // 권한
 
@@ -58,11 +72,14 @@ public class Member {
 
 
     // 생성 메서드
-    public static Member createMember(String email, String password, String userName) {
+    public static Member createMember(SignupRequestDto request) {
         Member member = new Member();
-        member.email = email;
-        member.password = password;
-        member.userName = userName;
+        member.email = request.getEmail();
+        member.password = request.getPassword();
+        member.userName = request.getUserName();
+        member.birth = request.getBirth();
+        member.gender = request.getGender();
+        member.phoneNumber = request.getPhoneNumber();
         member.role = Role.USER;
 
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

@@ -21,6 +21,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+
     /**
      * 회원가입 API
      *
@@ -38,6 +39,7 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
         }
     }
+
 
     /**
      * 로그인 API
@@ -62,6 +64,7 @@ public class MemberController {
         LoginResponseDto result = new LoginResponseDto(token);
         return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
     }
+
 
     /**
      * ADMIN 요청 API
