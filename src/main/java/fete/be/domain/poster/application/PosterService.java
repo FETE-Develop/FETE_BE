@@ -6,9 +6,7 @@ import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
-import fete.be.domain.poster.persistence.Poster;
-import fete.be.domain.poster.persistence.PosterImage;
-import fete.be.domain.poster.persistence.PosterRepository;
+import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 public class PosterService {
 
     private final PosterRepository posterRepository;
+    private final PosterLikeRepository posterLikeRepository;
     private final MemberService memberService;
 
     @Transactional
@@ -180,5 +180,27 @@ public class PosterService {
                         poster.getEvent().getDescription(),
                         poster.getEvent().getMood()
                 ));
+    }
+
+    @Transactional
+    public void likePoster(Long posterId, Boolean isLike) {
+        // Member 찾기
+        Member member = memberService.findMemberByEmail();
+        // posterId로 포스터 찾기
+        Poster poster = findPosterByPosterId(posterId);
+        // 조건에 해당하는 데이터 찾기
+        Optional<PosterLike> find = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId());
+
+        if (isLike) {  // 관심 등록
+            if (!find.isPresent()) {
+                PosterLike posterLike = PosterLike.createPosterLike(member.getMemberId(), poster.getPosterId());
+                posterLikeRepository.save(posterLike);
+            }
+        } else {  // 관심 해제
+            if (find.isPresent()) {
+                PosterLike posterLike = find.get();
+                posterLikeRepository.delete(posterLike);
+            }
+        }
     }
 }

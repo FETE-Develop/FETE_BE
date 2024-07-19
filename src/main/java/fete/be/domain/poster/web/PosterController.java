@@ -190,4 +190,28 @@ public class PosterController {
 
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
     }
+
+
+    /**
+     * 포스터 관심 등록 / 해제 API
+     *
+     * @param Long posterId
+     * @param Long isLike
+     * @return ApiResponse
+     */
+    @PostMapping("/like/{posterId}")
+    public ApiResponse likePoster(
+            @PathVariable("posterId") Long posterId,
+            @RequestParam("isLike") Boolean isLike) {
+        try {
+            log.info("LikePoster request");
+            Logging.time();
+
+            posterService.likePoster(posterId, isLike);
+
+            return new ApiResponse<>(ResponseMessage.LIKE_SUCCESS.getCode(), ResponseMessage.LIKE_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.LIKE_FAILURE.getCode(), e.getMessage());
+        }
+    }
 }
