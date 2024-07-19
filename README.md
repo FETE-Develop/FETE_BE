@@ -8,4 +8,4 @@ FETE
 Team Member (BackEnd)
 ---
 강건영 : 스프링, 스프링부트, JPA, AWS<br>
-변상연 : 쿠버네티스, 리눅스, CI/CD, 스프링
+변상연 : 쿠버네티스, 도커, 리눅스, CI/CD, 스프링
