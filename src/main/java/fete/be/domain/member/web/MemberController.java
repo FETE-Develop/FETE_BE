@@ -36,7 +36,7 @@ public class MemberController {
             memberService.signup(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), e.getMessage());
         }
     }
 

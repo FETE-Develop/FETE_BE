@@ -144,7 +144,7 @@ public class PosterController {
             PosterDto result = posterService.getPoster(posterId, findStatus);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.POSTER_INVALID_POSTER.getCode(), ResponseMessage.POSTER_INVALID_POSTER.getMessage());
+            return new ApiResponse<>(ResponseMessage.POSTER_INVALID_POSTER.getCode(), e.getMessage());
         }
     }
 

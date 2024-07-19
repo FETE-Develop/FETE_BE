@@ -54,7 +54,7 @@ public class TicketController {
             GetTicketInfoResponse result = ticketService.getTicketInfo(participantId);
             return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.TICKET_NO_EXIST.getCode(), ResponseMessage.TICKET_NO_EXIST.getMessage());
+            return new ApiResponse<>(ResponseMessage.TICKET_NO_EXIST.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), ResponseMessage.EVENT_QR_FAILURE.getMessage());
         }

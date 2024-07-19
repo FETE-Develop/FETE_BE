@@ -38,6 +38,8 @@ public class EventController {
             // 해당 posterId로 이벤트 신청 후, QR 코드 발급하기
             String qrCode = eventService.applyEvent(posterId);
             return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), qrCode);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), ResponseMessage.EVENT_QR_FAILURE.getMessage());
         }
@@ -68,7 +70,7 @@ public class EventController {
         } catch (NotFoundException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
         } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), ResponseMessage.EVENT_INVALID_QR.getMessage());
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
         }
     }
 }
