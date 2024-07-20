@@ -2,10 +2,12 @@ package fete.be.domain.poster.application.dto.request;
 
 import fete.be.domain.event.persistence.EventType;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 public class EventDto {
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
     private LocalDateTime startDate;  // 이벤트 시작일
