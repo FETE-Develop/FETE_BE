@@ -40,6 +40,8 @@ public enum ResponseMessage {
     // LIKE
     LIKE_SUCCESS(6000, "관심 등록 API 요청이 성공하였습니다."),
     LIKE_FAILURE(6001, "관심 등록 API 요청이 실패하였습니다."),
+    LIKE_GET_POSTER_SUCCESS(6002, "관심 등록한 포스터 조회에 성공하였습니다."),
+    LIKE_GET_POSTER_FAILURE(6003, "관심 등록한 포스터 조회에 실패하였습니다."),
     ;
 
     private int code;

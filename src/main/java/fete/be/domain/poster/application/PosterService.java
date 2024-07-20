@@ -203,4 +203,46 @@ public class PosterService {
             }
         }
     }
+
+    public Page<PosterDto> getLikePosters(int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.asc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
+                        Sort.Order.asc("title")  // 두 번째 정렬 기준: 이벤트 이름
+                )
+        );
+
+        // Member 찾기
+        Member member = memberService.findMemberByEmail();
+
+        // memberId로 PosterLike 조회
+        List<PosterLike> myLikes = posterLikeRepository.findPosterLikesByMemberId(member.getMemberId());
+
+        // myLikes에서 posterId만 추출
+        List<Long> posterIds = myLikes.stream()
+                .map(PosterLike::getPosterId)
+                .collect(Collectors.toList());
+
+        // 페이징 반영해서 조회
+        return posterRepository.findByPosterIdIn(posterIds, pageable)
+                .map(poster -> new PosterDto(
+                        poster.getPosterId(),
+                        poster.getTitle(),
+                        poster.getPosterImages().stream()
+                                .map(PosterImage::getImageUrl)
+                                .collect(Collectors.toList()),
+                        poster.getInstitution(),
+                        poster.getEvent().getEventType(),
+                        poster.getEvent().getStartDate(),
+                        poster.getEvent().getEndDate(),
+                        poster.getEvent().getAddress(),
+                        poster.getEvent().getTicketName(),
+                        poster.getEvent().getTicketPrice(),
+                        poster.getEvent().getDescription(),
+                        poster.getEvent().getMood()
+                ));
+    }
 }

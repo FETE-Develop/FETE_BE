@@ -37,7 +37,7 @@ public class PosterController {
      */
     @PostMapping
     public ApiResponse writePoster(@RequestBody WritePosterRequest request) {
-        log.info("WritePoster request: {}", request);
+        log.info("WritePoster request={}", request);
         Logging.time();
 
         // 현재 요청한 Member의 email을 추출해서 member 찾아오기
@@ -63,7 +63,7 @@ public class PosterController {
             @RequestBody ModifyPosterRequest request
     ) {
         try {
-            log.info("ModifyPoster request: {}", request);
+            log.info("ModifyPoster request: posterId={}, request={}", posterId, request);
             Logging.time();
 
             // posterId로 포스터를 찾아 수정사항 업데이트
@@ -85,7 +85,7 @@ public class PosterController {
     @DeleteMapping("/{posterId}")
     public ApiResponse deletePoster(@PathVariable("posterId") Long posterId) {
         try {
-            log.info("DeletePoster request: {}", posterId);
+            log.info("DeletePoster request: posterId={}", posterId);
             Logging.time();
 
             // posterId로 포스터를 찾아 삭제 (소프트 삭제 방식)
@@ -111,7 +111,7 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetPosters request");
+        log.info("GetPosters request: status={}", status);
         Logging.time();
 
         // status를 Status enum 타입으로 변환
@@ -135,7 +135,7 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestParam(name = "status", defaultValue = "ACTIVE") String status) {
         try {
-            log.info("GetPoster request: {}", posterId);
+            log.info("GetPoster request: posterId={}, status={}", posterId, status);
             Logging.time();
 
             // status를 Status enum 타입으로 변환
@@ -159,7 +159,7 @@ public class PosterController {
     @PostMapping("/approve")
     public ApiResponse approvePosters(@RequestBody ApprovePostersRequest request) {
         try {
-            log.info("ApprovePosters request: {}", request);
+            log.info("ApprovePosters request={}", request);
             Logging.time();
 
             posterService.approvePosters(request);
@@ -182,13 +182,17 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetMyPosters request");
-        Logging.time();
+        try {
+            log.info("GetMyPosters request");
+            Logging.time();
 
-        List<PosterDto> myPosters = posterService.getMyPosters(page, size).getContent();
-        GetPostersResponse result = new GetPostersResponse(myPosters);
+            List<PosterDto> myPosters = posterService.getMyPosters(page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(myPosters);
 
-        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
     }
 
 
@@ -204,7 +208,7 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestParam("isLike") Boolean isLike) {
         try {
-            log.info("LikePoster request");
+            log.info("LikePoster request: posterId={}, isLike={}", posterId, isLike);
             Logging.time();
 
             posterService.likePoster(posterId, isLike);
@@ -212,6 +216,32 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.LIKE_SUCCESS.getCode(), ResponseMessage.LIKE_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.LIKE_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 관심 등록한 포스터 조회 API
+     *
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetPostersResponse>
+     */
+    @GetMapping("/my-likes")
+    public ApiResponse<GetPostersResponse> getLikePosters(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        try {
+            log.info("GetLikePosters request");
+            Logging.time();
+
+            List<PosterDto> likePosters = posterService.getLikePosters(page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(likePosters);
+
+            return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_SUCCESS.getCode(), ResponseMessage.LIKE_GET_POSTER_SUCCESS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
 }
