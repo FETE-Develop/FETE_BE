@@ -112,7 +112,8 @@ public class PosterService {
                             poster.getEvent().getTicketPrice(),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getMood(),
-                            isLike
+                            isLike,
+                            poster.getLikeCount()
                     );
                 });
     }
@@ -146,7 +147,8 @@ public class PosterService {
                 poster.getEvent().getTicketPrice(),
                 poster.getEvent().getDescription(),
                 poster.getEvent().getMood(),
-                isLike
+                isLike,
+                poster.getLikeCount()
         );
 
         return posterDto;
@@ -201,7 +203,8 @@ public class PosterService {
                             poster.getEvent().getTicketPrice(),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getMood(),
-                            isLike
+                            isLike,
+                            poster.getLikeCount()
                     );
                 });
     }
@@ -219,11 +222,13 @@ public class PosterService {
             if (!find.isPresent()) {
                 PosterLike posterLike = PosterLike.createPosterLike(member.getMemberId(), poster.getPosterId());
                 posterLikeRepository.save(posterLike);
+                Poster.likePoster(poster, 1);
             }
         } else {  // 관심 해제
             if (find.isPresent()) {
                 PosterLike posterLike = find.get();
                 posterLikeRepository.delete(posterLike);
+                Poster.likePoster(poster, -1);
             }
         }
     }
@@ -252,24 +257,25 @@ public class PosterService {
 
         // 페이징 반영해서 조회
         return posterRepository.findByPosterIdIn(posterIds, pageable)
-                .map(poster -> {
-                    return new PosterDto(
-                            poster.getPosterId(),
-                            poster.getTitle(),
-                            poster.getPosterImages().stream()
-                                    .map(PosterImage::getImageUrl)
-                                    .collect(Collectors.toList()),
-                            poster.getInstitution(),
-                            poster.getEvent().getEventType(),
-                            poster.getEvent().getStartDate(),
-                            poster.getEvent().getEndDate(),
-                            poster.getEvent().getAddress(),
-                            poster.getEvent().getTicketName(),
-                            poster.getEvent().getTicketPrice(),
-                            poster.getEvent().getDescription(),
-                            poster.getEvent().getMood(),
-                            true
-                    );
-                });
+                .map(poster ->
+                        new PosterDto(
+                                poster.getPosterId(),
+                                poster.getTitle(),
+                                poster.getPosterImages().stream()
+                                        .map(PosterImage::getImageUrl)
+                                        .collect(Collectors.toList()),
+                                poster.getInstitution(),
+                                poster.getEvent().getEventType(),
+                                poster.getEvent().getStartDate(),
+                                poster.getEvent().getEndDate(),
+                                poster.getEvent().getAddress(),
+                                poster.getEvent().getTicketName(),
+                                poster.getEvent().getTicketPrice(),
+                                poster.getEvent().getDescription(),
+                                poster.getEvent().getMood(),
+                                true,
+                                poster.getLikeCount()
+                        )
+                );
     }
 }

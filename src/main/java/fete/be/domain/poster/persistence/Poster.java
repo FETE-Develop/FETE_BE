@@ -50,6 +50,8 @@ public class Poster {
     @Column(name = "status")
     private Status status;  // 포스터 상태
 
+    private int likeCount;  // 관심 등록 수
+
 
     // 생성 메서드
     public static Poster createPoster(Member member, WritePosterRequest request) {
@@ -74,6 +76,7 @@ public class Poster {
         poster.updatedAt = currentTime;
 
         poster.status = Status.WAIT;  // 초기에는 WAIT 상태로, 이후에 관리자의 승인을 받아야 ACTIVE로 전환됨
+        poster.likeCount = 0;
 
         return poster;
     }
@@ -115,5 +118,12 @@ public class Poster {
     // 관리자 승인 메서드
     public static void approvePoster(Poster poster) {
         poster.status = Status.ACTIVE;  // WAIT -> ACTIVE로 전환
+    }
+
+    // 관심 등록 카운트 메서드
+    public static void likePoster(Poster poster, int count) {
+        if (poster.likeCount + count >= 0) {  // 0 밑으로 떨어지는 현상 방지
+            poster.likeCount += count;
+        }
     }
 }

@@ -26,4 +26,5 @@ public class PosterDto {
     private String mood;  // 이벤트 분위기
 
     private Boolean isLike;  // 사용자의 관심 등록 상태
+    private int likeCount;  // 포스터의 관심 등록 수
 }
