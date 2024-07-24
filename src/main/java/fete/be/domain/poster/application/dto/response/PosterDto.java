@@ -24,4 +24,6 @@ public class PosterDto {
     private int ticketPrice;  // 티켓 가격
     private String description;  // 이벤트 관련 상세 설명
     private String mood;  // 이벤트 분위기
+
+    private Boolean isLike;  // 사용자의 관심 등록 상태
 }

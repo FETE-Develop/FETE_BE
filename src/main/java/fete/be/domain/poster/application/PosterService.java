@@ -79,6 +79,9 @@ public class PosterService {
     }
 
     public Page<PosterDto> getPosters(Status status, int page, int size) {
+        // Member 정보
+        Member member = memberService.findMemberByEmail();
+
         // 페이징 조건 추가
         Pageable pageable = PageRequest.of(
                 page,
@@ -91,32 +94,45 @@ public class PosterService {
 
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
-                .map(poster -> new PosterDto(
-                        poster.getPosterId(),
-                        poster.getTitle(),
-                        poster.getPosterImages().stream()
-                                .map(PosterImage::getImageUrl)
-                                .collect(Collectors.toList()),
-                        poster.getInstitution(),
-                        poster.getEvent().getEventType(),
-                        poster.getEvent().getStartDate(),
-                        poster.getEvent().getEndDate(),
-                        poster.getEvent().getAddress(),
-                        poster.getEvent().getTicketName(),
-                        poster.getEvent().getTicketPrice(),
-                        poster.getEvent().getDescription(),
-                        poster.getEvent().getMood()
-                ));
+                .map(poster -> {
+                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+
+                    return new PosterDto(
+                            poster.getPosterId(),
+                            poster.getTitle(),
+                            poster.getPosterImages().stream()
+                                    .map(PosterImage::getImageUrl)
+                                    .collect(Collectors.toList()),
+                            poster.getInstitution(),
+                            poster.getEvent().getEventType(),
+                            poster.getEvent().getStartDate(),
+                            poster.getEvent().getEndDate(),
+                            poster.getEvent().getAddress(),
+                            poster.getEvent().getTicketName(),
+                            poster.getEvent().getTicketPrice(),
+                            poster.getEvent().getDescription(),
+                            poster.getEvent().getMood(),
+                            isLike
+                    );
+                });
     }
 
     public PosterDto getPoster(Long posterId, Status status) {
+        // Member 정보
+        Member member = memberService.findMemberByEmail();
+
         // posterId로 해당 Poster 찾아오기
         Poster poster = posterRepository.findByStatusAndPosterId(status, posterId).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
         );
 
+        // 관심 등록 상태
+        boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+
+
         // 찾은 Poster를 PosterDto에 담기
-        PosterDto posterDto = new PosterDto(poster.getPosterId(),
+        PosterDto posterDto = new PosterDto(
+                poster.getPosterId(),
                 poster.getTitle(),
                 poster.getPosterImages().stream()
                         .map(PosterImage::getImageUrl)
@@ -129,7 +145,9 @@ public class PosterService {
                 poster.getEvent().getTicketName(),
                 poster.getEvent().getTicketPrice(),
                 poster.getEvent().getDescription(),
-                poster.getEvent().getMood());
+                poster.getEvent().getMood(),
+                isLike
+        );
 
         return posterDto;
     }
@@ -162,24 +180,30 @@ public class PosterService {
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
+
         // 조건에 맞는 데이터 조회
         return posterRepository.findByMember(member, pageable)
-                .map(poster -> new PosterDto(
-                        poster.getPosterId(),
-                        poster.getTitle(),
-                        poster.getPosterImages().stream()
-                                .map(PosterImage::getImageUrl)
-                                .collect(Collectors.toList()),
-                        poster.getInstitution(),
-                        poster.getEvent().getEventType(),
-                        poster.getEvent().getStartDate(),
-                        poster.getEvent().getEndDate(),
-                        poster.getEvent().getAddress(),
-                        poster.getEvent().getTicketName(),
-                        poster.getEvent().getTicketPrice(),
-                        poster.getEvent().getDescription(),
-                        poster.getEvent().getMood()
-                ));
+                .map(poster -> {
+                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+
+                    return new PosterDto(
+                            poster.getPosterId(),
+                            poster.getTitle(),
+                            poster.getPosterImages().stream()
+                                    .map(PosterImage::getImageUrl)
+                                    .collect(Collectors.toList()),
+                            poster.getInstitution(),
+                            poster.getEvent().getEventType(),
+                            poster.getEvent().getStartDate(),
+                            poster.getEvent().getEndDate(),
+                            poster.getEvent().getAddress(),
+                            poster.getEvent().getTicketName(),
+                            poster.getEvent().getTicketPrice(),
+                            poster.getEvent().getDescription(),
+                            poster.getEvent().getMood(),
+                            isLike
+                    );
+                });
     }
 
     @Transactional
@@ -228,21 +252,24 @@ public class PosterService {
 
         // 페이징 반영해서 조회
         return posterRepository.findByPosterIdIn(posterIds, pageable)
-                .map(poster -> new PosterDto(
-                        poster.getPosterId(),
-                        poster.getTitle(),
-                        poster.getPosterImages().stream()
-                                .map(PosterImage::getImageUrl)
-                                .collect(Collectors.toList()),
-                        poster.getInstitution(),
-                        poster.getEvent().getEventType(),
-                        poster.getEvent().getStartDate(),
-                        poster.getEvent().getEndDate(),
-                        poster.getEvent().getAddress(),
-                        poster.getEvent().getTicketName(),
-                        poster.getEvent().getTicketPrice(),
-                        poster.getEvent().getDescription(),
-                        poster.getEvent().getMood()
-                ));
+                .map(poster -> {
+                    return new PosterDto(
+                            poster.getPosterId(),
+                            poster.getTitle(),
+                            poster.getPosterImages().stream()
+                                    .map(PosterImage::getImageUrl)
+                                    .collect(Collectors.toList()),
+                            poster.getInstitution(),
+                            poster.getEvent().getEventType(),
+                            poster.getEvent().getStartDate(),
+                            poster.getEvent().getEndDate(),
+                            poster.getEvent().getAddress(),
+                            poster.getEvent().getTicketName(),
+                            poster.getEvent().getTicketPrice(),
+                            poster.getEvent().getDescription(),
+                            poster.getEvent().getMood(),
+                            true
+                    );
+                });
     }
 }
