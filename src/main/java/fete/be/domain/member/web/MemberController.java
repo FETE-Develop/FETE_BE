@@ -3,6 +3,7 @@ package fete.be.domain.member.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
+import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.global.jwt.JwtToken;
@@ -82,6 +83,26 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_OK.getCode(), ResponseMessage.MEMBER_ADMIN_OK.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_REJECT.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 회원 정보 수정 API
+     *
+     * @param ModifyRequestDto request
+     * @return ApiResponse
+     */
+    @PostMapping("/modify")
+    public ApiResponse modify(@RequestBody ModifyRequestDto request) {
+        try {
+            log.info("Modify request: {}", request);
+            Logging.time();
+
+            Long modifiedMemberId = memberService.modify(request);
+            return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_SUCCESS.getCode(), ResponseMessage.MEMBER_MODIFY_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_FAILURE.getCode(), e.getMessage());
         }
     }
 }

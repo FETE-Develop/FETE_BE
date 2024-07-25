@@ -9,7 +9,9 @@ public enum ResponseMessage {
     // MEMBER
     MEMBER_ADMIN_OK(600, "관리자 권한을 획득하였습니다."),
     MEMBER_ADMIN_REJECT(601, "관리자 권한 요청이 거부되었습니다."),
-    MEMBER_ALREADY_ADMIN(601, "관리자 권한을 획득한 상태입니다."),
+    MEMBER_ALREADY_ADMIN(602, "관리자 권한을 획득한 상태입니다."),
+    MEMBER_MODIFY_SUCCESS(603, "회원 정보 변경에 성공하였습니다."),
+    MEMBER_MODIFY_FAILURE(604, "회원 정보 변경에 실패하였습니다."),
 
     // SIGNUP
     SIGNUP_SUCCESS(1000, "성공적으로 회원가입 하였습니다."),

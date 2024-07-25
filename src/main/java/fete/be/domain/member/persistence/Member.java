@@ -1,5 +1,6 @@
 package fete.be.domain.member.persistence;
 
+import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
@@ -63,9 +64,9 @@ public class Member {
     private List<Poster> posters = new ArrayList<>();  // 유저가 등록한 프스터 리스트
 
     @Column(name = "created_at")
-    private String createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -82,7 +83,7 @@ public class Member {
         member.phoneNumber = request.getPhoneNumber();
         member.role = Role.USER;
 
-        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        LocalDateTime currentTime = LocalDateTime.now();
         member.createdAt = currentTime;
         member.updatedAt = currentTime;
         member.status = Status.ACTIVE;
@@ -93,6 +94,20 @@ public class Member {
     // ADMIN 권한 부여
     public static Member grantAdmin(Member member) {
         member.role = Role.ADMIN;
+        return member;
+    }
+
+    // 업데이트 메서드
+    public static Member modifyMember(Member member, ModifyRequestDto request) {
+        member.password = request.getPassword();
+        member.userName = request.getUserName();
+        member.birth = request.getBirth();
+        member.gender = request.getGender();
+        member.phoneNumber = request.getPhoneNumber();
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        member.updatedAt = currentTime;
+
         return member;
     }
 }

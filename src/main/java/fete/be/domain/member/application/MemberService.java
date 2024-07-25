@@ -1,6 +1,7 @@
 package fete.be.domain.member.application;
 
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
+import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
@@ -88,5 +89,15 @@ public class MemberService {
         // 정상 로직 - ADMIN 권한 부여
         Member grantedMember = Member.grantAdmin(member);
         return grantedMember.getMemberId();
+    }
+
+    @Transactional
+    public Long modify(ModifyRequestDto request) {
+        // Member 찾기
+        Member member = findMemberByEmail();
+
+        // DTO 값으로 Member 업데이트
+        Member modifiedMember = Member.modifyMember(member, request);
+        return modifiedMember.getMemberId();
     }
 }
