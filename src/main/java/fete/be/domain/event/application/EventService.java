@@ -4,7 +4,7 @@ import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
-import fete.be.domain.ticket.persistence.Payment;
+import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
 import lombok.RequiredArgsConstructor;

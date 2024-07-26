@@ -4,7 +4,7 @@ import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
-import fete.be.domain.ticket.persistence.Payment;
+import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.persistence.Poster;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -14,7 +14,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 

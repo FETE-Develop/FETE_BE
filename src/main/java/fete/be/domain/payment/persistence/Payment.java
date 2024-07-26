@@ -1,7 +1,8 @@
-package fete.be.domain.ticket.persistence;
+package fete.be.domain.payment.persistence;
 
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.member.persistence.Member;
+import fete.be.domain.ticket.persistence.Participant;
 import jakarta.persistence.*;
 import lombok.Getter;
 
