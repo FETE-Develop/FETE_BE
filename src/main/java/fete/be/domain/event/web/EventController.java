@@ -3,6 +3,7 @@ package fete.be.domain.event.web;
 import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
+import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -30,18 +31,20 @@ public class EventController {
      * @return ApiResponse<String>
      */
     @PostMapping("/{posterId}")
-    public ApiResponse<String> applyEvent(@PathVariable("posterId") Long posterId) {
+    public ApiResponse<String> applyEvent(
+            @PathVariable("posterId") Long posterId,
+            @RequestBody(required = false) TossPaymentRequest tossPaymentRequest) {
         try {
             log.info("ApplyEvent request: {}", posterId);
             Logging.time();
 
             // 해당 posterId로 이벤트 신청 후, QR 코드 발급하기
-            String qrCode = eventService.applyEvent(posterId);
+            String qrCode = eventService.applyEvent(posterId, tossPaymentRequest);
             return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), qrCode);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (Exception e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), ResponseMessage.EVENT_QR_FAILURE.getMessage());
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         }
     }
 
