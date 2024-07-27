@@ -1,18 +1,20 @@
 package fete.be.domain.payment.application.dto.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class TossPaymentResponse {
     private String version;
-    private String paymentKey;
+    private String paymentKey;  // 결제 키 값 (중요)
     private String type;
-    private String orderId;
+    private String orderId;  // 주문번호 (중요)
     private String orderName;
     private String mId;
     private String currency;
-    private String method;  // 결제 수단
-    private int totalAmount;  // 총 결제 금액
+    private String method;  // 결제 수단 (중요)
+    private int totalAmount;  // 총 결제 금액 (중요)
     private int balanceAmount;
     private String status;
     private String requestedAt;
