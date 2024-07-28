@@ -7,6 +7,7 @@ import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.global.util.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Slf4j
 public class Poster {
 
     @Id
@@ -24,7 +26,7 @@ public class Poster {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member member;  // 등록자
 
     @Column(name = "title", nullable = false, length = 30)
     private String title;  // 포스터 제목
@@ -37,8 +39,7 @@ public class Poster {
     @Column(name = "manager_contact", nullable = false, length = 20)
     private String managerContact;  // 담당자 연락처
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id")
+    @OneToOne(mappedBy = "poster", cascade = CascadeType.ALL)
     private Event event;  // 등록할 이벤트
 
     @Column(name = "created_at")
@@ -69,8 +70,6 @@ public class Poster {
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
 
-        poster.event = Event.createEvent(request.getEvent());
-
         LocalDateTime currentTime = LocalDateTime.now();
         poster.createdAt = currentTime;
         poster.updatedAt = currentTime;
@@ -96,7 +95,7 @@ public class Poster {
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
 
-        poster.event = Event.updateEvent(poster.event, request.getEvent());
+        poster.event = Event.updateEvent(poster.getEvent(), request.getEvent());
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;
@@ -118,6 +117,9 @@ public class Poster {
     // 관리자 승인 메서드
     public static void approvePoster(Poster poster) {
         poster.status = Status.ACTIVE;  // WAIT -> ACTIVE로 전환
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        poster.updatedAt = currentTime;
     }
 
     // 관심 등록 카운트 메서드

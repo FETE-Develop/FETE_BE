@@ -1,10 +1,12 @@
 package fete.be.domain.event.persistence;
 
 import fete.be.domain.poster.application.dto.request.EventDto;
+import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.payment.persistence.Payment;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Slf4j
 public class Event {
 
     @Id
@@ -34,12 +37,17 @@ public class Event {
     private int ticketPrice;  // 티켓 가격
     @Column(name = "description", length = 300)
     private String description;  // 이벤트 관련 상세 설명
-    @Column(name = "mood")
-    private String mood;  // 이벤트 분위기
+    @Column(name = "genre")
+    @Enumerated(EnumType.STRING)
+    private Genre genre;  // 이벤트 분위기
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;  // 수정일자
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "poster_id")
+    private Poster poster;  // 연결된 포스터
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participant> participants = new ArrayList<>();  // 이벤트 참여자 목록
@@ -49,7 +57,7 @@ public class Event {
 
 
     // 생성 메서드
-    public static Event createEvent(EventDto request) {
+    public static Event createEvent(Poster poster, EventDto request) {
         Event event = new Event();
 
         event.eventType = request.getEventType();
@@ -59,11 +67,13 @@ public class Event {
         event.ticketName = request.getTicketName();
         event.ticketPrice = request.getTicketPrice();
         event.description = request.getDescription();
-        event.mood = request.getMood();
+        event.genre = request.getGenre();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.createdAt = currentTime;
         event.updatedAt = currentTime;
+
+        event.poster = poster;
 
         return event;
     }
@@ -77,7 +87,7 @@ public class Event {
         event.ticketName = request.getTicketName();
         event.ticketPrice = request.getTicketPrice();
         event.description = request.getDescription();
-        event.mood = request.getMood();
+        event.genre = request.getGenre();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;

@@ -1,5 +1,7 @@
 package fete.be.domain.poster.application;
 
+import fete.be.domain.event.persistence.Event;
+import fete.be.domain.event.persistence.EventRepository;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class PosterService {
 
     private final PosterRepository posterRepository;
+    private final EventRepository eventRepository;
     private final PosterLikeRepository posterLikeRepository;
     private final MemberService memberService;
 
@@ -34,6 +37,10 @@ public class PosterService {
     public Long writePoster(Member member, WritePosterRequest request) {
         Poster poster = Poster.createPoster(member, request);
         Poster savedPoster = posterRepository.save(poster);
+
+        Event event = Event.createEvent(savedPoster, request.getEvent());
+        eventRepository.save(event);
+
         return savedPoster.getPosterId();
     }
 
@@ -57,6 +64,8 @@ public class PosterService {
 
         // 업데이트 진행
         Poster updatePoster = Poster.updatePoster(poster, request);
+        posterRepository.save(updatePoster);
+
         return updatePoster.getPosterId();
     }
 
@@ -111,7 +120,7 @@ public class PosterService {
                             poster.getEvent().getTicketName(),
                             poster.getEvent().getTicketPrice(),
                             poster.getEvent().getDescription(),
-                            poster.getEvent().getMood(),
+                            poster.getEvent().getGenre(),
                             isLike,
                             poster.getLikeCount()
                     );
@@ -146,7 +155,7 @@ public class PosterService {
                 poster.getEvent().getTicketName(),
                 poster.getEvent().getTicketPrice(),
                 poster.getEvent().getDescription(),
-                poster.getEvent().getMood(),
+                poster.getEvent().getGenre(),
                 isLike,
                 poster.getLikeCount()
         );
@@ -202,7 +211,7 @@ public class PosterService {
                             poster.getEvent().getTicketName(),
                             poster.getEvent().getTicketPrice(),
                             poster.getEvent().getDescription(),
-                            poster.getEvent().getMood(),
+                            poster.getEvent().getGenre(),
                             isLike,
                             poster.getLikeCount()
                     );
@@ -272,7 +281,7 @@ public class PosterService {
                                 poster.getEvent().getTicketName(),
                                 poster.getEvent().getTicketPrice(),
                                 poster.getEvent().getDescription(),
-                                poster.getEvent().getMood(),
+                                poster.getEvent().getGenre(),
                                 true,
                                 poster.getLikeCount()
                         )
