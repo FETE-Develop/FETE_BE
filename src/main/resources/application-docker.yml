@@ -30,3 +30,7 @@ jwt:
 
 admin:
   key: ${ADMIN_KEY}
+
+toss:
+  clientKey: ${TOSS_CLIENT_KEY}
+  secretKey: ${TOSS_SECRET_KEY}
