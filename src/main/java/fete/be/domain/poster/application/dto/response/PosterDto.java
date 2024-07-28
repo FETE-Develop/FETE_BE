@@ -1,7 +1,7 @@
 package fete.be.domain.poster.application.dto.response;
 
 import fete.be.domain.event.persistence.EventType;
-import fete.be.domain.poster.persistence.PosterImage;
+import fete.be.domain.event.persistence.Genre;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ public class PosterDto {
     private String ticketName;  // 티켓 이름
     private int ticketPrice;  // 티켓 가격
     private String description;  // 이벤트 관련 상세 설명
-    private String mood;  // 이벤트 분위기
+    private Genre genre;  // 장르
 
     private Boolean isLike;  // 사용자의 관심 등록 상태
     private int likeCount;  // 포스터의 관심 등록 수
