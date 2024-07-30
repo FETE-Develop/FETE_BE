@@ -6,6 +6,10 @@ import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
+import fete.be.domain.member.exception.KakaoUserNotFoundException;
+import fete.be.domain.member.oauth.kakao.KakaoAuthService;
+import fete.be.domain.member.oauth.kakao.KakaoLoginRequest;
+import fete.be.domain.member.oauth.kakao.KakaoUserInfoResponse;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -21,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-
+    private final KakaoAuthService kakaoAuthService;
 
     /**
      * 회원가입 API
@@ -64,6 +68,39 @@ public class MemberController {
         // 일치하는 유저가 있는 경우 - 정상 로그인 로직
         LoginResponseDto result = new LoginResponseDto(token);
         return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
+    }
+
+
+    /**
+     * 카카오 로그인 API
+     * 1. 카카오 회원 데이터가 없는 경우 : 카카오 계정 정보의 email과 고유 id로 signUp 메서드 실행 -> kakaoLogin 재실행
+     * 2. 카카오 회원 데이터가 존재하는 경우 : LoginRequestDto를 만들어 login 메서드 실행 -> jwt 토큰 발급
+     */
+    @PostMapping("/kakao/login")
+    public ApiResponse<LoginResponseDto> kakaoLogin(@RequestBody KakaoLoginRequest request) {
+        // Body에서 accessToken 추출
+        String accessToken = request.getAccessToken();
+
+        // 카카오 회원가입 여부 확인
+        try {  // 카카오 회원인 경우 -> 로그인 실행
+            LoginRequestDto loginInfo = kakaoAuthService.checkSignUp(accessToken);
+            return login(loginInfo);
+        } catch (KakaoUserNotFoundException e) {  // 카카오 회원이 처음인 경우 -> 회원가입 실행
+            // 카카오 계정 정보
+            KakaoUserInfoResponse userInfo = e.getUserInfo();
+
+            // 백엔드 서버의 회원 객체를 만들기 위함
+            String email = userInfo.getKakao_account().getEmail();  // 카카오 계정 이메일 -> email
+            String password = String.valueOf(userInfo.getId());  // 카카오 계정 고유 id -> password
+            String userName = userInfo.getKakao_account().getProfile().getNickname();  // 카카오 계정 닉네임 -> userName
+
+            // 회원가입 매개변수 생성 후, 회원가입 실행
+            SignupRequestDto signupInfo = new SignupRequestDto(email, password, userName);
+            memberService.signup(signupInfo);
+
+            // 카카오 로그인 재실행
+            return kakaoLogin(request);
+        }
     }
 
 
