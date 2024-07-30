@@ -1,13 +1,13 @@
 package fete.be.domain.member.oauth.kakao;
 
-import fete.be.domain.member.exception.KakaoException;
+import fete.be.domain.member.application.dto.request.LoginRequestDto;
+import fete.be.domain.member.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,12 +37,14 @@ public class KakaoAuthService {
      * @param String accessToken
      * @return String email
      */
-    public String checkSignUp(String accessToken) {
+    public LoginRequestDto checkSignUp(String accessToken) {
         KakaoUserInfoResponse userInfo = kakaoUserInfo.getUserInfo(accessToken);
         Member member = memberRepository.findByEmail(userInfo.getKakao_account().getEmail()).orElseThrow(
-                () -> new KakaoException("해당 회원이 존재하지 않습니다.")
+                () -> new KakaoUserNotFoundException("해당 회원이 존재하지 않습니다.", userInfo)
         );
-        return member.getEmail();
+
+        LoginRequestDto loginInfo = new LoginRequestDto(member.getEmail(), member.getPassword());
+        return loginInfo;
     }
 
 }
