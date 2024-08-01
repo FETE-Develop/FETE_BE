@@ -1,5 +1,6 @@
 package fete.be.domain.event.persistence;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.poster.application.dto.request.EventDto;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.ticket.persistence.Participant;
@@ -25,10 +26,14 @@ public class Event {
     @Enumerated(EnumType.STRING)
     @Column(name = "event_type")
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @Column(name = "start_date")
     private LocalDateTime startDate;  // 이벤트 시작일
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @Column(name = "end_date")
     private LocalDateTime endDate;  // 이벤트 종료일
+
     @Column(name = "address")
     private String address;  // 주소
     @Column(name = "ticket_name")
