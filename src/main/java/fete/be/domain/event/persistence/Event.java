@@ -27,6 +27,9 @@ public class Event {
     @Column(name = "event_type")
     private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
 
+    @Column(name = "event_name")
+    private String eventName;  // 이벤트 이름
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     @Column(name = "start_date")
     private LocalDateTime startDate;  // 이벤트 시작일
@@ -36,15 +39,16 @@ public class Event {
 
     @Column(name = "address")
     private String address;  // 주소
-    @Column(name = "ticket_name")
-    private String ticketName;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
-    @Column(name = "ticket_price")
-    private int ticketPrice;  // 티켓 가격
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> tickets = new ArrayList<>();
+
     @Column(name = "description", length = 300)
     private String description;  // 이벤트 관련 상세 설명
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)
     private Genre genre;  // 이벤트 분위기
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
