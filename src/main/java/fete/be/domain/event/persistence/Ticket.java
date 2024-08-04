@@ -14,9 +14,7 @@ public class Ticket {
     @Column(name = "ticket_id")
     private Long ticketId;
 
-    @Column(name = "ticket_name")
-    private String ticketName;  // 티켓 이름 = 이벤트 이름
-
+    @Column(name = "ticket_type")
     private String ticketType;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
 
     @Column(name = "ticket_price")
@@ -28,4 +26,15 @@ public class Ticket {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
+
+    public static Ticket createTicket(TicketInfoDto ticketInfoDto, Event event) {
+        Ticket ticket = new Ticket();
+
+        ticket.ticketType = ticketInfoDto.getTicketType();
+        ticket.ticketPrice = ticketInfoDto.getTicketPrice();
+        ticket.maxTicketCount = ticketInfoDto.getMaxTicketCount();
+        ticket.event = event;
+
+        return ticket;
+    }
 }

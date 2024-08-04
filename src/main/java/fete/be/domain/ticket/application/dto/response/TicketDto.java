@@ -11,9 +11,10 @@ import java.time.LocalDateTime;
 public class TicketDto {
     private Long participantId;
     private EventType eventType;
+    private String eventName;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String address;
-    private String ticketName;
+    private String ticketType;
     private int ticketPrice;
 }

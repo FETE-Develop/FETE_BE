@@ -41,13 +41,13 @@ public class Event {
     private String address;  // 주소
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Ticket> tickets = new ArrayList<>();
+    private List<Ticket> tickets = new ArrayList<>();  // 티켓 종류 및 가격 정보
 
     @Column(name = "description", length = 300)
     private String description;  // 이벤트 관련 상세 설명
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)
-    private Genre genre;  // 이벤트 분위기
+    private Genre genre;  // 이벤트 장르
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
@@ -61,7 +61,7 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Participant> participants = new ArrayList<>();  // 이벤트 참여자 목록
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();  // 결제 상태 리스트
 
 
@@ -70,11 +70,17 @@ public class Event {
         Event event = new Event();
 
         event.eventType = request.getEventType();
+        event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
         event.address = request.getAddress();
-        event.ticketName = request.getTicketName();
-        event.ticketPrice = request.getTicketPrice();
+
+        // 티켓 엔티티 생성
+        for (TicketInfoDto ticketInfoDto : request.getTickets()) {
+            Ticket ticket = Ticket.createTicket(ticketInfoDto, event);
+            event.tickets.add(ticket);
+        }
+
         event.description = request.getDescription();
         event.genre = request.getGenre();
 
@@ -90,11 +96,17 @@ public class Event {
     // 업데이트 메서드
     public static Event updateEvent(Event event, EventDto request) {
         event.eventType = request.getEventType();
+        event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
         event.address = request.getAddress();
-        event.ticketName = request.getTicketName();
-        event.ticketPrice = request.getTicketPrice();
+
+        event.tickets.clear();
+        for (TicketInfoDto ticketInfoDto : request.getTickets()) {
+            Ticket ticket = Ticket.createTicket(ticketInfoDto, event);
+            event.tickets.add(ticket);
+        }
+
         event.description = request.getDescription();
         event.genre = request.getGenre();
 
