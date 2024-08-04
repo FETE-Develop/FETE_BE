@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,7 +43,7 @@ public class TossService {
      * 5. 백엔드 : 토스로부터 결제 승인 정보를 반환 받으며, 받은 정보로 DB를 업데이트 해주고 프론트로 응답을 보낸다.
      */
     @Transactional
-    public Participant executePayment(TossPaymentRequest tossPaymentRequest, Participant participant) {
+    public List<Participant> executePayment(TossPaymentRequest tossPaymentRequest, List<Participant> participants) {
         log.info("Start executePayment");
 
         // secretKey와 콜론(:)을 Base64로 인코딩
@@ -65,14 +66,17 @@ public class TossService {
 
         log.info("TossPaymentResponse={}", tossPaymentResponse);
 
-        // 토스에서 받은 응답으로 Payment 객체에 값 업데이트 이후, 저장
-        Payment approvedPayment = Payment.updateTossFields(participant.getPayment(), tossPaymentResponse);
-        paymentRepository.save(approvedPayment);
+        // 여러 개의 티켓 발급을 위해 participants에 복제
+        for (Participant participant : participants) {
+            // 토스에서 받은 응답으로 Payment 객체에 값 업데이트 이후, 저장
+            Payment approvedPayment = Payment.updateTossFields(participant.getPayment(), tossPaymentResponse);
 
-        // 결제 완료로 변경
-        Payment.completePayment(participant.getPayment());
+            // 결제 완료로 변경
+            Payment.completePayment(approvedPayment);
+            paymentRepository.save(approvedPayment);
+        }
 
         // 결제 결과가 반영된 Participant 반환
-        return participant;
+        return participants;
     }
 }

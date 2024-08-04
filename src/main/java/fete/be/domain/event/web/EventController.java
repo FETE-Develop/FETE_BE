@@ -3,7 +3,9 @@ package fete.be.domain.event.web;
 import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
-import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
+import fete.be.domain.event.application.dto.BuyTicketRequest;
+import fete.be.domain.event.application.dto.BuyTicketResponse;
+import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -25,23 +28,28 @@ public class EventController {
 
 
     /**
-     * 이벤트 신청 후, QR 코드 발급 API
+     * 이벤트 티켓 결제 후, QR 코드 발급 API
      *
      * @param Long posterId
      * @return ApiResponse<String>
      */
     @PostMapping("/{posterId}")
-    public ApiResponse<String> applyEvent(
+    public ApiResponse<BuyTicketResponse> buyTicket(
             @PathVariable("posterId") Long posterId,
-            @RequestBody(required = false) TossPaymentRequest tossPaymentRequest) {
+            @RequestBody BuyTicketRequest buyTicketRequest) {
         try {
-            log.info("ApplyEvent request: {}", posterId);
+            log.info("BuyTicket request: {}", posterId);
             Logging.time();
 
             // 해당 posterId로 이벤트 신청 후, QR 코드 발급하기
-            String qrCode = eventService.applyEvent(posterId, tossPaymentRequest);
-            return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), qrCode);
-        } catch (IllegalArgumentException e) {
+            List<String> qrCodes = eventService.buyTicket(posterId, buyTicketRequest);
+            BuyTicketResponse result = new BuyTicketResponse(qrCodes);
+
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), result);
+        } catch (IncorrectPaymentAmountException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+        }
+        catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
