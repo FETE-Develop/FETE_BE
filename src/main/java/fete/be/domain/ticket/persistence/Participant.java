@@ -38,13 +38,13 @@ public class Participant {
 
 
     // 생성 메서드
-    public static Participant createParticipant(Member member, Event event) {
+    public static Participant createParticipant(Member member, Event event, String ticketType, int ticketPrice) {
         Participant participant = new Participant();
 
         participant.member = member;
         participant.event = event;
 
-        participant.payment = Payment.createPayment(member, event);
+        participant.payment = Payment.createPayment(member, event, ticketType, ticketPrice);
 
         participant.isParticipated = false;  // 초기에는 QR 코드를 생성한 상태이기 때문에 false 상태 -> QR 코드 인증 시 true로 변경
         LocalDateTime currentTime = LocalDateTime.now();

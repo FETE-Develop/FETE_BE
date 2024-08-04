@@ -28,6 +28,14 @@ public class Payment {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
     private Participant participant;  // 유저의 이벤트 참여 정보
 
+    @Column(name = "ticket_type")
+    private String ticketType;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
+    @Column(name = "ticket_price")
+    private int ticketPrice;  // 티켓 가격
+
+    @Column(name = "is_paid")
+    private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
+
     // 토스에서 제공하는 응답 값 (중요)-----------
     private int totalAmount;  // 총 결제 금액
     private String method;  // 결제 수단
@@ -35,8 +43,6 @@ public class Payment {
     private String orderId;  // 주문번호
     //---------------------------------------
 
-    @Column(name = "is_paid")
-    private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
@@ -46,11 +52,13 @@ public class Payment {
 
 
     // 생성 메서드
-    public static Payment createPayment(Member member, Event event) {
+    public static Payment createPayment(Member member, Event event, String ticketType, int ticketPrice) {
         Payment payment = new Payment();
 
         payment.member = member;
         payment.event = event;
+        payment.ticketType = ticketType;
+        payment.ticketPrice = ticketPrice;
         payment.isPaid = false;  // 처음 생성 시, 결제 미완료 상태로 저장
 
         LocalDateTime currentTime = LocalDateTime.now();
