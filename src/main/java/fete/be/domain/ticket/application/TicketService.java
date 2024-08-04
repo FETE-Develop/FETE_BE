@@ -35,11 +35,12 @@ public class TicketService {
                 .map(participant -> new TicketDto(
                         participant.getParticipantId(),
                         participant.getEvent().getEventType(),
+                        participant.getEvent().getEventName(),
                         participant.getEvent().getStartDate(),
                         participant.getEvent().getEndDate(),
                         participant.getEvent().getAddress(),
-                        participant.getEvent().getTicketName(),
-                        participant.getEvent().getTicketPrice()
+                        participant.getPayment().getTicketType(),
+                        participant.getPayment().getTicketPrice()
                 ))
                 .collect(Collectors.toList());
     }
@@ -54,10 +55,11 @@ public class TicketService {
         String qrCode = qrCodeService.generateQRCodeBase64(participant, 250, 250);
 
         // 리턴 객체 제작
-        TicketDto ticket = new TicketDto(participant.getParticipantId(), participant.getEvent().getEventType(),
-                participant.getEvent().getStartDate(), participant.getEvent().getEndDate(),
-                participant.getEvent().getAddress(), participant.getEvent().getTicketName(),
-                participant.getEvent().getTicketPrice());
+        TicketDto ticket = new TicketDto(
+                participant.getParticipantId(), participant.getEvent().getEventType(),
+                participant.getEvent().getEventName(), participant.getEvent().getStartDate(),
+                participant.getEvent().getEndDate(), participant.getEvent().getAddress(),
+                participant.getPayment().getTicketType(), participant.getPayment().getTicketPrice());
         GetTicketInfoResponse result = new GetTicketInfoResponse(ticket, qrCode);
 
         return result;

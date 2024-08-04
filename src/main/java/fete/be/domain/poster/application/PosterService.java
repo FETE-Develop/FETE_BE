@@ -2,6 +2,7 @@ package fete.be.domain.poster.application;
 
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.EventRepository;
+import fete.be.domain.event.persistence.TicketInfoDto;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
@@ -9,6 +10,7 @@ import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.persistence.*;
+import fete.be.domain.ticket.application.dto.response.TicketDto;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
@@ -114,11 +116,17 @@ public class PosterService {
                                     .collect(Collectors.toList()),
                             poster.getInstitution(),
                             poster.getEvent().getEventType(),
+                            poster.getEvent().getEventName(),
                             poster.getEvent().getStartDate(),
                             poster.getEvent().getEndDate(),
                             poster.getEvent().getAddress(),
-                            poster.getEvent().getTicketName(),
-                            poster.getEvent().getTicketPrice(),
+                            poster.getEvent().getTickets().stream()
+                                    .map(ticket -> new TicketInfoDto(
+                                            ticket.getTicketType(),
+                                            ticket.getTicketPrice(),
+                                            ticket.getMaxTicketCount()
+                                    ))
+                                    .collect(Collectors.toList()),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getGenre(),
                             isLike,
@@ -149,11 +157,17 @@ public class PosterService {
                         .collect(Collectors.toList()),
                 poster.getInstitution(),
                 poster.getEvent().getEventType(),
+                poster.getEvent().getEventName(),
                 poster.getEvent().getStartDate(),
                 poster.getEvent().getEndDate(),
                 poster.getEvent().getAddress(),
-                poster.getEvent().getTicketName(),
-                poster.getEvent().getTicketPrice(),
+                poster.getEvent().getTickets().stream()
+                        .map(ticket -> new TicketInfoDto(
+                                ticket.getTicketType(),
+                                ticket.getTicketPrice(),
+                                ticket.getMaxTicketCount()
+                        ))
+                        .collect(Collectors.toList()),
                 poster.getEvent().getDescription(),
                 poster.getEvent().getGenre(),
                 isLike,
@@ -205,11 +219,17 @@ public class PosterService {
                                     .collect(Collectors.toList()),
                             poster.getInstitution(),
                             poster.getEvent().getEventType(),
+                            poster.getEvent().getEventName(),
                             poster.getEvent().getStartDate(),
                             poster.getEvent().getEndDate(),
                             poster.getEvent().getAddress(),
-                            poster.getEvent().getTicketName(),
-                            poster.getEvent().getTicketPrice(),
+                            poster.getEvent().getTickets().stream()
+                                    .map(ticket -> new TicketInfoDto(
+                                            ticket.getTicketType(),
+                                            ticket.getTicketPrice(),
+                                            ticket.getMaxTicketCount()
+                                    ))
+                                    .collect(Collectors.toList()),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getGenre(),
                             isLike,
@@ -275,11 +295,17 @@ public class PosterService {
                                         .collect(Collectors.toList()),
                                 poster.getInstitution(),
                                 poster.getEvent().getEventType(),
+                                poster.getEvent().getEventName(),
                                 poster.getEvent().getStartDate(),
                                 poster.getEvent().getEndDate(),
                                 poster.getEvent().getAddress(),
-                                poster.getEvent().getTicketName(),
-                                poster.getEvent().getTicketPrice(),
+                                poster.getEvent().getTickets().stream()
+                                        .map(ticket -> new TicketInfoDto(
+                                                ticket.getTicketType(),
+                                                ticket.getTicketPrice(),
+                                                ticket.getMaxTicketCount()
+                                        ))
+                                        .collect(Collectors.toList()),
                                 poster.getEvent().getDescription(),
                                 poster.getEvent().getGenre(),
                                 true,
