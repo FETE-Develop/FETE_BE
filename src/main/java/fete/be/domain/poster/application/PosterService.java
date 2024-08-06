@@ -1,8 +1,6 @@
 package fete.be.domain.poster.application;
 
-import fete.be.domain.event.persistence.Event;
-import fete.be.domain.event.persistence.EventRepository;
-import fete.be.domain.event.persistence.TicketInfoDto;
+import fete.be.domain.event.persistence.*;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ApprovePostersRequest;
@@ -129,6 +127,13 @@ public class PosterService {
                                     .collect(Collectors.toList()),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getGenre(),
+                            poster.getEvent().getHomepageUrl(),
+                            poster.getEvent().getArtists().stream()
+                                    .map(artist -> new ArtistDto(
+                                            artist.getName(),
+                                            artist.getImageUrl()
+                                    ))
+                                    .collect(Collectors.toList()),
                             isLike,
                             poster.getLikeCount()
                     );
@@ -170,6 +175,13 @@ public class PosterService {
                         .collect(Collectors.toList()),
                 poster.getEvent().getDescription(),
                 poster.getEvent().getGenre(),
+                poster.getEvent().getHomepageUrl(),
+                poster.getEvent().getArtists().stream()
+                        .map(artist -> new ArtistDto(
+                                artist.getName(),
+                                artist.getImageUrl()
+                        ))
+                        .collect(Collectors.toList()),
                 isLike,
                 poster.getLikeCount()
         );
@@ -232,6 +244,13 @@ public class PosterService {
                                     .collect(Collectors.toList()),
                             poster.getEvent().getDescription(),
                             poster.getEvent().getGenre(),
+                            poster.getEvent().getHomepageUrl(),
+                            poster.getEvent().getArtists().stream()
+                                    .map(artist -> new ArtistDto(
+                                            artist.getName(),
+                                            artist.getImageUrl()
+                                    ))
+                                    .collect(Collectors.toList()),
                             isLike,
                             poster.getLikeCount()
                     );
@@ -308,6 +327,13 @@ public class PosterService {
                                         .collect(Collectors.toList()),
                                 poster.getEvent().getDescription(),
                                 poster.getEvent().getGenre(),
+                                poster.getEvent().getHomepageUrl(),
+                                poster.getEvent().getArtists().stream()
+                                        .map(artist -> new ArtistDto(
+                                                artist.getName(),
+                                                artist.getImageUrl()
+                                        ))
+                                        .collect(Collectors.toList()),
                                 true,
                                 poster.getLikeCount()
                         )
