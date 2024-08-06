@@ -49,6 +49,13 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Genre genre;  // 이벤트 장르
 
+    @Column(name = "homepage_url")
+    private String homepageUrl;  // 이벤트 관련 홈페이지 주소
+
+    @Column(name = "artists")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Artist> artists = new ArrayList<>();  // 이벤트 라인업
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
@@ -75,7 +82,7 @@ public class Event {
         event.endDate = request.getEndDate();
         event.address = request.getAddress();
 
-        // 티켓 엔티티 생성
+        // 티켓 종류 및 가격 생성
         for (TicketInfoDto ticketInfoDto : request.getTickets()) {
             Ticket ticket = Ticket.createTicket(ticketInfoDto, event);
             event.tickets.add(ticket);
@@ -83,6 +90,13 @@ public class Event {
 
         event.description = request.getDescription();
         event.genre = request.getGenre();
+        event.homepageUrl = request.getHomepageUrl();
+
+        // 라인업 생성
+        for (ArtistDto artistDto : request.getArtists()) {
+            Artist artist = Artist.createArtist(artistDto, event);
+            event.artists.add(artist);
+        }
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.createdAt = currentTime;
@@ -109,6 +123,13 @@ public class Event {
 
         event.description = request.getDescription();
         event.genre = request.getGenre();
+        event.homepageUrl = request.getHomepageUrl();
+
+        event.artists.clear();
+        for (ArtistDto artistDto : request.getArtists()) {
+            Artist artist = Artist.createArtist(artistDto, event);
+            event.artists.add(artist);
+        }
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;

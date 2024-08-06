@@ -27,6 +27,8 @@ public class Ticket {
     @JoinColumn(name = "event_id")
     private Event event;
 
+
+    // 생성 메서드
     public static Ticket createTicket(TicketInfoDto ticketInfoDto, Event event) {
         Ticket ticket = new Ticket();
 
