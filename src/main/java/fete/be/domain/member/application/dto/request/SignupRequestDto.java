@@ -9,7 +9,9 @@ import lombok.ToString;
 public class SignupRequestDto {
     private String email;
     private String password;
+    private String profileImage;
     private String userName;
+    private String introduction;
     private String birth;
     private Gender gender;
     private String phoneNumber;

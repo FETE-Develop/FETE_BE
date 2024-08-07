@@ -34,9 +34,15 @@ public class Member {
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private ProfileImage profileImage;  // 프로필 이미지
+
     @NotBlank
     @Column(nullable = false, length = 20)
-    private String userName;
+    private String userName;  // 닉네임
+
+    @Column(nullable = false, length = 30)
+    private String introduction;  // 소개글
 
     @NotBlank
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "생년월일 형식은 yyyy-MM-dd 입니다.")
@@ -76,7 +82,12 @@ public class Member {
         Member member = new Member();
         member.email = request.getEmail();
         member.password = request.getPassword();
+
+        // 프로필 이미지 생성
+        member.profileImage = ProfileImage.createProfileImage(member, request.getProfileImage());
+
         member.userName = request.getUserName();
+        member.introduction = request.getIntroduction();
         member.birth = request.getBirth();
         member.gender = request.getGender();
         member.phoneNumber = request.getPhoneNumber();
@@ -93,13 +104,19 @@ public class Member {
     // ADMIN 권한 부여
     public static Member grantAdmin(Member member) {
         member.role = Role.ADMIN;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        member.updatedAt = currentTime;
+
         return member;
     }
 
     // 업데이트 메서드
     public static Member modifyMember(Member member, ModifyRequestDto request) {
         member.password = request.getPassword();
+        member.profileImage = ProfileImage.updateProfileImage(member.profileImage, request.getProfileImage());
         member.userName = request.getUserName();
+        member.introduction = request.getIntroduction();
         member.birth = request.getBirth();
         member.gender = request.getGender();
         member.phoneNumber = request.getPhoneNumber();
