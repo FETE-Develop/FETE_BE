@@ -1,4 +1,4 @@
-package fete.be.domain.poster.application.dto.request;
+package fete.be.domain.admin.application.dto.request;
 
 import lombok.Getter;
 import lombok.ToString;
