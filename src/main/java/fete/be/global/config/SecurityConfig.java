@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/members/**").permitAll()
-                .requestMatchers("/api/posters/approve").hasRole("ADMIN")
+                .requestMatchers("/api/admins/**").hasRole("ADMIN")
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

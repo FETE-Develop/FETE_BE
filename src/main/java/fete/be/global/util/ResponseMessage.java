@@ -45,6 +45,12 @@ public enum ResponseMessage {
     LIKE_FAILURE(6001, "관심 등록 API 요청이 실패하였습니다."),
     LIKE_GET_POSTER_SUCCESS(6002, "관심 등록한 포스터 조회에 성공하였습니다."),
     LIKE_GET_POSTER_FAILURE(6003, "관심 등록한 포스터 조회에 실패하였습니다."),
+
+    // ADMIN
+    ADMIN_APPROVE_POSTERS(7000, "관리자의 포스터 승인이 성공하였습니다."),
+    ADMIN_APPROVE_POSTERS_FAIL(7001, "관리자의 포스터 승인이 실패하였습니다."),
+    ADMIN_GET_MEMBERS(7002, "관리자의 유저 정보 리스트 조회에 성공하였습니다."),
+    ADMIN_GET_MEMBERS_FAIL(7003, "관리자의 유저 정보 리스트 조회에 실패하였습니다."),
     ;
 
     private int code;
