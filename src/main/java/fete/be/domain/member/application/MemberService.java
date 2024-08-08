@@ -1,5 +1,7 @@
 package fete.be.domain.member.application;
 
+import fete.be.domain.admin.application.dto.response.GetMembersResponse;
+import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
@@ -13,12 +15,17 @@ import fete.be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -99,5 +106,25 @@ public class MemberService {
         // DTO 값으로 Member 업데이트
         Member modifiedMember = Member.modifyMember(member, request);
         return modifiedMember.getMemberId();
+    }
+
+    public Page<MemberDto> getMembers(int page, int size) {
+        // 페이징 객체 생성
+        Pageable pageable = PageRequest.of(page, size);
+
+        // 페이징 처리된 데이터 반환
+        return memberRepository.findAll(pageable)
+                .map(member -> new MemberDto(
+                        member.getMemberId(),
+                        member.getEmail(),
+                        member.getProfileImage().getImageUrl(),
+                        member.getUserName(),
+                        member.getIntroduction(),
+                        member.getBirth(),
+                        member.getGender(),
+                        member.getPhoneNumber(),
+                        member.getRole(),
+                        member.getCreatedAt(),
+                        member.getStatus()));
     }
 }
