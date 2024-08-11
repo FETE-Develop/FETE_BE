@@ -71,6 +71,9 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();  // 결제 상태 리스트
 
+    @Column(name = "total_profit")
+    private int totalProfit = 0;  // 누적 수익
+
 
     // 생성 메서드
     public static Event createEvent(Poster poster, EventDto request) {
@@ -135,5 +138,13 @@ public class Event {
         event.updatedAt = currentTime;
 
         return event;
+    }
+
+    // 결제 금액 총 수익에 반영하는 메서드
+    public static void updateTotalProfit(Event event, int amount) {
+        event.totalProfit += amount;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        event.updatedAt = currentTime;
     }
 }

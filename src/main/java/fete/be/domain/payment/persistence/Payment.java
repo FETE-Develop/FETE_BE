@@ -60,6 +60,7 @@ public class Payment {
         payment.ticketType = ticketType;
         payment.ticketPrice = ticketPrice;
         payment.isPaid = false;  // 처음 생성 시, 결제 미완료 상태로 저장
+        payment.totalAmount = 0;  // 아직 결제 전이기 때문에, 결제 금액을 0원으로 저장
 
         LocalDateTime currentTime = LocalDateTime.now();
         payment.createdAt = currentTime;
@@ -71,6 +72,9 @@ public class Payment {
     // 결제 완료로 전환
     public static void completePayment(Payment payment) {
         payment.isPaid = true;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        payment.paymentAt = currentTime;
     }
 
     // 토스 응답 값 업데이트 메서드

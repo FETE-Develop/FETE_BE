@@ -2,6 +2,7 @@ package fete.be.domain.event.application;
 
 import fete.be.domain.event.application.dto.BuyTicketRequest;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
+import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
@@ -123,6 +124,9 @@ public class EventService {
     private String makeQRCode(Participant participant) throws Exception {
         // 결제 완료로 변경
         Payment.completePayment(participant.getPayment());
+
+        // 총 수익 반영
+        Event.updateTotalProfit(participant.getEvent(), participant.getPayment().getTotalAmount());
 
         // QR 코드 발급
         String qrCodeBase64 = qrCodeService.generateQRCodeBase64(participant, 250, 250);
