@@ -1,8 +1,11 @@
 package fete.be.domain.admin.web;
 
 import fete.be.domain.admin.application.dto.response.GetMembersResponse;
+import fete.be.domain.admin.application.dto.response.GetPaymentsResponse;
 import fete.be.domain.admin.application.dto.response.MemberDto;
+import fete.be.domain.admin.application.dto.response.PaymentDto;
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.global.util.ApiResponse;
@@ -23,6 +26,7 @@ public class AdminController {
 
     private final MemberService memberService;
     private final PosterService posterService;
+    private final PaymentService paymentService;
 
 
     /**
@@ -64,6 +68,31 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_MEMBERS.getCode(), ResponseMessage.ADMIN_GET_MEMBERS.getMessage(), result);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_MEMBERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 이벤트의 결제 정보 조회 API
+     */
+    @GetMapping("/{posterId}")
+    public ApiResponse<GetPaymentsResponse> getPayments(
+            @PathVariable("posterId") Long posterId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        try {
+            log.info("GetPayments API: posterId={}", posterId);
+            Logging.time();
+
+            List<PaymentDto> payments = paymentService.getPayments(posterId, page, size);
+            int totalProfit = paymentService.getTotalProfit(posterId);
+
+            GetPaymentsResponse result = new GetPaymentsResponse(payments, totalProfit);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS.getCode(), ResponseMessage.ADMIN_GET_PAYMENTS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS_FAIL.getCode(), e.getMessage());
         }
     }
 }

@@ -51,6 +51,8 @@ public enum ResponseMessage {
     ADMIN_APPROVE_POSTERS_FAIL(7001, "관리자의 포스터 승인이 실패하였습니다."),
     ADMIN_GET_MEMBERS(7002, "관리자의 유저 정보 리스트 조회에 성공하였습니다."),
     ADMIN_GET_MEMBERS_FAIL(7003, "관리자의 유저 정보 리스트 조회에 실패하였습니다."),
+    ADMIN_GET_PAYMENTS(7004, "관리자의 이벤트 결제 정보 조회에 성공하였습니다."),
+    ADMIN_GET_PAYMENTS_FAIL(7005, "관리자의 이벤트 결제 정보 조회에 실패하였습니다."),
     ;
 
     private int code;
