@@ -78,8 +78,8 @@ public class Payment {
     }
 
     // 토스 응답 값 업데이트 메서드
-    public static Payment updateTossFields(Payment payment, TossPaymentResponse tossPaymentResponse) {
-        payment.totalAmount = tossPaymentResponse.getTotalAmount();
+    public static Payment updateTossFields(Payment payment, TossPaymentResponse tossPaymentResponse, int ticketNumber) {
+        payment.totalAmount = tossPaymentResponse.getTotalAmount() / ticketNumber;
         payment.method = tossPaymentResponse.getMethod();
         payment.paymentKey = tossPaymentResponse.getPaymentKey();
         payment.orderId = tossPaymentResponse.getOrderId();

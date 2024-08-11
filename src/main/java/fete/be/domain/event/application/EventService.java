@@ -64,7 +64,7 @@ public class EventService {
         }
 
         // 결제 요청된 가격과 실제 이벤트 티켓의 가격 비교
-        int originAmount = originTicketPrice * ticketNumber;
+        int originAmount = originTicketPrice * ticketNumber;  // 총 결제 금액
         int requestAmount = ticketPrice * ticketNumber;
         if (originAmount != requestAmount) {
             throw new IncorrectPaymentAmountException("결제 가격이 올바르지 않습니다.");
