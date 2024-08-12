@@ -4,6 +4,8 @@ import fete.be.domain.admin.application.dto.response.GetMembersResponse;
 import fete.be.domain.admin.application.dto.response.GetPaymentsResponse;
 import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.admin.application.dto.response.PaymentDto;
+import fete.be.domain.banner.application.BannerService;
+import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.application.PosterService;
@@ -27,6 +29,7 @@ public class AdminController {
     private final MemberService memberService;
     private final PosterService posterService;
     private final PaymentService paymentService;
+    private final BannerService bannerService;
 
 
     /**
@@ -52,6 +55,10 @@ public class AdminController {
 
     /**
      * 유저 정보 리스트 조회 API
+     *
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetMembersResponse>
      */
     @GetMapping
     public ApiResponse<GetMembersResponse> getMembers(
@@ -74,6 +81,11 @@ public class AdminController {
 
     /**
      * 이벤트의 결제 정보 조회 API
+     *
+     * @param Long posterId
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetPaymentsResponse>
      */
     @GetMapping("/{posterId}")
     public ApiResponse<GetPaymentsResponse> getPayments(
@@ -93,6 +105,28 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS.getCode(), ResponseMessage.ADMIN_GET_PAYMENTS.getMessage(), result);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 배너 생성 API
+     *
+     * @param CreateBannerRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/banners")
+    public ApiResponse createBanner(@RequestBody CreateBannerRequest request) {
+        try {
+            log.info("CreateBanner API: request={}", request);
+            Logging.time();
+
+            // 배너 생성
+            Long savedBannerId = bannerService.createBanner(request);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER.getCode(), ResponseMessage.ADMIN_CREATE_BANNER.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER_FAIL.getCode(), e.getMessage());
         }
     }
 }
