@@ -8,6 +8,7 @@ import lombok.Getter;
 public class BannerDto {
     private Long bannerId;
     private String title;
+    private String content;
     private String imageUrl;
     private Long posterId;
 }

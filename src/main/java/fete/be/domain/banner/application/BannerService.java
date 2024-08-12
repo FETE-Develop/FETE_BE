@@ -34,6 +34,7 @@ public class BannerService {
                 .map(banner -> new BannerDto(
                         banner.getBannerId(),
                         banner.getTitle(),
+                        banner.getContent(),
                         banner.getImageUrl(),
                         banner.getPosterId()
                 ))

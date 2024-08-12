@@ -15,6 +15,8 @@ public class Banner {
 
     @Column(name = "title")
     private String title;  // 배너 제목
+    @Column(name = "content")
+    private String content;  // 배너 내용
     @Column(name = "image_url")
     private String imageUrl;  // 배너 이미지
     @Column(name = "poster_id")
@@ -26,6 +28,7 @@ public class Banner {
         Banner banner = new Banner();
 
         banner.title = request.getTitle();
+        banner.content = request.getContent();
         banner.imageUrl = request.getImageUrl();
         banner.posterId = request.getPosterId();
 
