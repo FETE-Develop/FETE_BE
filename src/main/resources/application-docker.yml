@@ -34,3 +34,10 @@ admin:
 toss:
   clientKey: ${TOSS_CLIENT_KEY}
   secretKey: ${TOSS_SECRET_KEY}
+
+server:
+  port: 8443
+  ssl:
+    key-store-type: PKCS12
+    key-store: ${KEY_STORE_PATH}
+    key-store-password: ${KEY_STORE_PASSWORD}
