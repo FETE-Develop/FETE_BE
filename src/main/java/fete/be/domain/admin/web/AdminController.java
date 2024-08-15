@@ -1,9 +1,6 @@
 package fete.be.domain.admin.web;
 
-import fete.be.domain.admin.application.dto.response.GetMembersResponse;
-import fete.be.domain.admin.application.dto.response.GetPaymentsResponse;
-import fete.be.domain.admin.application.dto.response.MemberDto;
-import fete.be.domain.admin.application.dto.response.PaymentDto;
+import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
 import fete.be.domain.member.application.MemberService;
@@ -99,8 +96,9 @@ public class AdminController {
 
             List<PaymentDto> payments = paymentService.getPayments(posterId, page, size);
             int totalProfit = paymentService.getTotalProfit(posterId);
+            AccountDto account = paymentService.getAccount(posterId);
 
-            GetPaymentsResponse result = new GetPaymentsResponse(payments, totalProfit);
+            GetPaymentsResponse result = new GetPaymentsResponse(payments, totalProfit, account);
 
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS.getCode(), ResponseMessage.ADMIN_GET_PAYMENTS.getMessage(), result);
         } catch (IllegalArgumentException e) {

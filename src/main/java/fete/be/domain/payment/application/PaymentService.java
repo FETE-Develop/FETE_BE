@@ -1,5 +1,6 @@
 package fete.be.domain.payment.application;
 
+import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.admin.application.dto.response.PaymentDto;
 import fete.be.domain.event.persistence.Event;
@@ -76,5 +77,17 @@ public class PaymentService {
         Event event = poster.getEvent();
 
         return event.getTotalProfit();
+    }
+
+    /**
+     * 계좌 정보 조회
+     */
+    public AccountDto getAccount(Long posterId) {
+        // 포스터 및 이벤트 조회
+        Poster poster = posterService.findPosterByPosterId(posterId);
+        Event event = poster.getEvent();
+
+        AccountDto account = new AccountDto(event.getBankName(), event.getAccountNumber());
+        return account;
     }
 }
