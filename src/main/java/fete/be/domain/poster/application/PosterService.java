@@ -15,9 +15,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -337,5 +339,18 @@ public class PosterService {
                                 poster.getLikeCount()
                         )
                 );
+    }
+
+    // 매일 자정마다 실행
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void checkEndedPoster() {
+        // 종료된 포스터 조회
+        List<Poster> endedPosters = posterRepository.findEndDateBeforeNow(LocalDateTime.now());
+
+        // 종료된 포스터의 status를 END로 변경
+        for (Poster poster : endedPosters) {
+            Poster.endPoster(poster);
+        }
     }
 }

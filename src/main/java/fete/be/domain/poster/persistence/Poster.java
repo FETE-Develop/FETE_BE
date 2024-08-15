@@ -128,4 +128,12 @@ public class Poster {
             poster.likeCount += count;
         }
     }
+
+    // 이벤트 종료 메서드
+    public static void endPoster(Poster poster) {
+        poster.status = Status.END;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        poster.updatedAt = currentTime;
+    }
 }
