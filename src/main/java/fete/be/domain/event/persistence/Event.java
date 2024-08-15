@@ -56,6 +56,13 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Artist> artists = new ArrayList<>();  // 이벤트 라인업
 
+    @Column(name = "total_profit")
+    private int totalProfit = 0;  // 총 수익
+    @Column(name = "bank_name")
+    private String bankName;  // 은행
+    @Column(name = "account_number")
+    private String accountNumber;  // 계좌번호
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
@@ -71,8 +78,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Payment> payments = new ArrayList<>();  // 결제 상태 리스트
 
-    @Column(name = "total_profit")
-    private int totalProfit = 0;  // 누적 수익
 
 
     // 생성 메서드
@@ -100,6 +105,10 @@ public class Event {
             Artist artist = Artist.createArtist(artistDto, event);
             event.artists.add(artist);
         }
+
+        // 계좌 정보
+        event.bankName = request.getAccount().getBankName();
+        event.accountNumber = request.getAccount().getAccountNumber();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.createdAt = currentTime;
@@ -133,6 +142,9 @@ public class Event {
             Artist artist = Artist.createArtist(artistDto, event);
             event.artists.add(artist);
         }
+
+        event.bankName = request.getAccount().getBankName();
+        event.accountNumber = request.getAccount().getAccountNumber();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;

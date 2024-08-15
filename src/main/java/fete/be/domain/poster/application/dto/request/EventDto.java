@@ -1,10 +1,12 @@
 package fete.be.domain.poster.application.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.EventType;
 import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -26,4 +28,5 @@ public class EventDto {
     private Genre genre;  // 이벤트 장르
     private String homepageUrl;  // 이벤트 관련 홈페이지 주소
     private List<ArtistDto> artists;  // 이벤트 라인업
+    private AccountDto account;  // 이벤트 담당자의 계좌 정보
 }
