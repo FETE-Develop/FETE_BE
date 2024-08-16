@@ -127,22 +127,18 @@ public class Event {
         event.endDate = request.getEndDate();
         event.address = request.getAddress();
 
-        event.tickets.clear();
-        for (TicketInfoDto ticketInfoDto : request.getTickets()) {
-            Ticket ticket = Ticket.createTicket(ticketInfoDto, event);
-            event.tickets.add(ticket);
-        }
-
         event.description = request.getDescription();
         event.genre = request.getGenre();
         event.homepageUrl = request.getHomepageUrl();
 
+        // 라인업 생성
         event.artists.clear();
         for (ArtistDto artistDto : request.getArtists()) {
             Artist artist = Artist.createArtist(artistDto, event);
             event.artists.add(artist);
         }
 
+        // 계좌 정보
         event.bankName = request.getAccount().getBankName();
         event.accountNumber = request.getAccount().getAccountNumber();
 
