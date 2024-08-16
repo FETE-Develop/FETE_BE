@@ -41,7 +41,7 @@ public class JwtProvider {
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
 //                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))  // 30분
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))  // 1일
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30))  // 30일
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
