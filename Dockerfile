@@ -27,6 +27,6 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/be-0.0.1-SNAPSHOT.jar /app/fete-be.jar
 COPY --from=builder /app/src/main/resources/application-docker.yml /app/application-docker.yml
 
-EXPOSE 8080
+EXPOSE 8443
 
 ENTRYPOINT ["java", "-jar", "/app/fete-be.jar"]
