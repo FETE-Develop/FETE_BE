@@ -23,6 +23,9 @@ public class Ticket {
     @Column(name = "max_ticket_count")
     private int maxTicketCount;  // 티켓의 최대 개수
 
+    @Column(name = "sold_ticket_count")
+    private int soldTicketCount = 0;  // 판매된 티켓 개수
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
@@ -38,5 +41,18 @@ public class Ticket {
         ticket.event = event;
 
         return ticket;
+    }
+
+    // 판매된 티켓 업데이트
+    public static void updateSoldTicketCount(Ticket ticket, int ticketNumber) {
+        ticket.soldTicketCount += ticketNumber;
+    }
+
+    // 결제 요청으로 들어온 티켓 수량만큼 발급 가능한지 검사
+    public static boolean canBuyTicket(Ticket ticket, int ticketNumber) {
+        if (ticket.soldTicketCount + ticketNumber <= ticket.maxTicketCount) {
+            return true;
+        }
+        return false;
     }
 }
