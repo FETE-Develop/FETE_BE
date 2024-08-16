@@ -1,7 +1,11 @@
 package fete.be.domain.event.application;
 
+import fete.be.domain.event.application.dto.BuyTicketDto;
 import fete.be.domain.event.application.dto.BuyTicketRequest;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
+import fete.be.domain.event.exception.IncorrectTicketPriceException;
+import fete.be.domain.event.exception.IncorrectTicketTypeException;
+import fete.be.domain.event.exception.InsufficientTicketsException;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.TossService;
@@ -49,36 +53,36 @@ public class EventService {
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
 
-        // ---------------결제 가격 검증 로직 시작---------------
-        int ticketPrice = buyTicketRequest.getTicketPrice();
-        int ticketNumber = buyTicketRequest.getTicketNumber();
-        String ticketType = buyTicketRequest.getTicketType();
-
-        // 실제 DB에 저장되어 있는 가격 불러오기
-        int originTicketPrice = 0;
+        // 실제 DB의 티켓 정보
         List<Ticket> tickets = poster.getEvent().getTickets();
-        for (Ticket ticket : tickets) {
-            if (ticket.getTicketType().equals(ticketType)) {
-                originTicketPrice = ticket.getTicketPrice();
-            }
+
+        // 결제 정보 검증
+        List<BuyTicketDto> requestTickets = buyTicketRequest.getTickets();
+        for (BuyTicketDto requestTicket : requestTickets) {
+            isValidRequest(requestTicket, member, poster, participants);
         }
 
-        // 결제 요청된 가격과 실제 이벤트 티켓의 가격 비교
-        int originAmount = originTicketPrice * ticketNumber;  // 총 결제 금액
-        int requestAmount = ticketPrice * ticketNumber;
-        if (originAmount != requestAmount) {
-            throw new IncorrectPaymentAmountException("결제 가격이 올바르지 않습니다.");
-        }
-        // ---------------결제 가격 검증 로직 끝---------------
-
-        // 티켓 개수만큼 Participant 객체 생성해서 리스트에 넣기
-        for (int i = 0; i < ticketNumber; i++) {
-            participants.add(makeParticipants(member, poster, ticketType, ticketPrice));
-        }
+        // 총 결제 요청 금액 계산
+        int requestAmount = getRequestAmount(requestTickets);
 
         // 결제 시스템 실행
+        qrCodes = paymentSystem(requestAmount, participants, buyTicketRequest.getTossPaymentRequest(), qrCodes);
+
+        // 판매된 티켓 개수 업데이트
+        updateSoldTicketCount(tickets, requestTickets);
+
+        return qrCodes;
+    }
+
+    /**
+     * 결제 시스템
+     */
+    public List<String> paymentSystem(int requestAmount, List<Participant> participants,
+                                      TossPaymentRequest tossPaymentRequest, List<String> qrCodes) throws Exception {
+
         // 1. 무료 이벤트일 때
         if (requestAmount == FREE) {
+            // 티켓 개수만큼 QR 코드 발급
             for (Participant participant : participants) {
                 qrCodes.add(makeQRCode(participant));
             }
@@ -89,12 +93,11 @@ public class EventService {
         // 토스 페이먼츠 결제 시스템
 
         // 1) 프론트로부터 TossPaymentRequest를 받아오기 - 이벤트 신청할 때 프론트에서 토스 API로부터 인가코드를 받아와서 백엔드로 전달해줘야 함
-        TossPaymentRequest tossPaymentRequest = buyTicketRequest.getTossPaymentRequest();
         log.info("TossPaymentRequest={}", tossPaymentRequest);
 
         // 토스로 결제 승인 보내기 전, 가격 검증 로직 실행
         int tossAmount = tossPaymentRequest.getAmount();
-        if (originAmount != tossAmount) {
+        if (requestAmount != tossAmount) {
             throw new IncorrectPaymentAmountException("결제 가격이 올바르지 않습니다.");
         }
 
@@ -107,6 +110,74 @@ public class EventService {
         }
 
         return qrCodes;
+    }
+
+    /**
+     * 결제 요청 정보 검증
+     */
+    public void isValidRequest(BuyTicketDto requestTicket, Member member, Poster poster, List<Participant> participants) {
+
+        // 실제 DB의 티켓 정보
+        List<Ticket> tickets = poster.getEvent().getTickets();
+
+        int ticketPrice = requestTicket.getTicketPrice();
+        int ticketNumber = requestTicket.getTicketNumber();
+        String ticketType = requestTicket.getTicketType();
+
+        // 결제 요청 정보와 실제 DB 정보와 일치하는지 검증
+        boolean findTicketType = false;
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                findTicketType = true;
+                // 결제 요청된 티켓의 수량만큼 구매 가능한지 검사
+                if (!Ticket.canBuyTicket(ticket, ticketNumber)) {
+                    throw new InsufficientTicketsException("티켓의 수량이 충분하지 않습니다.");
+                }
+                // 결제 요청된 티켓 가격과 실제 티켓 가격 비교
+                if (ticket.getTicketPrice() != ticketPrice) {
+                    throw new IncorrectTicketPriceException("티켓의 가격이 올바르지 않습니다.");
+                }
+            }
+        }
+
+        // 티켓의 종류가 일치하는 것이 없는 경우
+        if (!findTicketType) {
+            throw new IncorrectTicketTypeException("티켓의 종류가 올바르지 않습니다.");
+        }
+
+        // 티켓 개수만큼 Participant 객체 생성해서 리스트에 넣기
+        for (int i = 0; i < ticketNumber; i++) {
+            participants.add(makeParticipants(member, poster, ticketType, ticketPrice));
+        }
+    }
+
+    /**
+     * 총 결제 요청 금액 계산
+     */
+    public int getRequestAmount(List<BuyTicketDto> requestTickets) {
+        int amount = 0;
+        for (BuyTicketDto requestTicket : requestTickets) {
+            amount += requestTicket.getTicketPrice() * requestTicket.getTicketNumber();
+        }
+
+        return amount;
+    }
+
+    /**
+     * 판매된 티켓 개수 업데이트
+     */
+    public void updateSoldTicketCount(List<Ticket> tickets, List<BuyTicketDto> requestTickets) {
+        for (BuyTicketDto requestTicket : requestTickets) {
+            int ticketNumber = requestTicket.getTicketNumber();
+            String ticketType = requestTicket.getTicketType();
+
+            // 판매된 티켓 개수만큼 업데이트
+            for (Ticket ticket : tickets) {
+                if (ticket.getTicketType().equals(ticketType)) {
+                    Ticket.updateSoldTicketCount(ticket, ticketNumber);
+                }
+            }
+        }
     }
 
     /**

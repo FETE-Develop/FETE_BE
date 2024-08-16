@@ -6,6 +6,9 @@ import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.BuyTicketRequest;
 import fete.be.domain.event.application.dto.BuyTicketResponse;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
+import fete.be.domain.event.exception.IncorrectTicketPriceException;
+import fete.be.domain.event.exception.IncorrectTicketTypeException;
+import fete.be.domain.event.exception.InsufficientTicketsException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -28,7 +31,7 @@ public class EventController {
 
 
     /**
-     * 이벤트 티켓 결제 후, QR 코드 발급 API
+     * 티켓 구매 API
      *
      * @param Long posterId
      * @return ApiResponse<String>
@@ -48,8 +51,13 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_SUCCESS.getCode(), ResponseMessage.EVENT_QR_SUCCESS.getMessage(), result);
         } catch (IncorrectPaymentAmountException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IncorrectTicketPriceException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+        } catch (IncorrectTicketTypeException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+        } catch (InsufficientTicketsException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+        } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
@@ -62,7 +70,7 @@ public class EventController {
      * -> 유저의 QR 코드 검증, 이벤트 장소 검증
      *
      * @param MultipartFile file
-     * @param Long posterId
+     * @param Long          posterId
      * @return ApiResponse
      */
     @PostMapping("/verify")

@@ -66,11 +66,10 @@ public class TossService {
 
         log.info("TossPaymentResponse={}", tossPaymentResponse);
 
-        int ticketNumber = participants.size();  // 티켓 개수
         // 여러 개의 티켓 발급을 위해 participants에 복제
         for (Participant participant : participants) {
             // 토스에서 받은 응답으로 Payment 객체에 값 업데이트 이후, 저장
-            Payment approvedPayment = Payment.updateTossFields(participant.getPayment(), tossPaymentResponse, ticketNumber);
+            Payment approvedPayment = Payment.updateTossFields(participant.getPayment(), tossPaymentResponse);
 
             // 결제 완료로 변경
             Payment.completePayment(approvedPayment);
