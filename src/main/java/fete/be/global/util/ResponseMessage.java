@@ -55,10 +55,15 @@ public enum ResponseMessage {
     ADMIN_GET_PAYMENTS_FAIL(7005, "관리자의 이벤트 결제 정보 조회에 실패하였습니다."),
     ADMIN_CREATE_BANNER(7006, "관리자의 배너 생성이 성공하였습니다."),
     ADMIN_CREATE_BANNER_FAIL(7007, "관리자의 배너 생성이 실패하였습니다."),
+    ADMIN_MODIFY_BANNER(7008, "관리자의 배너 수정이 성공하였습니다."),
+    ADMIN_MODIFY_BANNER_FAIL(7009, "관리자의 배너 수정이 실패하였습니다."),
+    ADMIN_DELETE_BANNER(7010, "관리자의 배너 삭제가 성공하였습니다."),
+    ADMIN_DELETE_BANNER_FAIL(7011, "관리자의 배너 삭제가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),
     BANNER_GET_BANNERS_FAIL(8001, "배너 전체 조회에 실패하였습니다."),
+    BANNER_NO_EXIST(8002, "해당 배너가 존재하지 않습니다."),
     ;
 
     private int code;

@@ -1,6 +1,7 @@
 package fete.be.domain.banner.persistence;
 
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
+import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -27,6 +28,16 @@ public class Banner {
     public static Banner createBanner(CreateBannerRequest request) {
         Banner banner = new Banner();
 
+        banner.title = request.getTitle();
+        banner.content = request.getContent();
+        banner.imageUrl = request.getImageUrl();
+        banner.posterId = request.getPosterId();
+
+        return banner;
+    }
+
+    // 업데이트 메서드
+    public static Banner modifyBanner(Banner banner, ModifyBannerRequest request) {
         banner.title = request.getTitle();
         banner.content = request.getContent();
         banner.imageUrl = request.getImageUrl();

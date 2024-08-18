@@ -1,5 +1,6 @@
 package fete.be.domain.admin.web;
 
+import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
 import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
@@ -80,8 +81,8 @@ public class AdminController {
      * 이벤트의 결제 정보 조회 API
      *
      * @param Long posterId
-     * @param int page
-     * @param int size
+     * @param int  page
+     * @param int  size
      * @return ApiResponse<GetPaymentsResponse>
      */
     @GetMapping("/{posterId}")
@@ -125,6 +126,54 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER.getCode(), ResponseMessage.ADMIN_CREATE_BANNER.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 배너 수정 API
+     *
+     * @param Long                bannerId
+     * @param ModifyBannerRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/banners/{bannerId}")
+    public ApiResponse modifyBanner(
+            @PathVariable("bannerId") Long bannerId,
+            @RequestBody ModifyBannerRequest request
+    ) {
+        try {
+            log.info("ModifyBanner API: request={}", request);
+            Logging.time();
+
+            // 배너 수정
+            Long modifiedBanner = bannerService.modifyBanner(bannerId, request);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_MODIFY_BANNER.getCode(), ResponseMessage.ADMIN_MODIFY_BANNER.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_MODIFY_BANNER_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 배너 삭제 API
+     *
+     * @param Long bannerId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/banners/{bannerId}")
+    public ApiResponse deleteBanner(@PathVariable("bannerId") Long bannerId) {
+        try {
+            log.info("DeleteBanner API: bannerId={}", bannerId);
+            Logging.time();
+
+            // 배너 삭제
+            bannerService.deleteBanner(bannerId);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_DELETE_BANNER.getCode(), ResponseMessage.ADMIN_DELETE_BANNER.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_DELETE_BANNER_FAIL.getCode(), e.getMessage());
         }
     }
 }
