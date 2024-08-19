@@ -53,7 +53,7 @@ public class KakaoAuthService {
      * 카카오 계정으로 신규 로그인할 경우
      * - 카카오에서 받은 계정 정보와 프론트에서 입력 받은 사용자 정보로 회원가입 하기
      */
-    public SignupRequestDto createSignUpDto(KakaoUserInfoResponse userInfo, KakaoLoginRequest request) {
+    public SignupRequestDto createSignUpDto(KakaoUserInfoResponse userInfo, KakaoSignUpRequest request) {
         SignupRequestDto signupRequestDto = new SignupRequestDto(userInfo, request);
         return signupRequestDto;
     }

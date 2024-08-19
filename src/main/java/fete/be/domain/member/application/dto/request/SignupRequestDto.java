@@ -1,6 +1,7 @@
 package fete.be.domain.member.application.dto.request;
 
 import fete.be.domain.member.oauth.kakao.KakaoLoginRequest;
+import fete.be.domain.member.oauth.kakao.KakaoSignUpRequest;
 import fete.be.domain.member.oauth.kakao.KakaoUserInfoResponse;
 import fete.be.domain.member.persistence.Gender;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class SignupRequestDto {
     private String phoneNumber;
 
 
-    public SignupRequestDto(KakaoUserInfoResponse userInfo, KakaoLoginRequest request) {
+    public SignupRequestDto(KakaoUserInfoResponse userInfo, KakaoSignUpRequest request) {
         this.email = userInfo.getKakao_account().getEmail();  // 카카오 계정 이메일 -> email
         this.password = String.valueOf(userInfo.getId());  // 카카오 계정 고유 id -> password
         this.profileImage = userInfo.getKakao_account().getProfile().getProfile_image_url();  // 카카오 계정 프로필 이미지 -> profileImage
