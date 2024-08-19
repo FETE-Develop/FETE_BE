@@ -341,8 +341,8 @@ public class PosterService {
                 );
     }
 
-    // 매일 자정마다 실행
-    @Scheduled(cron = "0 0 0 * * ?")
+    // 매일 정오마다 실행
+    @Scheduled(cron = "0 0 12 * * ?")
     @Transactional
     public void checkEndedPoster() {
         // 종료된 포스터 조회
