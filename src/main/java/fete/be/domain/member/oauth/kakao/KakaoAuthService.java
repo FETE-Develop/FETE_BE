@@ -1,6 +1,7 @@
 package fete.be.domain.member.oauth.kakao;
 
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
+import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
@@ -38,6 +39,7 @@ public class KakaoAuthService {
      * @return String email
      */
     public LoginRequestDto checkSignUp(String accessToken) {
+        // 카카오로 accessToken을 보내 회원정보를 받아오기
         KakaoUserInfoResponse userInfo = kakaoUserInfo.getUserInfo(accessToken);
         Member member = memberRepository.findByEmail(userInfo.getKakao_account().getEmail()).orElseThrow(
                 () -> new KakaoUserNotFoundException("해당 회원이 존재하지 않습니다.", userInfo)
@@ -45,6 +47,15 @@ public class KakaoAuthService {
 
         LoginRequestDto loginInfo = new LoginRequestDto(member.getEmail(), member.getPassword());
         return loginInfo;
+    }
+
+    /**
+     * 카카오 계정으로 신규 로그인할 경우
+     * - 카카오에서 받은 계정 정보와 프론트에서 입력 받은 사용자 정보로 회원가입 하기
+     */
+    public SignupRequestDto createSignUpDto(KakaoUserInfoResponse userInfo, KakaoLoginRequest request) {
+        SignupRequestDto signupRequestDto = new SignupRequestDto(userInfo, request);
+        return signupRequestDto;
     }
 
 }

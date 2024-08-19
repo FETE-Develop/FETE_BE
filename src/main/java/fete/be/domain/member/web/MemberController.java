@@ -82,21 +82,19 @@ public class MemberController {
         String accessToken = request.getAccessToken();
 
         // 카카오 회원가입 여부 확인
-        try {  // 카카오 회원인 경우 -> 로그인 실행
+        try {
+            // 카카오 회원인 경우 -> 로그인 실행
             LoginRequestDto loginInfo = kakaoAuthService.checkSignUp(accessToken);
             return login(loginInfo);
         } catch (KakaoUserNotFoundException e) {  // 카카오 회원이 처음인 경우 -> 회원가입 실행
             // 카카오 계정 정보
             KakaoUserInfoResponse userInfo = e.getUserInfo();
 
-            // 백엔드 서버의 회원 객체를 만들기 위함
-            String email = userInfo.getKakao_account().getEmail();  // 카카오 계정 이메일 -> email
-            String password = String.valueOf(userInfo.getId());  // 카카오 계정 고유 id -> password
-            String userName = userInfo.getKakao_account().getProfile().getNickname();  // 카카오 계정 닉네임 -> userName
+            // 카카오 계정 정보, 사용자로부터 입력 받은 정보로 회원가입 DTO 생성
+            SignupRequestDto signUpDto = kakaoAuthService.createSignUpDto(userInfo, request);
 
-            // 회원가입 매개변수 생성 후, 회원가입 실행
-            SignupRequestDto signupInfo = new SignupRequestDto(email, password, userName);
-            memberService.signup(signupInfo);
+            // 회원가입 실행
+            memberService.signup(signUpDto);
 
             // 카카오 로그인 재실행
             return kakaoLogin(request);
