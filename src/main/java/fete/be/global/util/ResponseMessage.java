@@ -59,6 +59,8 @@ public enum ResponseMessage {
     ADMIN_MODIFY_BANNER_FAIL(7009, "관리자의 배너 수정이 실패하였습니다."),
     ADMIN_DELETE_BANNER(7010, "관리자의 배너 삭제가 성공하였습니다."),
     ADMIN_DELETE_BANNER_FAIL(7011, "관리자의 배너 삭제가 실패하였습니다."),
+    ADMIN_GET_POSTERS(7012, "관리자의 포스터 간편 전체 조회에 성공하였습니다."),
+    ADMIN_GET_POSTERS_FAIL(7013, "관리자의 포스터 간편 전체 조회에 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),

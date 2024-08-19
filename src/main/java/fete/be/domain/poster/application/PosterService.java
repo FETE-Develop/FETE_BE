@@ -1,5 +1,6 @@
 package fete.be.domain.poster.application;
 
+import fete.be.domain.admin.application.dto.response.SimplePosterDto;
 import fete.be.domain.event.persistence.*;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
@@ -352,5 +353,29 @@ public class PosterService {
         for (Poster poster : endedPosters) {
             Poster.endPoster(poster);
         }
+    }
+
+    // 관리자용 간편 포스터 전체 조회
+    public Page<SimplePosterDto> getSimplePosters(Status status, int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.asc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
+                        Sort.Order.asc("title")  // 두 번째 정렬 기준: 이벤트 이름
+                )
+        );
+
+        // 조건에 맞는 Poster 가져오기
+        return posterRepository.findByStatus(status, pageable)
+                .map(poster -> new SimplePosterDto(
+                        poster.getPosterId(),
+                        poster.getTitle(),
+                        poster.getManager(),
+                        poster.getEvent().getStartDate(),
+                        poster.getEvent().getEndDate(),
+                        poster.getEvent().getGenre()
+                ));
     }
 }
