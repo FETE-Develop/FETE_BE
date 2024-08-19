@@ -8,9 +8,11 @@ import fete.be.domain.member.application.MemberService;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
+import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
+import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -174,6 +176,36 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_DELETE_BANNER.getCode(), ResponseMessage.ADMIN_DELETE_BANNER.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_DELETE_BANNER_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 포스터 간편 조회 API
+     *
+     * @param String status
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetSimplePostersResponse>
+     */
+    @GetMapping("/posters")
+    public ApiResponse<GetSimplePostersResponse> getSimplePosters(
+            @RequestParam(name = "status", defaultValue = "ACTIVE") String status,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        try {
+            log.info("GetSimplePosters API");
+            Logging.time();
+
+            // status를 Status enum 타입으로 변환
+            Status findStatus = Status.valueOf(status);
+            List<SimplePosterDto> simplePosters = posterService.getSimplePosters(findStatus, page, size).getContent();
+            GetSimplePostersResponse result = new GetSimplePostersResponse(simplePosters);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS.getCode(), ResponseMessage.ADMIN_GET_POSTERS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS_FAIL.getCode(), e.getMessage());
         }
     }
 }
