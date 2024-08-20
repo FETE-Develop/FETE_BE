@@ -1,14 +1,15 @@
 package fete.be.domain.member.application.dto.request;
 
-import fete.be.domain.member.oauth.kakao.KakaoLoginRequest;
 import fete.be.domain.member.oauth.kakao.KakaoSignUpRequest;
 import fete.be.domain.member.oauth.kakao.KakaoUserInfoResponse;
 import fete.be.domain.member.persistence.Gender;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class SignupRequestDto {
     private String email;
     private String password;
@@ -30,4 +31,6 @@ public class SignupRequestDto {
         this.gender = request.getGender();
         this.phoneNumber = request.getPhoneNumber();
     }
+
+
 }
