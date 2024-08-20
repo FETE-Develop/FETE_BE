@@ -34,7 +34,6 @@ public class TicketService {
                 .stream()
                 .map(participant -> new TicketDto(
                         participant.getParticipantId(),
-                        participant.getEvent().getEventType(),
                         participant.getEvent().getEventName(),
                         participant.getEvent().getStartDate(),
                         participant.getEvent().getEndDate(),
@@ -56,7 +55,7 @@ public class TicketService {
 
         // 리턴 객체 제작
         TicketDto ticket = new TicketDto(
-                participant.getParticipantId(), participant.getEvent().getEventType(),
+                participant.getParticipantId(),
                 participant.getEvent().getEventName(), participant.getEvent().getStartDate(),
                 participant.getEvent().getEndDate(), participant.getEvent().getAddress(),
                 participant.getPayment().getTicketType(), participant.getPayment().getTicketPrice());

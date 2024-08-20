@@ -115,7 +115,6 @@ public class PosterService {
                                     .map(PosterImage::getImageUrl)
                                     .collect(Collectors.toList()),
                             poster.getInstitution(),
-                            poster.getEvent().getEventType(),
                             poster.getEvent().getEventName(),
                             poster.getEvent().getStartDate(),
                             poster.getEvent().getEndDate(),
@@ -163,7 +162,6 @@ public class PosterService {
                         .map(PosterImage::getImageUrl)
                         .collect(Collectors.toList()),
                 poster.getInstitution(),
-                poster.getEvent().getEventType(),
                 poster.getEvent().getEventName(),
                 poster.getEvent().getStartDate(),
                 poster.getEvent().getEndDate(),
@@ -232,7 +230,6 @@ public class PosterService {
                                     .map(PosterImage::getImageUrl)
                                     .collect(Collectors.toList()),
                             poster.getInstitution(),
-                            poster.getEvent().getEventType(),
                             poster.getEvent().getEventName(),
                             poster.getEvent().getStartDate(),
                             poster.getEvent().getEndDate(),
@@ -315,7 +312,6 @@ public class PosterService {
                                         .map(PosterImage::getImageUrl)
                                         .collect(Collectors.toList()),
                                 poster.getInstitution(),
-                                poster.getEvent().getEventType(),
                                 poster.getEvent().getEventName(),
                                 poster.getEvent().getStartDate(),
                                 poster.getEvent().getEndDate(),

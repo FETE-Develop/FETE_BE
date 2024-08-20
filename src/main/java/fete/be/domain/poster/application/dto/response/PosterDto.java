@@ -19,9 +19,7 @@ public class PosterDto {
     private List<String> posterImages;  // 포스터 이미지
     private String institution;  // 기관명
 
-    private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
     private String eventName;  // 이벤트 이름
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime startDate;  // 이벤트 시작일
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")

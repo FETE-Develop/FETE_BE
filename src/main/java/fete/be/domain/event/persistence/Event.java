@@ -23,10 +23,6 @@ public class Event {
     @Column(name = "event_id")
     private Long eventId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "event_type")
-    private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
-
     @Column(name = "event_name")
     private String eventName;  // 이벤트 이름
 
@@ -84,7 +80,6 @@ public class Event {
     public static Event createEvent(Poster poster, EventDto request) {
         Event event = new Event();
 
-        event.eventType = request.getEventType();
         event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
@@ -121,7 +116,6 @@ public class Event {
 
     // 업데이트 메서드
     public static Event updateEvent(Event event, EventDto request) {
-        event.eventType = request.getEventType();
         event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();

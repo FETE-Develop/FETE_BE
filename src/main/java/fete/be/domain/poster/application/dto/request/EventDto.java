@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @ToString
 public class EventDto {
-    private EventType eventType;  // 이벤트 종류 - FESTIVAL / PARTY
     private String eventName;  // 이벤트 이름
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime startDate;  // 이벤트 시작일
