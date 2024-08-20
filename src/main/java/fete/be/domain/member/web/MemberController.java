@@ -85,6 +85,9 @@ public class MemberController {
      */
     @PostMapping("/kakao/signup")
     public ApiResponse<SocialLoginResponse> kakaoSignUp(@RequestBody KakaoSignUpRequest request) {
+        log.info("KakaoSignUp request: {}", request);
+        Logging.time();
+
         // Body에서 accessToken 추출
         String accessToken = request.getAccessToken();
 
@@ -126,6 +129,9 @@ public class MemberController {
      */
     @PostMapping("/kakao/login")
     public ApiResponse<SocialLoginResponse> kakaoLogin(@RequestBody KakaoLoginRequest request) {
+        log.info("KakaoLogin request: {}", request);
+        Logging.time();
+
         // Body에서 accessToken 추출
         String accessToken = request.getAccessToken();
 
