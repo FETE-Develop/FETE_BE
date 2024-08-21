@@ -114,6 +114,13 @@ public class Poster {
         return poster;
     }
 
+    // Event 설정
+    public static Poster setEvent(Poster poster, Event event) {
+        poster.event = event;
+
+        return poster;
+    }
+
     // 관리자 승인 메서드
     public static void approvePoster(Poster poster) {
         poster.status = Status.ACTIVE;  // WAIT -> ACTIVE로 전환

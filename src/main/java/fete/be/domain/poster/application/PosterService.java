@@ -41,9 +41,11 @@ public class PosterService {
         Poster savedPoster = posterRepository.save(poster);
 
         Event event = Event.createEvent(savedPoster, request.getEvent());
-        eventRepository.save(event);
+        Event savedEvent = eventRepository.save(event);
 
-        return savedPoster.getPosterId();
+        Poster result = Poster.setEvent(savedPoster, savedEvent);
+
+        return result.getPosterId();
     }
 
     public Poster findPosterByPosterId(Long posterId) {
