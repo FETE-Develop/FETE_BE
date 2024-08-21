@@ -149,4 +149,20 @@ public class Event {
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;
     }
+
+    // 취소 금액을 수익에 반영하는 메서드
+    public void updateProfit(int amount) {
+        this.totalProfit += amount;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        this.updatedAt = currentTime;
+    }
+
+    // Participant 양방향 매핑
+    public static void setParticipants(Participant participant, Event event) {
+        event.participants.add(participant);
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        event.updatedAt = currentTime;
+    }
 }

@@ -10,6 +10,7 @@ import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
+import fete.be.domain.payment.persistence.PaymentRepository;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
@@ -39,6 +40,7 @@ public class EventService {
     private final QRCodeService qrCodeService;
     private final TossService tossService;
     private final ParticipantRepository participantRepository;
+    private final PaymentRepository paymentRepository;
 
 
     @Transactional
@@ -185,9 +187,16 @@ public class EventService {
      * 이벤트 참여 객체 생성해주는 메서드
      */
     private Participant makeParticipants(Member member, Poster poster, String ticketType, int ticketPrice) {
-        Participant participant = Participant.createParticipant(member, poster.getEvent(), ticketType, ticketPrice);
+        Participant participant = Participant.createParticipant(member, poster.getEvent());
         Participant savedParticipant = participantRepository.save(participant);
-        return savedParticipant;
+
+        Payment payment = Payment.createPayment(member, poster.getEvent(), savedParticipant, ticketType, ticketPrice);
+        Payment savedPayment = paymentRepository.save(payment);
+
+        Participant result = Participant.setPayment(savedParticipant, savedPayment);
+        result.getEvent().setParticipants(result, poster.getEvent());
+
+        return result;
     }
 
     /**

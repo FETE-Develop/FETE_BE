@@ -1,6 +1,6 @@
 package fete.be.domain.payment.application;
 
-import fete.be.domain.event.persistence.Event;
+import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.dto.request.TossCancelRequest;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
@@ -92,7 +92,7 @@ public class TossService {
      *   - 응답 속 cancels의 transactionKey를 저장하면 된다. -> 취소 거래를 구분하는 키이다.
      */
     @Transactional
-    public void cancelPayment(Long participantId, String cancelReason) {
+    public String cancelPayment(Long participantId, String cancelReason) {
         log.info("Start cancelPayment");
 
         // Participant 객체 조회
@@ -125,14 +125,40 @@ public class TossService {
         Payment canceledPayment = Payment.updateTossCancelInfo(payment, tossPaymentResponse.getLastTransactionKey(), cancelReason);
 
         // 이벤트 수익에서 취소된 금액 빼주기
-        int canceledAmount = participant.getPayment().getTotalAmount() * -1;
-        Event.updateTotalProfit(participant.getEvent(), canceledAmount);
+        int canceledAmount = canceledPayment.getTotalAmount() * -1;
+        participant.updateProfit(canceledAmount);
 
         // 결제 취소 상태로 변경 -> 이벤트 수익 차감 이후에 호출되어야 함 (순서 중요)
         Payment.cancelPayment(canceledPayment);
 
+        // 취소된 티켓 1장만큼 판매된 티켓 수량 감소
+        updateSoldTicketCount(participant, canceledPayment);
+
         // DB 업데이트
-        paymentRepository.save(canceledPayment);
+        Payment savedPayment = paymentRepository.save(canceledPayment);
+
+        // 취소 거래 키 반환
+        return savedPayment.getLastTransactionKey();
+    }
+
+    /**
+     * 판매된 티켓 수량에 취소된 티켓 수량 반영
+     *
+     * @param Participant participant
+     * @param Payment payment
+     */
+    private void updateSoldTicketCount(Participant participant, Payment payment) {
+        // 취소된 티켓만큼 판매 티켓 수량 반영
+        List<Ticket> tickets = participant.getEvent().getTickets();
+        String ticketType = payment.getTicketType();
+
+        // 취소된 티켓 개수를 반영
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                // 취소되었기 때문에 판매된 티켓 수량 값을 감소시켜줌
+                Ticket.updateSoldTicketCount(ticket, -1);
+            }
+        }
     }
 
     /**

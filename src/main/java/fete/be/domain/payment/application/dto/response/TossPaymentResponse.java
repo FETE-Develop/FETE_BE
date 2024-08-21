@@ -45,7 +45,7 @@ public class TossPaymentResponse {
 
 
     @Getter
-    public class Cancel {
+    public static class Cancel {
         private int cancelAmount;
         private String cancelReason;
         private int taxFreeAmount;
@@ -60,7 +60,7 @@ public class TossPaymentResponse {
     }
 
     @Getter
-    public class Card {
+    public static class Card {
         private int amount;
         private String issuerCode;
         private String acquirerCode;  // nullable
@@ -76,7 +76,7 @@ public class TossPaymentResponse {
     }
 
     @Getter
-    public class VirtualAccount {
+    public static class VirtualAccount {
         private String accountType;
         private String accountNumber;
         private String bankCode;
@@ -89,56 +89,56 @@ public class TossPaymentResponse {
     }
 
     @Getter
-    public class RefundReceiveAccount {
+    public static class RefundReceiveAccount {
         private String bankCode;
         private String accountNumber;
         private String holderName;
     }
 
     @Getter
-    public class MobilePhone {
+    public static class MobilePhone {
         private String customerMobilePhone;
         private String settlementStatus;
         private String receiptUrl;
     }
 
     @Getter
-    public class GiftCertificate {
+    public static class GiftCertificate {
         private String approveNo;
         private String settlementStatus;
     }
 
     @Getter
-    public class Transfer {
+    public static class Transfer {
         private String bankCode;
         private String settlementStatus;
     }
 
     @Getter
-    public class Receipt {
+    public static class Receipt {
         private String url;
     }
 
     @Getter
-    public class Checkout {
+    public static class Checkout {
         private String url;
     }
 
     @Getter
-    public class EasyPay {
+    public static class EasyPay {
         private String provider;
         private int amount;
         private int discountAmount;
     }
 
     @Getter
-    public class Failure {
+    public static class Failure {
         private String code;
         private String message;
     }
 
     @Getter
-    public class CashReceipt {
+    public static class CashReceipt {
         private String type;
         private String receiptKey;
         private String issueNumber;
@@ -148,7 +148,7 @@ public class TossPaymentResponse {
     }
 
     @Getter
-    public class CashReceipts {
+    public static class CashReceipts {
         private String receiptKey;
         private String orderId;
         private String orderName;
@@ -166,7 +166,7 @@ public class TossPaymentResponse {
     }
 
     @Getter
-    public class Discount {
+    public static class Discount {
         private Integer amount;
     }
 

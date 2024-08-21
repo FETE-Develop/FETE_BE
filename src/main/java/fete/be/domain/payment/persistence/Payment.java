@@ -25,7 +25,8 @@ public class Payment {
     @JoinColumn(name = "event_id")
     private Event event;  // 결제할 이벤트
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "payment")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "participant_id")
     private Participant participant;  // 유저의 이벤트 참여 정보
 
     @Column(name = "ticket_type")
@@ -56,11 +57,13 @@ public class Payment {
 
 
     // 생성 메서드
-    public static Payment createPayment(Member member, Event event, String ticketType, int ticketPrice) {
+    public static Payment createPayment(Member member, Event event, Participant participant, String ticketType, int ticketPrice) {
         Payment payment = new Payment();
 
         payment.member = member;
         payment.event = event;
+        payment.participant = participant;
+
         payment.ticketType = ticketType;
         payment.ticketPrice = ticketPrice;
         payment.isPaid = false;  // 처음 생성 시, 결제 미완료 상태로 저장
@@ -108,7 +111,6 @@ public class Payment {
     public static Payment updateTossCancelInfo(Payment payment, String lastTransactionKey, String cancelReason) {
         payment.lastTransactionKey = lastTransactionKey;
         payment.cancelReason = cancelReason;
-//        payment.totalAmount = 0;
 
         LocalDateTime currentTime = LocalDateTime.now();
         payment.updatedAt = currentTime;
