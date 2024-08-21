@@ -45,6 +45,7 @@ public class EventService {
     public List<String> buyTicket(Long posterId, BuyTicketRequest buyTicketRequest) throws Exception {
         // QR 코드 리스트 선언
         List<String> qrCodes = new ArrayList<>();
+        // Participant 객체 생성
         List<Participant> participants = new ArrayList<>();
 
         // 현재 API 요청을 보낸 Member 찾기

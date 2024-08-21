@@ -41,6 +41,10 @@ public class Payment {
     private String method;  // 결제 수단
     private String paymentKey;  // 결제 키 값
     private String orderId;  // 주문번호
+
+    // 결제 취소
+    private String lastTransactionKey;  // 취소 거래 키 값
+    private String cancelReason;  // 취소 사유
     //---------------------------------------
 
     @Column(name = "created_at")
@@ -77,8 +81,17 @@ public class Payment {
         payment.paymentAt = currentTime;
     }
 
+    // 결제 취소로 전환
+    public static void cancelPayment(Payment payment) {
+        payment.isPaid = false;
+        payment.totalAmount = 0;  // 결제 취소되었기 때문에 결제 금액을 0원으로 변경
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        payment.updatedAt = currentTime;
+    }
+
     // 토스 응답 값 업데이트 메서드
-    public static Payment updateTossFields(Payment payment, TossPaymentResponse tossPaymentResponse) {
+    public static Payment updateTossPaymentInfo(Payment payment, TossPaymentResponse tossPaymentResponse) {
 //        payment.totalAmount = tossPaymentResponse.getTotalAmount() / ticketNumber;
         payment.totalAmount = payment.ticketPrice;  // 추후에 할인 쿠폰이 생긴다면, 할인 쿠폰 정보 가져와서 차감해주면 됨
         payment.method = tossPaymentResponse.getMethod();
@@ -87,6 +100,18 @@ public class Payment {
 
         LocalDateTime currentTime = LocalDateTime.now();
         payment.paymentAt = currentTime;
+
+        return payment;
+    }
+
+    // 토스 결제 취소 응답 값 업데이트
+    public static Payment updateTossCancelInfo(Payment payment, String lastTransactionKey, String cancelReason) {
+        payment.lastTransactionKey = lastTransactionKey;
+        payment.cancelReason = cancelReason;
+//        payment.totalAmount = 0;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        payment.updatedAt = currentTime;
 
         return payment;
     }
