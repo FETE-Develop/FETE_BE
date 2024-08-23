@@ -1,14 +1,12 @@
 package fete.be.domain.admin.web;
 
-import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
+import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.banner.application.BannerService;
-import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.payment.application.PaymentService;
+import fete.be.domain.popup.application.PopupService;
 import fete.be.domain.poster.application.PosterService;
-import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
-import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -30,6 +28,7 @@ public class AdminController {
     private final PosterService posterService;
     private final PaymentService paymentService;
     private final BannerService bannerService;
+    private final PopupService popupService;
 
 
     /**
@@ -184,8 +183,8 @@ public class AdminController {
      * 포스터 간편 조회 API
      *
      * @param String status
-     * @param int page
-     * @param int size
+     * @param int    page
+     * @param int    size
      * @return ApiResponse<GetSimplePostersResponse>
      */
     @GetMapping("/posters")
@@ -206,6 +205,77 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS.getCode(), ResponseMessage.ADMIN_GET_POSTERS.getMessage(), result);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 팝업 생성 API
+     *
+     * @param CreatePopupRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/popups")
+    public ApiResponse createPopup(@RequestBody CreatePopupRequest request) {
+        try {
+            log.info("CreatePopup API: request={}", request);
+            Logging.time();
+
+            // 팝업 생성
+            Long savedPopupId = popupService.createPopup(request);
+
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_POPUP_SUCCESS.getCode(), ResponseMessage.ADMIN_CREATE_POPUP_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_POPUP_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 팝업 수정 API
+     *
+     * @param Long               popupId
+     * @param ModifyPopupRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/popups/{popupId}")
+    public ApiResponse modifyPopup(
+            @PathVariable("popupId") Long popupId,
+            @RequestBody ModifyPopupRequest request
+    ) {
+        try {
+            log.info("ModifyPopup API: popupId={}, request={}", popupId, request);
+            Logging.time();
+
+            // 팝업 수정
+            Long modifiedPopupId = popupService.modifyPopup(popupId, request);
+
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_POPUP_SUCCESS.getCode(), ResponseMessage.ADMIN_MODIFY_POPUP_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_POPUP_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 팝업 삭제 API
+     * - Hard 삭제 방식
+     *
+     * @param Long popupId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/popups/{popupId}")
+    public ApiResponse deletePopup(@PathVariable("popupId") Long popupId) {
+        try {
+            log.info("DeletePopup API: popupId={}", popupId);
+            Logging.time();
+
+            // 팝업 삭제
+            popupService.deletePopup(popupId);
+
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_POPUP_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_POPUP_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_POPUP_FAIL.getCode(), e.getMessage());
         }
     }
 }

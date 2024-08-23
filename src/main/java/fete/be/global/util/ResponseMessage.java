@@ -67,11 +67,18 @@ public enum ResponseMessage {
     ADMIN_DELETE_BANNER_FAIL(7011, "관리자의 배너 삭제가 실패하였습니다."),
     ADMIN_GET_POSTERS(7012, "관리자의 포스터 간편 전체 조회에 성공하였습니다."),
     ADMIN_GET_POSTERS_FAIL(7013, "관리자의 포스터 간편 전체 조회에 실패하였습니다."),
+    ADMIN_CREATE_POPUP_SUCCESS(7014, "팝업 생성이 성공하였습니다."),
+    ADMIN_CREATE_POPUP_FAIL(7015, "팝업 생성이 실패하였습니다."),
+    ADMIN_MODIFY_POPUP_SUCCESS(7016, "팝업 수정이 성공하였습니다."),
+    ADMIN_MODIFY_POPUP_FAIL(7017, "팝업 수정이 실패하였습니다."),
+    ADMIN_DELETE_POPUP_SUCCESS(7018, "팝업 삭제가 성공하였습니다."),
+    ADMIN_DELETE_POPUP_FAIL(7019, "팝업 삭제가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),
     BANNER_GET_BANNERS_FAIL(8001, "배너 전체 조회에 실패하였습니다."),
     BANNER_NO_EXIST(8002, "해당 배너가 존재하지 않습니다."),
+
     ;
 
     private int code;
