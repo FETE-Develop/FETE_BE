@@ -79,6 +79,9 @@ public enum ResponseMessage {
     BANNER_GET_BANNERS_FAIL(8001, "배너 전체 조회에 실패하였습니다."),
     BANNER_NO_EXIST(8002, "해당 배너가 존재하지 않습니다."),
 
+    // POPUP
+    POPUP_GET_POPUPS(9000, "팝업 전체 조회에 성공하였습니다."),
+    POPUP_GET_POPUPS_FAIL(9001, "팝업 전체 조회에 실패하였습니다."),
     ;
 
     private int code;

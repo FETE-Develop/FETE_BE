@@ -2,6 +2,7 @@ package fete.be.domain.popup.application;
 
 import fete.be.domain.admin.application.dto.request.CreatePopupRequest;
 import fete.be.domain.admin.application.dto.request.ModifyPopupRequest;
+import fete.be.domain.popup.application.dto.PopupDto;
 import fete.be.domain.popup.persistence.Popup;
 import fete.be.domain.popup.persistence.PopupRepository;
 import fete.be.domain.poster.application.PosterService;
@@ -11,7 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +66,15 @@ public class PopupService {
 
         // 삭제 실행
         popupRepository.delete(popup);
+    }
+
+    public List<PopupDto> getPopups() {
+        return popupRepository.findAll().stream()
+                .map(popup -> new PopupDto(
+                        popup.getPopupId(),
+                        popup.getImageUrl(),
+                        popup.getPosterId()
+                ))
+                .collect(Collectors.toList());
     }
 }
