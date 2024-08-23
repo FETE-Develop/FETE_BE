@@ -58,33 +58,17 @@ public class QRCodeService {
     }
 
     /**
-     * QR 코드 검증
+     * QR 코드 검증 : 프론트에서 QR 코드 해석한 정보를 검증해주는 방식
+     * 프론트에서 보내주는 바디 예시
+     * {
+     *      participantId: 2,
+     *      memberId: 2,
+     *      eventId: 1,
+     *      paymentId: 1,
+     * }
      */
     @Transactional
-    public Long verifyQRCode(MultipartFile file, Long posterId) throws IOException, NotFoundException {
-        // QR 코드 이미지 파일을 읽기
-        InputStream inputStream = file.getInputStream();
-        BufferedImage bufferedImage = ImageIO.read(inputStream);
-
-        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-        Result result = new MultiFormatReader().decode(bitmap);
-        String base64Image = result.getText();
-
-        // Base64 디코딩하여 BufferedImage로 변환
-        bufferedImage = decodeQRCodeImage(base64Image);
-
-        // QR 코드 이미지에서 QR 코드 텍스트 추출
-        source = new BufferedImageLuminanceSource(bufferedImage);
-        bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
-        result = new MultiFormatReader().decode(bitmap);
-        String qrCodeText = result.getText();
-
-        // 역직렬화
-        ParticipantDto participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
-
+    public Long verifyQRCode(Long posterId, ParticipantDto participantDto) {
         // DB에서 원본 데이터를 조회
         Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
@@ -95,7 +79,7 @@ public class QRCodeService {
         // 검증 로직
         // 해당 QR 코드가 사용된 적 있는지 확인
         if (originalParticipant.getIsParticipated()) {
-            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+            throw new IllegalArgumentException(ResponseMessage.EVENT_QR_ALREADY_USED.getMessage());
         }
 
         // 해당 QR 코드가 올바른 이벤트 장소에서 대조하고 있는지 확인
@@ -112,6 +96,63 @@ public class QRCodeService {
         Participant.completeParticipant(originalParticipant);
         return participantDto.getParticipantId();
     }
+
+//
+//    /**
+//     * QR 코드 검증 : QR 코드 이미지 자체를 받아서 검증하는 방식
+//     */
+//    @Transactional
+//    public Long verifyQRCode(MultipartFile file, Long posterId) throws IOException, NotFoundException {
+//        // QR 코드 이미지 파일을 읽기
+//        InputStream inputStream = file.getInputStream();
+//        BufferedImage bufferedImage = ImageIO.read(inputStream);
+//
+//        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
+//        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+//
+//        Result result = new MultiFormatReader().decode(bitmap);
+//        String base64Image = result.getText();
+//
+//        // Base64 디코딩하여 BufferedImage로 변환
+//        bufferedImage = decodeQRCodeImage(base64Image);
+//
+//        // QR 코드 이미지에서 QR 코드 텍스트 추출
+//        source = new BufferedImageLuminanceSource(bufferedImage);
+//        bitmap = new BinaryBitmap(new HybridBinarizer(source));
+//
+//        result = new MultiFormatReader().decode(bitmap);
+//        String qrCodeText = result.getText();
+//
+//        // 역직렬화
+//        ParticipantDto participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
+//
+//        // DB에서 원본 데이터를 조회
+//        Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
+//                () -> new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
+//
+//        // posterId로 포스터 찾기
+//        Poster poster = posterService.findPosterByPosterId(posterId);
+//
+//        // 검증 로직
+//        // 해당 QR 코드가 사용된 적 있는지 확인
+//        if (originalParticipant.getIsParticipated()) {
+//            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+//        }
+//
+//        // 해당 QR 코드가 올바른 이벤트 장소에서 대조하고 있는지 확인
+//        if (!poster.getEvent().getEventId().equals(participantDto.getEventId())) {
+//            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+//        }
+//
+//        // QR 데이터와 원본 데이터 비교
+//        if (!isValid(participantDto, originalParticipant)) {
+//            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+//        }
+//
+//        // 정상 로직일 경우, 이벤트 참여 완료 처리
+//        Participant.completeParticipant(originalParticipant);
+//        return participantDto.getParticipantId();
+//    }
 
     private boolean isValid(ParticipantDto compare, Participant original) {
         // 유저 일치 확인

@@ -1,10 +1,10 @@
 package fete.be.domain.event.web;
 
-import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.BuyTicketRequest;
 import fete.be.domain.event.application.dto.BuyTicketResponse;
+import fete.be.domain.event.application.dto.ParticipantDto;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.domain.event.exception.IncorrectTicketPriceException;
 import fete.be.domain.event.exception.IncorrectTicketTypeException;
@@ -15,9 +15,7 @@ import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -65,6 +63,25 @@ public class EventController {
     }
 
 
+    @PostMapping("/verify/{posterId}")
+    public ApiResponse verifyQRCode(
+            @PathVariable("posterId") Long posterId,
+            @RequestBody ParticipantDto participantDto
+    ) {
+        try {
+            log.info("VerifyQRCode request: posterId={}, body={}", posterId, participantDto);
+            Logging.time();
+
+            // 유저의 QR 코드 검증, 이벤트 장소 검증
+            Long participantId = qrCodeService.verifyQRCode(posterId, participantDto);
+
+            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        }
+    }
+
+
     /**
      * 이벤트 참여자의 QR 코드 검증 API
      * -> 유저의 QR 코드 검증, 이벤트 장소 검증
@@ -73,23 +90,23 @@ public class EventController {
      * @param Long          posterId
      * @return ApiResponse
      */
-    @PostMapping("/verify")
-    public ApiResponse verifyQRCode(
-            @RequestPart("file") MultipartFile file,
-            @RequestPart("posterId") Long posterId) {
-        try {
-            log.info("VerifyQRCode request: {}", posterId);
-            Logging.time();
-
-            // 유저의 QR 코드 검증, 이벤트 장소 검증
-            Long participantId = qrCodeService.verifyQRCode(file, posterId);
-            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
-        } catch (IOException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
-        } catch (NotFoundException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
-        } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
-        }
-    }
+//    @PostMapping("/verify")
+//    public ApiResponse verifyQRCode(
+//            @RequestPart("file") MultipartFile file,
+//            @RequestPart("posterId") Long posterId) {
+//        try {
+//            log.info("VerifyQRCode request: {}", posterId);
+//            Logging.time();
+//
+//            // 유저의 QR 코드 검증, 이벤트 장소 검증
+//            Long participantId = qrCodeService.verifyQRCode(file, posterId);
+//            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
+//        } catch (IOException e) {
+//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
+//        } catch (NotFoundException e) {
+//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
+//        } catch (IllegalArgumentException e) {
+//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+//        }
+//    }
 }
