@@ -2,14 +2,16 @@ package fete.be.domain.poster.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.ArtistDto;
-import fete.be.domain.event.persistence.EventType;
 import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
+import fete.be.domain.poster.persistence.Poster;
+import fete.be.domain.poster.persistence.PosterImage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -34,4 +36,41 @@ public class PosterDto {
 
     private Boolean isLike;  // 사용자의 관심 등록 상태
     private int likeCount;  // 포스터의 관심 등록 수
+
+    public PosterDto(Poster poster, boolean isLike) {
+        this.posterId = poster.getPosterId();
+        this.title = poster.getTitle();
+
+        this.posterImages = poster.getPosterImages().stream()
+                .map(PosterImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        this.institution = poster.getInstitution();
+        this.eventName = poster.getEvent().getEventName();
+        this.startDate = poster.getEvent().getStartDate();
+        this.endDate = poster.getEvent().getEndDate();
+        this.address = poster.getEvent().getAddress();
+
+        this.tickets = poster.getEvent().getTickets().stream()
+                .map(ticket -> new TicketInfoDto(
+                        ticket.getTicketType(),
+                        ticket.getTicketPrice(),
+                        ticket.getMaxTicketCount()
+                ))
+                .collect(Collectors.toList());
+
+        this.description = poster.getEvent().getDescription();
+        this.genre = poster.getEvent().getGenre();
+        this.homepageUrl = poster.getEvent().getHomepageUrl();
+
+        this.artists = poster.getEvent().getArtists().stream()
+                .map(artist -> new ArtistDto(
+                        artist.getName(),
+                        artist.getImageUrl()
+                ))
+                .collect(Collectors.toList());
+
+        this.isLike = isLike;
+        this.likeCount = poster.getLikeCount();
+    }
 }
