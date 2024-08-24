@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
+import fete.be.domain.poster.application.dto.request.Place;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.poster.persistence.PosterImage;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class PosterDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime endDate;  // 이벤트 종료일
 
-    private String address;  // 주소
+    private Place place;  // 위치 정보
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
     private Genre genre;  // 장르
@@ -49,7 +50,7 @@ public class PosterDto {
         this.eventName = poster.getEvent().getEventName();
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
-        this.address = poster.getEvent().getAddress();
+        this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(
