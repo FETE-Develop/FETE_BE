@@ -42,6 +42,7 @@ public class MemberController {
         try {
             log.info("Signup request: {}", request);
             Logging.time();
+
             memberService.signup(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {

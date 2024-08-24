@@ -12,6 +12,8 @@ public enum ResponseMessage {
     MEMBER_ALREADY_ADMIN(602, "관리자 권한을 획득한 상태입니다."),
     MEMBER_MODIFY_SUCCESS(603, "회원 정보 변경에 성공하였습니다."),
     MEMBER_MODIFY_FAILURE(604, "회원 정보 변경에 실패하였습니다."),
+    MEMBER_NO_EXIST(605, "해당 회원이 존재하지 않습니다."),
+    MEMBER_BLOCKED(606, "차단된 회원입니다."),
 
     // SIGNUP
     SIGNUP_SUCCESS(1000, "성공적으로 회원가입 하였습니다."),
@@ -73,6 +75,8 @@ public enum ResponseMessage {
     ADMIN_MODIFY_POPUP_FAIL(7017, "팝업 수정이 실패하였습니다."),
     ADMIN_DELETE_POPUP_SUCCESS(7018, "팝업 삭제가 성공하였습니다."),
     ADMIN_DELETE_POPUP_FAIL(7019, "팝업 삭제가 실패하였습니다."),
+    ADMIN_DEACTIVATE_MEMBER_SUCCESS(7020, "유저 강제 탈퇴가 성공하였습니다."),
+    ADMIN_DEACTIVATE_MEMBER_FAIL(7021, "유저 강제 탈퇴가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),
