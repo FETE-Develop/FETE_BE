@@ -79,6 +79,28 @@ public class AdminController {
 
 
     /**
+     * 유저 강제 탈퇴 API
+     *
+     * @param Long memberId
+     * @return ApiResponse
+     */
+    @PostMapping("/members/deactivate/{memberId}")
+    public ApiResponse deactivateMember(@PathVariable("memberId") Long memberId) {
+        try {
+            log.info("DeactivateMember API");
+            Logging.time();
+
+            // 해당 유저 탈퇴 후, 휴대전화 번호를 차단 DB에 추가
+            Long blockedMemberId = memberService.deactivateMember(memberId);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_DEACTIVATE_MEMBER_SUCCESS.getCode(), ResponseMessage.ADMIN_DEACTIVATE_MEMBER_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_DEACTIVATE_MEMBER_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
      * 이벤트의 결제 정보 조회 API
      *
      * @param Long posterId

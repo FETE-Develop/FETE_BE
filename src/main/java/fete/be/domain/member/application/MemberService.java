@@ -1,13 +1,10 @@
 package fete.be.domain.member.application;
 
-import fete.be.domain.admin.application.dto.response.GetMembersResponse;
 import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
-import fete.be.domain.member.persistence.Member;
-import fete.be.domain.member.persistence.MemberRepository;
-import fete.be.domain.member.persistence.Role;
+import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ResponseMessage;
@@ -25,7 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,6 +30,7 @@ import java.util.stream.Collectors;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final BlockedMemberRepository blockedMemberRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
@@ -46,6 +43,12 @@ public class MemberService {
         // email 중복 검사
         if (isDuplicateEmail(request.getEmail())) {
             throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 차단된 유저인지 검사
+        boolean isBlocked = blockedMemberRepository.existsByPhoneNumber(request.getPhoneNumber());
+        if (isBlocked) {
+            throw new IllegalArgumentException(ResponseMessage.MEMBER_BLOCKED.getMessage());
         }
 
         // 검증에 성공할 경우
@@ -126,5 +129,23 @@ public class MemberService {
                         member.getRole(),
                         member.getCreatedAt(),
                         member.getStatus()));
+    }
+
+    @Transactional
+    public Long deactivateMember(Long memberId) {
+        // 탈퇴할 유저 조회
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new IllegalArgumentException(ResponseMessage.MEMBER_NO_EXIST.getMessage())
+        );
+
+        // 차단시킬 휴대전화 번호
+        String phoneNumber = member.getPhoneNumber();
+        BlockedMember blockedMember = BlockedMember.createBlockedMember(phoneNumber);
+        BlockedMember savedBlockedMember = blockedMemberRepository.save(blockedMember);
+
+        // DB에서 해당 유저 삭제
+        memberRepository.delete(member);
+
+        return savedBlockedMember.getBlockedMemberId();
     }
 }
