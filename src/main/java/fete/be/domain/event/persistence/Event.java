@@ -35,6 +35,10 @@ public class Event {
 
     @Column(name = "address")
     private String address;  // 주소
+    @Column(name = "latitude")
+    private double latitude;  // 위도
+    @Column(name = "longitude")
+    private double longitude;  // 경도
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets = new ArrayList<>();  // 티켓 종류 및 가격 정보
@@ -83,7 +87,10 @@ public class Event {
         event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
-        event.address = request.getAddress();
+
+        event.address = request.getPlace().getAddress();
+        event.latitude = request.getPlace().getLatitude();
+        event.longitude = request.getPlace().getLongitude();
 
         // 티켓 종류 및 가격 생성
         for (TicketInfoDto ticketInfoDto : request.getTickets()) {
@@ -119,7 +126,10 @@ public class Event {
         event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
-        event.address = request.getAddress();
+
+        event.address = request.getPlace().getAddress();
+        event.latitude = request.getPlace().getLatitude();
+        event.longitude = request.getPlace().getLongitude();
 
         event.description = request.getDescription();
         event.genre = request.getGenre();
