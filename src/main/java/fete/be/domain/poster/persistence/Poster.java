@@ -43,6 +43,7 @@ public class Poster {
     @OneToOne(mappedBy = "poster", cascade = CascadeType.ALL)
     private Event event;  // 등록할 이벤트
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;  // 카테고리
 
     @Column(name = "created_at")

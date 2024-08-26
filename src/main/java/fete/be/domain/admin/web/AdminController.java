@@ -325,4 +325,51 @@ public class AdminController {
         }
     }
 
+
+    /**
+     * 카테고리 수정 API
+     *
+     * @param Long categoryId
+     * @param ModifyCategoryRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/categories/{categoryId}")
+    public ApiResponse modifyCategory(
+            @PathVariable("categoryId") Long categoryId,
+            @RequestBody ModifyCategoryRequest request
+    ) {
+        try {
+            log.info("ModifyCategory API: categoryId={}, request={}", categoryId, request);
+            Logging.time();
+
+            // 카테고리 수정
+            Long modifiedCategoryId = categoryService.modifyCategory(categoryId, request);
+
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_CATEGORY_SUCCESS.getCode(), ResponseMessage.ADMIN_MODIFY_CATEGORY_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_CATEGORY_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 카테고리 삭제 API
+     *
+     * @param Long categoryId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/categories/{categoryId}")
+    public ApiResponse deleteCategory(@PathVariable("categoryId") Long categoryId) {
+        try {
+            log.info("DeleteCategory API: categoryId={}", categoryId);
+            Logging.time();
+
+            // 카테고리 삭제
+            categoryService.deleteCategory(categoryId);
+
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_CATEGORY_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_CATEGORY_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_CATEGORY_FAIL.getCode(), e.getMessage());
+        }
+    }
 }

@@ -79,6 +79,10 @@ public enum ResponseMessage {
     ADMIN_DEACTIVATE_MEMBER_FAIL(7021, "유저 강제 탈퇴가 실패하였습니다."),
     ADMIN_CREATE_CATEGORY_SUCCESS(7022, "카테고리 생성이 성공하였습니다."),
     ADMIN_CREATE_CATEGORY_FAIL(7023, "카테고리 생성이 성공하였습니다."),
+    ADMIN_MODIFY_CATEGORY_SUCCESS(7024, "카테고리 수정이 성공하였습니다."),
+    ADMIN_MODIFY_CATEGORY_FAIL(7025, "카테고리 수정이 실패하였습니다."),
+    ADMIN_DELETE_CATEGORY_SUCCESS(7026, "카테고리 삭제가 성공하였습니다."),
+    ADMIN_DELETE_CATEGORY_FAIL(7027, "카테고리 삭제가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),
@@ -88,6 +92,9 @@ public enum ResponseMessage {
     // POPUP
     POPUP_GET_POPUPS(9000, "팝업 전체 조회에 성공하였습니다."),
     POPUP_GET_POPUPS_FAIL(9001, "팝업 전체 조회에 실패하였습니다."),
+
+    // CATEGORY
+    CATEGORY_NO_EXIST(10000, "해당 카테고리가 존재하지 않습니다."),
     ;
 
     private int code;
