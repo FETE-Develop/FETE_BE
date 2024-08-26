@@ -77,6 +77,8 @@ public enum ResponseMessage {
     ADMIN_DELETE_POPUP_FAIL(7019, "팝업 삭제가 실패하였습니다."),
     ADMIN_DEACTIVATE_MEMBER_SUCCESS(7020, "유저 강제 탈퇴가 성공하였습니다."),
     ADMIN_DEACTIVATE_MEMBER_FAIL(7021, "유저 강제 탈퇴가 실패하였습니다."),
+    ADMIN_CREATE_CATEGORY_SUCCESS(7022, "카테고리 생성이 성공하였습니다."),
+    ADMIN_CREATE_CATEGORY_FAIL(7023, "카테고리 생성이 성공하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(8000, "배너 전체 조회에 성공하였습니다."),

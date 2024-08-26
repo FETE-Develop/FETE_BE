@@ -1,5 +1,6 @@
 package fete.be.domain.poster.persistence;
 
+import fete.be.domain.category.persistence.Category;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
@@ -41,6 +42,8 @@ public class Poster {
 
     @OneToOne(mappedBy = "poster", cascade = CascadeType.ALL)
     private Event event;  // 등록할 이벤트
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;  // 카테고리
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
@@ -142,5 +145,10 @@ public class Poster {
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;
+    }
+
+    // 카테고리 설정 메서드
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

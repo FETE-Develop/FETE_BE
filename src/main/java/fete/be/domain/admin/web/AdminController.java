@@ -3,6 +3,7 @@ package fete.be.domain.admin.web;
 import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.banner.application.BannerService;
+import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.popup.application.PopupService;
@@ -29,6 +30,7 @@ public class AdminController {
     private final PaymentService paymentService;
     private final BannerService bannerService;
     private final PopupService popupService;
+    private final CategoryService categoryService;
 
 
     /**
@@ -300,4 +302,27 @@ public class AdminController {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_POPUP_FAIL.getCode(), e.getMessage());
         }
     }
+
+
+    /**
+     * 카테고리 생성 API
+     *
+     * @param CreateCategoryRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/categories")
+    public ApiResponse createCategory(@RequestBody CreateCategoryRequest request) {
+        try {
+            log.info("CreateCategory API: request={}", request);
+            Logging.time();
+
+            // 카테고리 생성
+            Long savedCategoryId = categoryService.createCategory(request);
+
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_CATEGORY_SUCCESS.getCode(), ResponseMessage.ADMIN_CREATE_CATEGORY_SUCCESS.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_CATEGORY_FAIL.getCode(), e.getMessage());
+        }
+    }
+
 }
