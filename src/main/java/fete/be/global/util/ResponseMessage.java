@@ -94,7 +94,9 @@ public enum ResponseMessage {
     POPUP_GET_POPUPS_FAIL(9001, "팝업 전체 조회에 실패하였습니다."),
 
     // CATEGORY
-    CATEGORY_NO_EXIST(10000, "해당 카테고리가 존재하지 않습니다."),
+    CATEGORY_GET_CATEGORIES(10000, "카테고리가 전체 조회에 성공하였습니다."),
+    CATEGORY_GET_CATEGORIES_FAIL(10001, "카테고리가 전체 조회에 실패하였습니다."),
+    CATEGORY_NO_EXIST(10002, "해당 카테고리가 존재하지 않습니다."),
     ;
 
     private int code;

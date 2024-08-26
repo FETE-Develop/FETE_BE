@@ -2,6 +2,8 @@ package fete.be.domain.category.application;
 
 import fete.be.domain.admin.application.dto.request.CreateCategoryRequest;
 import fete.be.domain.admin.application.dto.request.ModifyCategoryRequest;
+import fete.be.domain.admin.application.dto.response.SimplePosterDto;
+import fete.be.domain.category.application.dto.response.CategoryDto;
 import fete.be.domain.category.persistence.Category;
 import fete.be.domain.category.persistence.CategoryRepository;
 import fete.be.domain.poster.application.PosterService;
@@ -10,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -56,5 +61,26 @@ public class CategoryService {
 
         // 카테고리 삭제 (Hard 삭제)
         categoryRepository.delete(category);
+    }
+
+    public List<CategoryDto> getCategories() {
+        List<CategoryDto> categories = categoryRepository.findAll().stream()
+                .map(category -> new CategoryDto(
+                        category.getCategoryId(),
+                        category.getCategoryName(),
+                        category.getPosters().stream()
+                                .map(poster -> new SimplePosterDto(
+                                        poster.getPosterId(),
+                                        poster.getTitle(),
+                                        poster.getManager(),
+                                        poster.getEvent().getStartDate(),
+                                        poster.getEvent().getEndDate(),
+                                        poster.getEvent().getGenre()
+                                ))
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+
+        return categories;
     }
 }
