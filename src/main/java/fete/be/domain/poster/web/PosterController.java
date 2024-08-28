@@ -3,7 +3,6 @@ package fete.be.domain.poster.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
-import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;

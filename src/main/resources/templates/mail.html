@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div style="margin:100px;"><h3> FETE </h3>
+    <h1> 이메일 인증번호 안내 </h1><br>
+    <p> 본 메일은 FETE의 회원가입을 위한 이메일 인증입니다.</p>
+    <p> 아래의 이메일 인증번호를 입력하여 본인확인을 해주시길 바랍니다.</p><br>
+    <div align="center" style="background-color: rgb(0, 0, 0, 0.08); font-family:verdana;">
+        <div style="font-size:130%" th:text="${code}"></div>
+    </div>
+    <br/></div>
+</body>
+</html>
