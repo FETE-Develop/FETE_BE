@@ -15,6 +15,13 @@ public enum ResponseMessage {
     MEMBER_NO_EXIST(605, "해당 회원이 존재하지 않습니다."),
     MEMBER_BLOCKED(606, "차단된 회원입니다."),
 
+    // EMAIL
+    EMAIL_SEND_SUCCESS(700, "이메일 전송이 성공하였습니다."),
+    EMAIL_SEND_FAIL(701, "이메일 전송이 실패하였습니다."),
+    EMAIL_CORRECT_CODE(702, "인증번호가 일치합니다."),
+    EMAIL_INCORRECT_CODE(703, "인증번호가 일치하지 않습니다."),
+
+
     // SIGNUP
     SIGNUP_SUCCESS(1000, "성공적으로 회원가입 하였습니다."),
     SIGNUP_DUPLICATE_EMAIL(1001, "중복된 이메일 입니다."),

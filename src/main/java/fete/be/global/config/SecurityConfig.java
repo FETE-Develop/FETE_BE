@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/members/**").permitAll()
+                .requestMatchers("/api/members/**", "/api/emails/**").permitAll()
                 .requestMatchers("/api/admins/**").hasRole("ADMIN")
                 .and()
                 .exceptionHandling()
