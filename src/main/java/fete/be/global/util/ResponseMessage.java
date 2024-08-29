@@ -31,6 +31,8 @@ public enum ResponseMessage {
     LOGIN_FAILURE(2001, "아이디 또는 비밀번호가 일치하지 않습니다."),
     KAKAO_LOGIN_SUCCESS(2002, "카카오 로그인에 성공하였습니다."),
     KAKAO_LOGIN_FAILURE(2003, "카카오 로그인에 실패하였습니다."),
+    APPLE_LOGIN_SUCCESS(2004, "애플 로그인에 성공하였습니다."),
+    APPLE_LOGIN_FAILURE(2005, "애플 로그인에 실패하였습니다."),
 
 
     // POSTER

@@ -7,11 +7,16 @@ import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.domain.member.application.dto.response.SocialLoginResponse;
-import fete.be.domain.member.exception.KakaoUserNotFoundException;
+import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
+import fete.be.domain.member.oauth.kakao.exception.KakaoUserNotFoundException;
+import fete.be.domain.member.oauth.apple.dto.AppleLoginRequest;
+import fete.be.domain.member.oauth.apple.AppleAuthService;
+import fete.be.domain.member.oauth.apple.dto.AppleSignUpRequest;
+import fete.be.domain.member.oauth.apple.AppleUserInfo;
 import fete.be.domain.member.oauth.kakao.KakaoAuthService;
-import fete.be.domain.member.oauth.kakao.KakaoLoginRequest;
-import fete.be.domain.member.oauth.kakao.KakaoSignUpRequest;
-import fete.be.domain.member.oauth.kakao.KakaoUserInfoResponse;
+import fete.be.domain.member.oauth.kakao.dto.KakaoLoginRequest;
+import fete.be.domain.member.oauth.kakao.dto.KakaoSignUpRequest;
+import fete.be.domain.member.oauth.kakao.dto.KakaoUserInfoResponse;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -30,6 +35,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final KakaoAuthService kakaoAuthService;
+    private final AppleAuthService appleAuthService;
+
 
     /**
      * 회원가입 API
@@ -152,6 +159,85 @@ public class MemberController {
             SocialLoginResponse result = new SocialLoginResponse(NEW_MEMBER, null);
 
             return new ApiResponse<>(ResponseMessage.KAKAO_LOGIN_FAILURE.getCode(), e.getMessage(), result);
+        }
+    }
+
+
+    /**
+     * 애플 회원가입 API
+     * 1. 애플 회원 데이터가 없는 경우 : 애플 계정 정보의 email과 sub로 signUp 메서드 실행 -> appleLogin 재실행
+     * 2. 애플 회원 데이터가 존재하는 경우 : LoginRequestDto를 만들어 login 메서드 실행 -> jwt 토큰 발급
+     *
+     * @param AppleSignUpRequest request
+     * @return ApiResponse<SocialLoginResponse>
+     */
+    @PostMapping("/apple/signup")
+    public ApiResponse<SocialLoginResponse> appleSignUp(@RequestBody AppleSignUpRequest request) {
+        log.info("AppleSignUp request: {}", request);
+        Logging.time();
+
+        // 애플의 idToken 추출
+        String idToken = request.getIdToken();
+
+        try {
+            // 기존 회원인지 검사
+            LoginRequestDto loginInfo = appleAuthService.checkSignUp(idToken);
+
+            // 기존 회원인 경우 -> 로그인 실행 후 jwt 토큰 발급
+            ApiResponse<LoginResponseDto> loginApiResult = login(loginInfo);
+            LoginResponseDto loginResponse = loginApiResult.getResult();
+            SocialLoginResponse result = new SocialLoginResponse(EXISTING_MEMBER, loginResponse.getToken());
+
+            return new ApiResponse<>(ResponseMessage.APPLE_LOGIN_SUCCESS.getCode(), ResponseMessage.APPLE_LOGIN_SUCCESS.getMessage(), result);
+        } catch (AppleUserNotFoundException e) {  // 애플 회원이 처음인 경우 -> 회원가입 실행
+            // 애플 계정 정보
+            AppleUserInfo appleUserInfo = e.getAppleUserInfo();
+
+            // 애플 계정 정보, 사용자로부터 입력 받은 정보로 회원가입 DTO 생성
+            SignupRequestDto signUpDto = appleAuthService.createSignUpDto(appleUserInfo, request);
+
+            // 회원가입 실행
+            memberService.signup(signUpDto);
+
+            // 애플 로그인 재실행
+            AppleLoginRequest appleLoginRequest = new AppleLoginRequest(idToken);
+            return appleLogin(appleLoginRequest);
+        }
+    }
+
+
+    /**
+     * 애플 로그인 API
+     * - idToken으로 회원 여부 확인
+     * - 기존 회원 -> 로그인 후, jwt 토큰 발급
+     * - 신규 회원 -> 로그인 실패 결과 전달
+     *
+     * @param AppleLoginRequest request
+     * @return ApiResponse<SocialLoginResponse>
+     */
+    @PostMapping("/apple/login")
+    public ApiResponse<SocialLoginResponse> appleLogin(@RequestBody AppleLoginRequest request) {
+        log.info("AppleLogin request: {}", request);
+        Logging.time();
+
+        // 애플의 idToken 추출
+        String idToken = request.getIdToken();
+
+        try {
+            // idToken 토큰을 통해 애플 회원 여부 확인
+            LoginRequestDto loginInfo = appleAuthService.checkSignUp(idToken);
+
+            // 기존 회원인 경우 -> 로그인 실행 후 jwt 토큰 발급
+            ApiResponse<LoginResponseDto> loginApiResult = login(loginInfo);
+            LoginResponseDto loginResponse = loginApiResult.getResult();
+            SocialLoginResponse result = new SocialLoginResponse(EXISTING_MEMBER, loginResponse.getToken());
+
+            return new ApiResponse<>(ResponseMessage.APPLE_LOGIN_SUCCESS.getCode(), ResponseMessage.APPLE_LOGIN_SUCCESS.getMessage(), result);
+        } catch (AppleUserNotFoundException e) {
+            // 신규 회원인 경우 -> 애플 로그인 실패 결과 전달
+            SocialLoginResponse result = new SocialLoginResponse(NEW_MEMBER, null);
+
+            return new ApiResponse<>(ResponseMessage.APPLE_LOGIN_FAILURE.getCode(), e.getMessage(), result);
         }
     }
 
