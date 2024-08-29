@@ -2,7 +2,9 @@ package fete.be.domain.member.oauth.kakao;
 
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
-import fete.be.domain.member.exception.KakaoUserNotFoundException;
+import fete.be.domain.member.oauth.kakao.dto.KakaoSignUpRequest;
+import fete.be.domain.member.oauth.kakao.dto.KakaoUserInfoResponse;
+import fete.be.domain.member.oauth.kakao.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;

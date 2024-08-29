@@ -1,4 +1,4 @@
-package fete.be.domain.member.oauth.kakao;
+package fete.be.domain.member.oauth.kakao.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

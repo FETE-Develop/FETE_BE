@@ -1,5 +1,6 @@
 package fete.be.domain.member.oauth.kakao;
 
+import fete.be.domain.member.oauth.kakao.dto.KakaoUserInfoResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;

@@ -1,4 +1,4 @@
-package fete.be.domain.member.exception;
+package fete.be.domain.member.oauth.kakao.exception;
 
 public class KakaoException extends RuntimeException{
 
