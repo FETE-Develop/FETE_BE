@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker Build and Push, Excute
 
 on:
   push:
@@ -27,3 +27,12 @@ jobs:
         with:
           push: true
           tags: ideawolf/fete-be:latest
+
+      - name: SSH and Execute Script
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: 22
+          script: sudo sh /home/ubuntu/bin/fe_docker_cicd.sh
