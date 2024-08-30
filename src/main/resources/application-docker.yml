@@ -5,28 +5,28 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
 
-  jpa:
-    open-in-view: false
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-      
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME}
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE:true}
+            required: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED:true}
+          timeout: ${SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT:5000}
+          
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
 
 jwt:
   header: ${JWT_HEADER:Authorization}
   secret: ${JWT_SECRET}
-  # token-validity-in-seconds: ${JWT_TOKEN_VALIDITY_IN_SECONDS:86400}
 
 admin:
   key: ${ADMIN_KEY}
@@ -35,9 +35,7 @@ toss:
   clientKey: ${TOSS_CLIENT_KEY}
   secretKey: ${TOSS_SECRET_KEY}
 
-server:
-  port: 8443
-  ssl:
-    key-store-type: PKCS12
-    key-store: ${KEY_STORE_PATH}
-    key-store-password: ${KEY_STORE_PASSWORD}
+kakao:
+  client-id: ${KAKAO_CLIENT_ID}
+  client-secret: ${KAKAO_CLIENT_SECRET}
+  redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:8080/login/oauth2/code/kakao}
