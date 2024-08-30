@@ -1,3 +1,10 @@
+server:
+  port: 8443
+  ssl:
+    key-store-type: PKCS12
+    key-store: ${KEY_STORE_PATH}
+    key-store-password: ${KEY_STORE_PASSWORD}
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:fete;MODE=MySQL}
@@ -23,6 +30,23 @@ spring:
     redis:
       host: ${SPRING_DATA_REDIS_HOST:localhost}
       port: ${SPRING_DATA_REDIS_PORT:6379}
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 jwt:
   header: ${JWT_HEADER:Authorization}
