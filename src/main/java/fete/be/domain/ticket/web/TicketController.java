@@ -92,4 +92,24 @@ public class TicketController {
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         }
     }
+
+
+    /**
+     * 유저의 CustomerKey 조회 API
+     *
+     * @return ApiResponse<String>
+     */
+    @GetMapping("/customer-key")
+    public ApiResponse<String> getCustomerKey() {
+        log.info("getCustomerKey request");
+        Logging.time();
+
+        try {
+            String customerKey = ticketService.getCustomerKey();
+            return new ApiResponse<>(ResponseMessage.TICKET_GET_CUSTOMER_KEY_SUCCESS.getCode(), ResponseMessage.TICKET_GET_CUSTOMER_KEY_SUCCESS.getMessage(), customerKey);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_GET_CUSTOMER_KEY_FAILURE.getCode(), e.getMessage());
+
+        }
+    }
 }

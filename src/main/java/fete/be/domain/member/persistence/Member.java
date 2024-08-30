@@ -6,6 +6,7 @@ import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.persistence.Poster;
+import fete.be.global.util.UUIDGenerator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -76,6 +77,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "customer_key")
+    private String customerKey;  // 고객 키 -> 토스 결제에서 고객을 구분하는 키
+
 
     // 생성 메서드
     public static Member createMember(SignupRequestDto request) {
@@ -97,6 +101,7 @@ public class Member {
         member.createdAt = currentTime;
         member.updatedAt = currentTime;
         member.status = Status.ACTIVE;
+        member.customerKey = UUIDGenerator.generateUUID();
 
         return member;
     }

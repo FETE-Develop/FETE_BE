@@ -66,4 +66,10 @@ public class TicketService {
         GetTicketInfoResponse result = new GetTicketInfoResponse(ticket, qrCode);
         return result;
     }
+
+    public String getCustomerKey() {
+        // 유저 조회
+        Member member = memberService.findMemberByEmail();
+        return member.getCustomerKey();
+    }
 }

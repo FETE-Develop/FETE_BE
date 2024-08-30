@@ -56,6 +56,8 @@ public enum ResponseMessage {
     TICKET_NO_EXIST(5002, "존재하지 않는 티켓입니다."),
     TICKET_CANCEL_SUCCESS(5003, "티켓 취소가 성공하였습니다."),
     TICKET_CANCEL_FAILURE(5004, "티켓 취소가 실패하였습니다."),
+    TICKET_GET_CUSTOMER_KEY_SUCCESS(5005, "고객 키 조회에 성공하였습니다."),
+    TICKET_GET_CUSTOMER_KEY_FAILURE(5006, "고객 키 조회에 실패하였습니다."),
 
     // LIKE
     LIKE_SUCCESS(6000, "관심 등록 API 요청이 성공하였습니다."),
