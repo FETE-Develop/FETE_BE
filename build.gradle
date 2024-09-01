@@ -64,6 +64,9 @@ dependencies {
 
 	// Apple login
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	// Firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
 }
 
 dependencyManagement {
