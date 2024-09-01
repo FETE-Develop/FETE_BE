@@ -79,6 +79,8 @@ public class Member {
 
     @Column(name = "customer_key")
     private String customerKey;  // 고객 키 -> 토스 결제에서 고객을 구분하는 키
+    @Column(name = "fcm_token")
+    private String fcmToken;  // 유저의 고유한 푸시 알림용 FCM 토큰
 
 
     // 생성 메서드
@@ -125,6 +127,16 @@ public class Member {
         member.birth = request.getBirth();
         member.gender = request.getGender();
         member.phoneNumber = request.getPhoneNumber();
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        member.updatedAt = currentTime;
+
+        return member;
+    }
+
+    // FCM 토큰 저장 메서드
+    public static Member storeToken(Member member, String fcmToken) {
+        member.fcmToken = fcmToken;
 
         LocalDateTime currentTime = LocalDateTime.now();
         member.updatedAt = currentTime;
