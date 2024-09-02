@@ -22,6 +22,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Slf4j
 @Service
@@ -147,5 +149,10 @@ public class MemberService {
         memberRepository.delete(member);
 
         return savedBlockedMember.getBlockedMemberId();
+    }
+
+    public List<String> getAllTokens() {
+        List<String> tokens = memberRepository.findByFcmTokenIsNotNull();
+        return tokens;
     }
 }
