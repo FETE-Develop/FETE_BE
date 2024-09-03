@@ -1,10 +1,14 @@
 package fete.be.domain.admin.web;
 
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.notification.application.NotificationService;
+import fete.be.domain.notification.application.dto.request.PushMessageRequest;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.popup.application.PopupService;
 import fete.be.domain.poster.application.PosterService;
@@ -31,6 +35,7 @@ public class AdminController {
     private final BannerService bannerService;
     private final PopupService popupService;
     private final CategoryService categoryService;
+    private final NotificationService notificationService;
 
 
     /**
@@ -370,6 +375,27 @@ public class AdminController {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_CATEGORY_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_CATEGORY_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_CATEGORY_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 알림 설정한 전체 유저에게 푸시 알림 전송 API
+     */
+    @PostMapping("/notifications")
+    public ApiResponse sendAllMember(@RequestBody PushMessageRequest request) {
+        try {
+            log.info("SendAllMember API: request={}", request);
+            Logging.time();
+
+            // 알림 설정한 전체 유저에게 푸시 알림 전송
+            BatchResponse response = notificationService.sendAll(request);
+
+            return new ApiResponse(ResponseMessage.ADMIN_ALL_NOTIFICATION_SUCCESS.getCode(), ResponseMessage.ADMIN_ALL_NOTIFICATION_SUCCESS.getMessage());
+        } catch (FirebaseMessagingException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_NOTIFICATION_FAILURE.getCode(), e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_NOTIFICATION_FAILURE.getCode(), e.getMessage());
         }
     }
 }

@@ -94,6 +94,8 @@ public enum ResponseMessage {
     ADMIN_MODIFY_CATEGORY_FAIL(7025, "카테고리 수정이 실패하였습니다."),
     ADMIN_DELETE_CATEGORY_SUCCESS(7026, "카테고리 삭제가 성공하였습니다."),
     ADMIN_DELETE_CATEGORY_FAIL(7027, "카테고리 삭제가 실패하였습니다."),
+    ADMIN_ALL_NOTIFICATION_SUCCESS(7028, "전체 푸시 알림 전송이 성공하였습니다."),
+    ADMIN_NOTIFICATION_FAILURE(7029, "푸시 알림 전송이 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),
