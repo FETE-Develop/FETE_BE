@@ -17,6 +17,9 @@ public class Ticket {
     @Column(name = "ticket_type")
     private String ticketType;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
 
+    @Column(name = "description")
+    private String description;  // 티켓 설명
+
     @Column(name = "ticket_price")
     private int ticketPrice;  // 티켓 가격
 
@@ -36,6 +39,7 @@ public class Ticket {
         Ticket ticket = new Ticket();
 
         ticket.ticketType = ticketInfoDto.getTicketType();
+        ticket.description = ticketInfoDto.getDescription();
         ticket.ticketPrice = ticketInfoDto.getTicketPrice();
         ticket.maxTicketCount = ticketInfoDto.getMaxTicketCount();
         ticket.event = event;

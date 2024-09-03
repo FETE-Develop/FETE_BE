@@ -55,6 +55,7 @@ public class PosterDto {
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(
                         ticket.getTicketType(),
+                        ticket.getDescription(),
                         ticket.getTicketPrice(),
                         ticket.getMaxTicketCount()
                 ))
