@@ -69,14 +69,7 @@ public class CategoryService {
                         category.getCategoryId(),
                         category.getCategoryName(),
                         category.getPosters().stream()
-                                .map(poster -> new SimplePosterDto(
-                                        poster.getPosterId(),
-                                        poster.getTitle(),
-                                        poster.getManager(),
-                                        poster.getEvent().getStartDate(),
-                                        poster.getEvent().getEndDate(),
-                                        poster.getEvent().getGenre()
-                                ))
+                                .map(poster -> new SimplePosterDto(poster))
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());

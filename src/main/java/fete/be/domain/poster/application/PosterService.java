@@ -221,14 +221,7 @@ public class PosterService {
 
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
-                .map(poster -> new SimplePosterDto(
-                        poster.getPosterId(),
-                        poster.getTitle(),
-                        poster.getManager(),
-                        poster.getEvent().getStartDate(),
-                        poster.getEvent().getEndDate(),
-                        poster.getEvent().getGenre()
-                ));
+                .map(poster -> new SimplePosterDto(poster));
     }
 
     /**
