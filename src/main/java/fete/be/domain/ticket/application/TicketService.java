@@ -32,15 +32,7 @@ public class TicketService {
 
         return participantRepository.findByMemberAndPaymentIsPaidTrue(member)
                 .stream()
-                .map(participant -> new TicketDto(
-                        participant.getParticipantId(),
-                        participant.getEvent().getEventName(),
-                        participant.getEvent().getStartDate(),
-                        participant.getEvent().getEndDate(),
-                        participant.getEvent().getAddress(),
-                        participant.getPayment().getTicketType(),
-                        participant.getPayment().getTicketPrice()
-                ))
+                .map(participant -> new TicketDto(participant))
                 .collect(Collectors.toList());
     }
 
@@ -54,14 +46,7 @@ public class TicketService {
         String qrCode = qrCodeService.generateQRCodeBase64(participant, 250, 250);
 
         // 리턴 객체 제작
-        TicketDto ticket = new TicketDto(
-                participant.getParticipantId(),
-                participant.getEvent().getEventName(),
-                participant.getEvent().getStartDate(),
-                participant.getEvent().getEndDate(),
-                participant.getEvent().getAddress(),
-                participant.getPayment().getTicketType(),
-                participant.getPayment().getTicketPrice());
+        TicketDto ticket = new TicketDto(participant);
 
         GetTicketInfoResponse result = new GetTicketInfoResponse(ticket, qrCode);
         return result;
