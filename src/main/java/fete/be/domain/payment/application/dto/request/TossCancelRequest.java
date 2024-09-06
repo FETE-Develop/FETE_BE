@@ -10,5 +10,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TossCancelRequest {
-    private String cancelReason;
+    private String cancelReason;  // 취소 사유 (필수)
+    private int cancelAmount;  // 부분 취소 금액 (선택)
 }

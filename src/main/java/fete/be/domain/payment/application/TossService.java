@@ -80,16 +80,16 @@ public class TossService {
     /**
      * ### 토스 결제 취소 API
      * 1. 프론트 : 취소할 티켓의 participantId, cancelReason, cancelAmount를 백엔드로 넘겨준다.
-     *   - cancelAmount는 부분 취소 결제 금액이다, 값을 전달하지 않으면 전액이 취소된다.
-     *   - cancelReason = 필수 전달 값
+     * - cancelAmount는 부분 취소 결제 금액이다, 값을 전달하지 않으면 전액이 취소된다.
+     * - cancelReason = 필수 전달 값
      * 2. 백엔드 : participantId를 통해 payment 객체에서 paymentKey 값을 가져온다.
      * 3. 백엔드 : 토스의 결제 취소 API를 호출한다.
-     *   - POST 메서드, https://api.tosspayments.com/v1/payments/{paymentKey}/cancel
-     *   - Authorization: Basic dGVzdF9za196WExrS0V5cE5BcldtbzUwblgzbG1lYXhZRzVSOg==
-     *   - Content-Type: application/json
-     *   - data '{"cancelReason":"고객 변심"}
+     * - POST 메서드, https://api.tosspayments.com/v1/payments/{paymentKey}/cancel
+     * - Authorization: Basic dGVzdF9za196WExrS0V5cE5BcldtbzUwblgzbG1lYXhZRzVSOg==
+     * - Content-Type: application/json
+     * - data '{"cancelReason":"고객 변심"}
      * 4.백엔드 : 토스로부터 TossPaymentResponse 형식의 응답을 받게 된다.
-     *   - 응답 속 cancels의 transactionKey를 저장하면 된다. -> 취소 거래를 구분하는 키이다.
+     * - 응답 속 cancels의 transactionKey를 저장하면 된다. -> 취소 거래를 구분하는 키이다.
      */
     @Transactional
     public String cancelPayment(Long participantId, String cancelReason) {
@@ -110,8 +110,9 @@ public class TossService {
         // Toss API 헤더 생성
         HttpHeaders headers = makeHttpHeaders();
 
-        // TossCancelRequest 객체 생성
-        TossCancelRequest tossCancelRequest = new TossCancelRequest(cancelReason);
+        // 결제한 금액(=취소할 금액) 조회 후, TossCancelRequest 객체 생성
+        int cancelAmount = payment.getTotalAmount();
+        TossCancelRequest tossCancelRequest = new TossCancelRequest(cancelReason, cancelAmount);
 
         // tossCancelRequest를 이용해서 토스의 취소 API를 호출할 준비
         HttpEntity<TossCancelRequest> requestHttpEntity = new HttpEntity<>(tossCancelRequest, headers);
@@ -125,8 +126,7 @@ public class TossService {
         Payment canceledPayment = Payment.updateTossCancelInfo(payment, tossPaymentResponse.getLastTransactionKey(), cancelReason);
 
         // 이벤트 수익에서 취소된 금액 빼주기
-        int canceledAmount = canceledPayment.getTotalAmount() * -1;
-        participant.updateProfit(canceledAmount);
+        participant.updateProfit(cancelAmount * (-1));
 
         // 결제 취소 상태로 변경 -> 이벤트 수익 차감 이후에 호출되어야 함 (순서 중요)
         Payment.cancelPayment(canceledPayment);
@@ -145,7 +145,7 @@ public class TossService {
      * 판매된 티켓 수량에 취소된 티켓 수량 반영
      *
      * @param Participant participant
-     * @param Payment payment
+     * @param Payment     payment
      */
     private void updateSoldTicketCount(Participant participant, Payment payment) {
         // 취소된 티켓만큼 판매 티켓 수량 반영
