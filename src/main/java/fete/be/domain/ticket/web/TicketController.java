@@ -2,6 +2,7 @@ package fete.be.domain.ticket.web;
 
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossCancelRequest;
+import fete.be.domain.payment.exception.InvalidPaymentStatusException;
 import fete.be.domain.ticket.application.dto.response.GetTicketInfoResponse;
 import fete.be.domain.ticket.application.dto.response.GetTicketsResponse;
 import fete.be.domain.ticket.application.dto.response.TicketDto;
@@ -59,6 +60,8 @@ public class TicketController {
             GetTicketInfoResponse result = ticketService.getTicketInfo(participantId);
 
             return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);
+        } catch (InvalidPaymentStatusException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_IS_NOT_PAID.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.TICKET_NO_EXIST.getCode(), e.getMessage());
         } catch (Exception e) {

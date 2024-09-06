@@ -2,6 +2,8 @@ package fete.be.domain.ticket.application;
 
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.payment.exception.InvalidPaymentStatusException;
+import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.ticket.application.dto.response.GetTicketInfoResponse;
 import fete.be.domain.ticket.application.dto.response.TicketDto;
 import fete.be.domain.member.persistence.Member;
@@ -41,6 +43,12 @@ public class TicketService {
         Participant participant = participantRepository.findById(participantId).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.TICKET_NO_EXIST.getMessage())
         );
+
+        // 결제 상태가 아닌 경우 예외 처리
+        Payment payment = participant.getPayment();
+        if (!payment.getIsPaid()) {
+            throw new InvalidPaymentStatusException(ResponseMessage.TICKET_IS_NOT_PAID.getMessage());
+        }
 
         // 찾아온 객체를 QR서비스 단의 generateQRCodeBase64에 넣어서 qrCode 발급해오기
         String qrCode = qrCodeService.generateQRCodeBase64(participant, 250, 250);
