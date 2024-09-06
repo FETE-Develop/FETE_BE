@@ -4,7 +4,10 @@ public enum ResponseMessage {
 
     SUCCESS(200, "API 요청이 성공하였습니다."),
     INVALID_REQUEST(201, "불가능한 요청입니다."),
+
+    // GLOBAL
     INTERNAL_ERROR(500, "내부 오류가 발생했습니다."),
+    NO_RESOURCE_ERROR(501, "잘못된 URI 입니다."),
 
     // MEMBER
     MEMBER_ADMIN_OK(600, "관리자 권한을 획득하였습니다."),
