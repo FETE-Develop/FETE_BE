@@ -24,6 +24,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ApiResponse handleException(Exception e) {
         log.error("[exceptionHandle] Exception", e);
-        return new ApiResponse(ResponseMessage.INTERNAL_ERROR.getCode(), ResponseMessage.INTERNAL_ERROR.getMessage());
+        return new ApiResponse(ResponseMessage.INTERNAL_ERROR.getCode(), e.getMessage());
     }
 }
