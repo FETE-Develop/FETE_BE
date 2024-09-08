@@ -201,6 +201,21 @@ public class PosterService {
                 });
     }
 
+    public Page<PosterDto> searchPosters(String keyword, int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = createPageable(page, size);
+
+        // Member 찾기
+        Member member = memberService.findMemberByEmail();
+
+        // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
+        return posterRepository.findByTitleContainingOrEventDescriptionContaining(keyword, keyword, pageable)
+                .map(poster -> {
+                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                    return new PosterDto(poster, isLike);
+                });
+    }
+
     // 매일 정오마다 실행
     @Scheduled(cron = "0 0 12 * * ?")
     @Transactional
