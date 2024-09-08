@@ -19,6 +19,8 @@ public interface PosterRepository extends JpaRepository<Poster, Long> {
 
     Page<Poster> findByPosterIdIn(List<Long> posterIds, Pageable pageable);
 
+    Page<Poster> findByTitleContainingOrEventDescriptionContaining(String keyword1, String keyword2, Pageable pageable);
+
     Optional<Poster> findByStatusAndPosterId(Status status, Long posterId);
 
     @Query("select p from Poster p where p.status = 'ACTIVE' and p.event.endDate < :now")

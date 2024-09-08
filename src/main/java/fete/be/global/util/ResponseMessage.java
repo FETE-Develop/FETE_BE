@@ -44,6 +44,8 @@ public enum ResponseMessage {
     POSTER_INVALID_POSTER(1002, "해당 포스터가 존재하지 않습니다."),
     POSTER_INVALID_USER(1003, "해당 포스터의 작성자가 아닙니다."),
     POSTER_INVALID_EVENT(1004, "해당 이벤트가 존재하지 않습니다."),
+    POSTER_SEARCH_SUCCESS(1005, "포스터 검색에 성공하였습니다."),
+    POSTER_SEARCH_FAILURE(1006, "포스터 검색에 실패하였습니다."),
 
     // EVENT
     EVENT_QR_SUCCESS(1100, "QR 코드 발급에 성공하였습니다."),

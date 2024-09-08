@@ -4,6 +4,7 @@ import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
+import fete.be.domain.poster.application.dto.request.SearchPostersRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -220,6 +221,39 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_SUCCESS.getCode(), ResponseMessage.LIKE_GET_POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 포스터 검색 API
+     * - 키워드로 포스터 제목, 이벤트 설명 필드를 검색하는 API입니다.
+     *
+     * @param SearchPostersRequest request
+     * @param int page
+     * @param int size
+     * @return ApiResponse<GetPostersResponse>
+     */
+    @PostMapping("/search")
+    public ApiResponse<GetPostersResponse> searchPosters(
+            @RequestBody SearchPostersRequest request,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        try {
+            log.info("SearchPosters request: request={}", request);
+            Logging.time();
+
+            // 키워드 추출
+            String keyword = request.getKeyword();
+
+            // 제목 또는 설명에 키워드가 포함되어 있는 포스터들 조회
+            List<PosterDto> searchedPosters = posterService.searchPosters(keyword, page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(searchedPosters);
+
+            return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_FAILURE.getCode(), e.getMessage());
         }
     }
 }
