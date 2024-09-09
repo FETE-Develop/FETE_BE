@@ -31,6 +31,7 @@ jobs:
       # FIREBASE_CONFIG 환경 변수를 사용해 firebase-adminsdk.json 파일 생성
       - name: Create firebase-adminsdk.json from FIREBASE_CONFIG secret
         run: |
+          mkdir -p src/main/resources/firebase
           echo '${{ secrets.FIREBASE_CONFIG }}' > src/main/resources/firebase/firebase-adminsdk.json
 
       - name: SSH and Execute Script
