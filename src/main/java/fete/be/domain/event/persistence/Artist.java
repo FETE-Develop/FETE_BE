@@ -13,9 +13,11 @@ public class Artist {
     private Long artistId;
 
     @Column(name = "name")
-    private String name;
+    private String name;  // 아티스트 이름
+    @Column(name = "info_url")
+    private String infoUrl;  // 아티스트 정보 링크
     @Column(name = "image_url")
-    private String imageUrl;
+    private String imageUrl;  // 아티스트 프로필 이미지 (관리자만 등록 가능)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
@@ -27,7 +29,7 @@ public class Artist {
         Artist artist = new Artist();
 
         artist.name = artistDto.getName();
-        artist.imageUrl = artistDto.getImageUrl();
+        artist.infoUrl = artistDto.getInfoUrl();
         artist.event = event;
 
         return artist;
