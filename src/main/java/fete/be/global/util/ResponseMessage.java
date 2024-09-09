@@ -103,6 +103,9 @@ public enum ResponseMessage {
     ADMIN_DELETE_CATEGORY_FAIL(7027, "카테고리 삭제가 실패하였습니다."),
     ADMIN_ALL_NOTIFICATION_SUCCESS(7028, "전체 푸시 알림 전송이 성공하였습니다."),
     ADMIN_NOTIFICATION_FAILURE(7029, "푸시 알림 전송이 실패하였습니다."),
+    ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS(7030, "아티스트 프로필 이미지 등록이 성공하였습니다."),
+    ADMIN_REGISTER_ARTIST_PROFILE_FAIL(7031, "아티스트 프로필 이미지 등록이 실패하였습니다."),
+    ADMIN_INVALID_ARTIST_PROFILE_COUNT(7032, "아티스트 프로필 이미지 개수가 일치하지 않습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),

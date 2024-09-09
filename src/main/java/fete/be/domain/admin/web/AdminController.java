@@ -12,6 +12,7 @@ import fete.be.domain.notification.application.dto.request.PushMessageRequest;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.popup.application.PopupService;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -45,7 +46,7 @@ public class AdminController {
      * @param ApprovePostersRequest request
      * @return ApiResponse
      */
-    @PostMapping("/approve")
+    @PostMapping("/posters/approve")
     public ApiResponse approvePosters(@RequestBody ApprovePostersRequest request) {
         try {
             log.info("ApprovePosters request={}", request);
@@ -55,6 +56,64 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_APPROVE_POSTERS.getCode(), ResponseMessage.ADMIN_APPROVE_POSTERS.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_APPROVE_POSTERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 포스터 간편 조회 API
+     *
+     * @param String status
+     * @param int    page
+     * @param int    size
+     * @return ApiResponse<GetSimplePostersResponse>
+     */
+    @GetMapping("/posters")
+    public ApiResponse<GetSimplePostersResponse> getSimplePosters(
+            @RequestParam(name = "status", defaultValue = "ACTIVE") String status,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        try {
+            log.info("GetSimplePosters API");
+            Logging.time();
+
+            // status를 Status enum 타입으로 변환
+            Status findStatus = Status.valueOf(status);
+            List<SimplePosterDto> simplePosters = posterService.getSimplePosters(findStatus, page, size).getContent();
+            GetSimplePostersResponse result = new GetSimplePostersResponse(simplePosters);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS.getCode(), ResponseMessage.ADMIN_GET_POSTERS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 관리자의 아티스트 프로필 이미지 등록 API
+     * - 단, 변경할 이미지 링크가 이미 등록된 아티스트 순서에 맞게 들어와야 함.
+     *
+     * @param Long                      posterId
+     * @param SetArtistImageUrlsRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/posters/{posterId}")
+    public ApiResponse setArtistImageUrls(
+            @PathVariable("posterId") Long posterId,
+            @RequestBody SetArtistImageUrlsRequest request
+    ) {
+        try {
+            log.info("SetArtistImageUrls API: posterId={}, request={}", posterId, request);
+            Logging.time();
+
+            // 아티스트 프로필 이미지 등록
+            posterService.setArtistImageUrls(posterId, request);
+            return new ApiResponse<>(ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS.getCode(), ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS.getMessage());
+        } catch (ProfileImageCountMismatchException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_INVALID_ARTIST_PROFILE_COUNT.getCode(), e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_FAIL.getCode(), e.getMessage());
         }
     }
 
@@ -209,36 +268,6 @@ public class AdminController {
 
 
     /**
-     * 포스터 간편 조회 API
-     *
-     * @param String status
-     * @param int    page
-     * @param int    size
-     * @return ApiResponse<GetSimplePostersResponse>
-     */
-    @GetMapping("/posters")
-    public ApiResponse<GetSimplePostersResponse> getSimplePosters(
-            @RequestParam(name = "status", defaultValue = "ACTIVE") String status,
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "10") int size
-    ) {
-        try {
-            log.info("GetSimplePosters API");
-            Logging.time();
-
-            // status를 Status enum 타입으로 변환
-            Status findStatus = Status.valueOf(status);
-            List<SimplePosterDto> simplePosters = posterService.getSimplePosters(findStatus, page, size).getContent();
-            GetSimplePostersResponse result = new GetSimplePostersResponse(simplePosters);
-
-            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS.getCode(), ResponseMessage.ADMIN_GET_POSTERS.getMessage(), result);
-        } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.ADMIN_GET_POSTERS_FAIL.getCode(), e.getMessage());
-        }
-    }
-
-
-    /**
      * 팝업 생성 API
      *
      * @param CreatePopupRequest request
@@ -334,7 +363,7 @@ public class AdminController {
     /**
      * 카테고리 수정 API
      *
-     * @param Long categoryId
+     * @param Long                  categoryId
      * @param ModifyCategoryRequest request
      * @return ApiResponse
      */

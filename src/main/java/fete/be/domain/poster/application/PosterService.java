@@ -1,5 +1,6 @@
 package fete.be.domain.poster.application;
 
+import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
 import fete.be.domain.event.persistence.*;
 import fete.be.domain.member.application.MemberService;
@@ -8,6 +9,7 @@ import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
+import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
@@ -237,6 +239,26 @@ public class PosterService {
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
                 .map(poster -> new SimplePosterDto(poster));
+    }
+
+    // 관리자용 아티스트 프로필 이미지 등록
+    @Transactional
+    public void setArtistImageUrls(Long posterId, SetArtistImageUrlsRequest request) {
+        // 수정할 포스터 조회
+        Poster poster = findPosterByPosterId(posterId);
+        Event event = poster.getEvent();
+        List<Artist> artists = event.getArtists();
+
+        // 등록할 아티스트 프로필 이미지 리스트
+        List<String> imageUrls = request.getImageUrls();
+
+        // 아티스트 수와 전달된 프로필 이미지 수가 다르다면 예외 처리
+        if (artists.size() != imageUrls.size()) {
+            throw new ProfileImageCountMismatchException(ResponseMessage.ADMIN_INVALID_ARTIST_PROFILE_COUNT.getMessage());
+        }
+
+        // 아티스트 이미지 등록
+        Artist.updateInfoUrls(artists, imageUrls);
     }
 
     /**
