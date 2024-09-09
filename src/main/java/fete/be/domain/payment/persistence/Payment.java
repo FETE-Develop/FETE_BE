@@ -117,4 +117,14 @@ public class Payment {
 
         return payment;
     }
+
+    // 무료 티켓 취소 시, 필드 업데이트
+    public static Payment updateCancelInfo(Payment payment, String cancelReason) {
+        payment.cancelReason = cancelReason;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        payment.updatedAt = currentTime;
+
+        return payment;
+    }
 }

@@ -7,6 +7,7 @@ import fete.be.domain.ticket.application.dto.response.GetTicketInfoResponse;
 import fete.be.domain.ticket.application.dto.response.GetTicketsResponse;
 import fete.be.domain.ticket.application.dto.response.TicketDto;
 import fete.be.domain.ticket.application.TicketService;
+import fete.be.domain.ticket.exception.InvalidRefundAmountException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -80,17 +81,23 @@ public class TicketController {
     @PostMapping("/{participantId}")
     public ApiResponse cancelTicket(
             @PathVariable("participantId") Long participantId,
-            @RequestBody TossCancelRequest request
+            @RequestBody(required = false) TossCancelRequest request
     ) {
         log.info("CancelTicket request: participantId={}, request={}", participantId, request);
         Logging.time();
 
         try {
-            // 토스 결제 취소 API 실행
-            String cancelReason = request.getCancelReason();
-            String transactionKey = tossService.cancelPayment(participantId, cancelReason);
+            if (request == null) {  // null일 경우 무료 티켓 취소
+                Long canceledPaymentId = tossService.cancelFreeTicket(participantId);
+            } else {  // null이 아닌 경우, 토스 결제 취소
+                // 취소 사유 추출 후, 토스 결제 취소 API 실행
+                String cancelReason = request.getCancelReason();
+                String transactionKey = tossService.cancelPayment(participantId, cancelReason);
+            }
 
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_SUCCESS.getCode(), ResponseMessage.TICKET_CANCEL_SUCCESS.getMessage());
+        } catch (InvalidRefundAmountException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         }
