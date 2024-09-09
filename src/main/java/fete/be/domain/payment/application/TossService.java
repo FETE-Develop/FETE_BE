@@ -6,8 +6,10 @@ import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.payment.persistence.PaymentRepository;
+import fete.be.domain.ticket.exception.InvalidRefundAmountException;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
+import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -139,6 +141,40 @@ public class TossService {
 
         // 취소 거래 키 반환
         return savedPayment.getLastTransactionKey();
+    }
+
+    /**
+     * 무료 이벤트 티켓 취소
+     */
+    @Transactional
+    public Long cancelFreeTicket(Long participantId) {
+        log.info("Start cancelFreeTicket");
+
+        // Participant 객체 조회
+        Participant participant = participantRepository.findById(participantId).orElseThrow(
+                () -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다.")
+        );
+        // Payment 객체 조회
+        Payment payment = participant.getPayment();
+
+
+        // 결제한 금액(=취소할 금액) 조회 후, 취소 금액이 0원이 맞는지 검사
+        int cancelAmount = payment.getTotalAmount();
+        if (cancelAmount != 0) {
+            throw new InvalidRefundAmountException(ResponseMessage.TICKET_INVALID_AMOUNT.getMessage());
+        }
+
+        // 결제 취소 상태로 변경
+        Payment.cancelPayment(payment);
+
+        // 취소된 티켓 1장만큼 판매된 티켓 수량 감소
+        updateSoldTicketCount(participant, payment);
+
+        // DB 업데이트
+        Payment savedPayment = paymentRepository.save(payment);
+
+        // 취소된 Payment 아이디 반환
+        return savedPayment.getPaymentId();
     }
 
     /**

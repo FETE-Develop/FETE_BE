@@ -64,6 +64,7 @@ public enum ResponseMessage {
     TICKET_GET_CUSTOMER_KEY_SUCCESS(1205, "고객 키 조회에 성공하였습니다."),
     TICKET_GET_CUSTOMER_KEY_FAILURE(1206, "고객 키 조회에 실패하였습니다."),
     TICKET_IS_NOT_PAID(1207, "결제되지 않은 티켓입니다."),
+    TICKET_INVALID_AMOUNT(1208, "올바르지 않은 금액의 티켓입니다."),
 
     // LIKE
     LIKE_SUCCESS(1300, "관심 등록 API 요청이 성공하였습니다."),
