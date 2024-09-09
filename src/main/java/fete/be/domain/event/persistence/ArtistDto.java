@@ -9,5 +9,6 @@ import lombok.ToString;
 @ToString
 public class ArtistDto {
     private String name;
+    private String infoUrl;
     private String imageUrl;
 }

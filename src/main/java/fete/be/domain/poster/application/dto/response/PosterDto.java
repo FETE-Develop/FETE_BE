@@ -68,6 +68,7 @@ public class PosterDto {
         this.artists = poster.getEvent().getArtists().stream()
                 .map(artist -> new ArtistDto(
                         artist.getName(),
+                        artist.getInfoUrl(),
                         artist.getImageUrl()
                 ))
                 .collect(Collectors.toList());
