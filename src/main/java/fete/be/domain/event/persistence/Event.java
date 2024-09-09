@@ -79,7 +79,6 @@ public class Event {
     private List<Payment> payments = new ArrayList<>();  // 결제 상태 리스트
 
 
-
     // 생성 메서드
     public static Event createEvent(Poster poster, EventDto request) {
         Event event = new Event();

@@ -3,6 +3,8 @@ package fete.be.domain.event.persistence;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.List;
+
 @Entity
 @Getter
 public class Artist {
@@ -33,5 +35,14 @@ public class Artist {
         artist.event = event;
 
         return artist;
+    }
+
+    // 프로필 이미지 등록 메서드 (관리자용)
+    public static void updateInfoUrls(List<Artist> artists, List<String> imageUrls) {
+        int artistNumber = 0;
+        for (Artist artist : artists) {
+            artist.imageUrl = imageUrls.get(artistNumber);
+            artistNumber += 1;
+        }
     }
 }
