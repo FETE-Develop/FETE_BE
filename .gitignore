@@ -39,4 +39,4 @@ out/
 ### Secret ###
 application-secret.yml
 docker-compose.yml
-src/main/resources/firebase/firebase-adminsdk.json
+#src/main/resources/firebase/firebase-adminsdk.json
