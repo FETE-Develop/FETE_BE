@@ -32,7 +32,7 @@ public class TicketService {
     public List<TicketDto> getTickets() {
         Member member = memberService.findMemberByEmail();
 
-        return participantRepository.findByMemberAndPaymentIsPaidTrue(member)
+        return participantRepository.findByMember(member)
                 .stream()
                 .map(participant -> new TicketDto(participant))
                 .collect(Collectors.toList());

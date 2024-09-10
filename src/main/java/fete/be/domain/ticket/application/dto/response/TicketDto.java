@@ -21,6 +21,7 @@ public class TicketDto {
     private String address;
     private String ticketType;
     private int ticketPrice;
+    private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
 
     public TicketDto(Participant participant) {
         this.participantId = participant.getParticipantId();
@@ -31,5 +32,6 @@ public class TicketDto {
         this.address = participant.getEvent().getAddress();
         this.ticketType = participant.getPayment().getTicketType();
         this.ticketPrice = participant.getPayment().getTicketPrice();
+        this.isPaid = participant.getPayment().getIsPaid();
     }
 }

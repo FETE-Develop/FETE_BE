@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .authorizeRequests()
                 .requestMatchers("/api/members/**", "/api/emails/**").permitAll()
+                .requestMatchers("/api/banners/**", "/api/popups/**", "/api/categories/**").permitAll()
+                .requestMatchers("/api/posters", "/api/posters/{posterId}", "/api/posters/search").permitAll()
                 .requestMatchers("/api/admins/**").hasRole("ADMIN")
                 .and()
                 .exceptionHandling()
