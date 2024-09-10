@@ -2,7 +2,9 @@ package fete.be.domain.ticket.web;
 
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossCancelRequest;
+import fete.be.domain.payment.exception.InvalidCancelReasonException;
 import fete.be.domain.payment.exception.InvalidPaymentStatusException;
+import fete.be.domain.ticket.application.dto.request.CancelTicketsRequest;
 import fete.be.domain.ticket.application.dto.response.GetTicketInfoResponse;
 import fete.be.domain.ticket.application.dto.response.GetTicketsResponse;
 import fete.be.domain.ticket.application.dto.response.TicketDto;
@@ -78,24 +80,23 @@ public class TicketController {
      * @param TossCancelRequest request
      * @return ApiResponse
      */
-    @PostMapping("/{participantId}")
-    public ApiResponse cancelTicket(
-            @PathVariable("participantId") Long participantId,
-            @RequestBody(required = false) TossCancelRequest request
-    ) {
-        log.info("CancelTicket request: participantId={}, request={}", participantId, request);
+    @PostMapping
+    public ApiResponse cancelTickets(@RequestBody CancelTicketsRequest request) {
+        log.info("CancelTicket request: request={}", request);
         Logging.time();
 
-        try {
-            if (request == null) {  // null일 경우 무료 티켓 취소
-                Long canceledPaymentId = tossService.cancelFreeTicket(participantId);
-            } else {  // null이 아닌 경우, 토스 결제 취소
-                // 취소 사유 추출 후, 토스 결제 취소 API 실행
-                String cancelReason = request.getCancelReason();
-                String transactionKey = tossService.cancelPayment(participantId, cancelReason);
-            }
+        // 취소할 티켓 리스트
+        List<Long> ticketIds = request.getTicketIds();
+        String cancelReason = request.getCancelReason();
 
+        try {
+            for (Long participantId : ticketIds) {
+                // 티켓 개별 취소 실행
+                tossService.cancelTicket(participantId, cancelReason);
+            }
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_SUCCESS.getCode(), ResponseMessage.TICKET_CANCEL_SUCCESS.getMessage());
+        } catch (InvalidCancelReasonException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         } catch (InvalidRefundAmountException e) {
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {

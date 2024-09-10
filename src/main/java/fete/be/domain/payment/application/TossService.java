@@ -4,6 +4,7 @@ import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.dto.request.TossCancelRequest;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
+import fete.be.domain.payment.exception.InvalidCancelReasonException;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.payment.persistence.PaymentRepository;
 import fete.be.domain.ticket.exception.InvalidRefundAmountException;
@@ -94,16 +95,13 @@ public class TossService {
      * - 응답 속 cancels의 transactionKey를 저장하면 된다. -> 취소 거래를 구분하는 키이다.
      */
     @Transactional
-    public String cancelPayment(Long participantId, String cancelReason) {
+    public String cancelPayment(Participant participant, Payment payment, String cancelReason) {
         log.info("Start cancelPayment");
 
-        // Participant 객체 조회
-        Participant participant = participantRepository.findById(participantId).orElseThrow(
-                () -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다.")
-        );
-        // Payment 객체 조회
-        Payment payment = participant.getPayment();
-
+        // cancelReason 검사
+        if (cancelReason == null || cancelReason.isBlank()) {
+            throw new InvalidCancelReasonException(ResponseMessage.TICKET_INVALID_CANCEL_REASON.getMessage());
+        }
 
         // paymentKey 추출 후, URL 작업
         String paymentKey = payment.getPaymentKey();
@@ -147,16 +145,8 @@ public class TossService {
      * 무료 이벤트 티켓 취소
      */
     @Transactional
-    public Long cancelFreeTicket(Long participantId) {
+    public Long cancelFreeTicket(Participant participant, Payment payment, String cancelReason) {
         log.info("Start cancelFreeTicket");
-
-        // Participant 객체 조회
-        Participant participant = participantRepository.findById(participantId).orElseThrow(
-                () -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다.")
-        );
-        // Payment 객체 조회
-        Payment payment = participant.getPayment();
-
 
         // 결제한 금액(=취소할 금액) 조회 후, 취소 금액이 0원이 맞는지 검사
         int cancelAmount = payment.getTotalAmount();
@@ -164,17 +154,41 @@ public class TossService {
             throw new InvalidRefundAmountException(ResponseMessage.TICKET_INVALID_AMOUNT.getMessage());
         }
 
+        // Payment 객체에 취소 관련 정보 저장
+        Payment canceledPayment = Payment.updateCancelInfo(payment, cancelReason);
+
         // 결제 취소 상태로 변경
-        Payment.cancelPayment(payment);
+        Payment.cancelPayment(canceledPayment);
 
         // 취소된 티켓 1장만큼 판매된 티켓 수량 감소
-        updateSoldTicketCount(participant, payment);
+        updateSoldTicketCount(participant, canceledPayment);
 
         // DB 업데이트
-        Payment savedPayment = paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(canceledPayment);
 
         // 취소된 Payment 아이디 반환
         return savedPayment.getPaymentId();
+    }
+
+    /**
+     * 결제 금액에 따라 무료 티켓 취소 또는 유료 티켓 취소로 매핑
+     */
+    @Transactional
+    public void cancelTicket(Long participantId, String cancelReason) {
+        // Participant 객체 조회
+        Participant participant = participantRepository.findById(participantId).orElseThrow(
+                () -> new IllegalArgumentException("해당 티켓이 존재하지 않습니다.")
+        );
+        // Payment 객체 조회
+        Payment payment = participant.getPayment();
+
+        // 결제 취소할 금액 확인
+        int cancelAmount = payment.getTotalAmount();
+        if (cancelAmount == 0) {  // 무료 티켓 취소인 경우
+            cancelFreeTicket(participant, payment, cancelReason);
+        } else {  // 유료 티켓인 경우
+            cancelPayment(participant, payment, cancelReason);
+        }
     }
 
     /**
