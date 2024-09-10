@@ -14,6 +14,7 @@ import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class PosterService {
 
     private final PosterRepository posterRepository;
@@ -95,23 +97,33 @@ public class PosterService {
     }
 
     public Page<PosterDto> getPosters(Status status, int page, int size) {
-        // Member 정보
-        Member member = memberService.findMemberByEmail();
-
         // 페이징 조건 추가
         Pageable pageable = createPageable(page, size);
+
+        // Member 정보
+        Member member = memberService.findMemberByEmail();
 
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
                 .map(poster -> {
-                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
                 });
     }
 
+    public Page<PosterDto> getGuestPosters(Status status, int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = createPageable(page, size);
+
+        return posterRepository.findByStatus(status, pageable)
+                .map(poster -> {
+                    Boolean isLike = false;
+                    return new PosterDto(poster, isLike);
+                });
+    }
 
     public PosterDto getPoster(Long posterId, Status status) {
-        // Member 정보
+        // 유저 정보
         Member member = memberService.findMemberByEmail();
 
         // posterId로 해당 Poster 찾아오기
@@ -120,7 +132,20 @@ public class PosterService {
         );
 
         // 관심 등록 상태
-        boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+        Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+
+        // 찾은 Poster를 PosterDto에 담아 반환
+        return new PosterDto(poster, isLike);
+    }
+
+    public PosterDto getGuestPoster(Long posterId, Status status) {
+        // posterId로 해당 Poster 찾아오기
+        Poster poster = posterRepository.findByStatusAndPosterId(status, posterId).orElseThrow(
+                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
+        );
+
+        // 관심 등록 상태
+        Boolean isLike = false;
 
         // 찾은 Poster를 PosterDto에 담아 반환
         return new PosterDto(poster, isLike);
@@ -151,7 +176,7 @@ public class PosterService {
         // 조건에 맞는 데이터 조회
         return posterRepository.findByMember(member, pageable)
                 .map(poster -> {
-                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
                 });
     }
@@ -198,7 +223,7 @@ public class PosterService {
         // 페이징 반영해서 조회
         return posterRepository.findByPosterIdIn(posterIds, pageable)
                 .map(poster -> {
-                    boolean isLike = true;
+                    Boolean isLike = true;
                     return new PosterDto(poster, isLike);
                 });
     }
@@ -213,7 +238,19 @@ public class PosterService {
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
         return posterRepository.findByTitleContainingOrEventDescriptionContaining(keyword, keyword, pageable)
                 .map(poster -> {
-                    boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                    return new PosterDto(poster, isLike);
+                });
+    }
+
+    public Page<PosterDto> searchGuestPosters(String keyword, int page, int size) {
+        // 페이징 조건 추가
+        Pageable pageable = createPageable(page, size);
+
+        // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
+        return posterRepository.findByTitleContainingOrEventDescriptionContaining(keyword, keyword, pageable)
+                .map(poster -> {
+                    Boolean isLike = false;
                     return new PosterDto(poster, isLike);
                 });
     }

@@ -4,6 +4,7 @@ import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
@@ -79,7 +80,7 @@ public class MemberService {
 
     public Member findMemberByEmail() {
         String email = SecurityUtil.getCurrentMemberEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new GuestUserException(ResponseMessage.MEMBER_NO_EXIST.getMessage()));
         return member;
     }
 

@@ -38,7 +38,7 @@ public class PosterDto {
     private Boolean isLike;  // 사용자의 관심 등록 상태
     private int likeCount;  // 포스터의 관심 등록 수
 
-    public PosterDto(Poster poster, boolean isLike) {
+    public PosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
         this.title = poster.getTitle();
 

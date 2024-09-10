@@ -1,6 +1,7 @@
 package fete.be.domain.poster.web;
 
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
@@ -117,10 +118,20 @@ public class PosterController {
         // status를 Status enum 타입으로 변환
         Status findStatus = Status.valueOf(status);
 
-        List<PosterDto> posters = posterService.getPosters(findStatus, page, size).getContent();
-        GetPostersResponse result = new GetPostersResponse(posters);
+        try {
+            List<PosterDto> posters = posterService.getPosters(findStatus, page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(posters);
 
-        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 포스터 전체 조회 메서드 실행
+            List<PosterDto> posters = posterService.getGuestPosters(findStatus, page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(posters);
+
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (Exception e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
     }
 
 
@@ -133,15 +144,20 @@ public class PosterController {
     @GetMapping("/{posterId}")
     public ApiResponse<PosterDto> getPoster(
             @PathVariable("posterId") Long posterId,
-            @RequestParam(name = "status", defaultValue = "ACTIVE") String status) {
+            @RequestParam(name = "status", defaultValue = "ACTIVE") String status)
+    {
+        log.info("GetPoster request: posterId={}, status={}", posterId, status);
+        Logging.time();
+
+        // status를 Status enum 타입으로 변환
+        Status findStatus = Status.valueOf(status);
+
         try {
-            log.info("GetPoster request: posterId={}, status={}", posterId, status);
-            Logging.time();
-
-            // status를 Status enum 타입으로 변환
-            Status findStatus = Status.valueOf(status);
-
             PosterDto result = posterService.getPoster(posterId, findStatus);
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 포스터 전체 조회 메서드 실행
+            PosterDto result = posterService.getGuestPoster(posterId, findStatus);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.POSTER_INVALID_POSTER.getCode(), e.getMessage());
@@ -240,15 +256,21 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
+        log.info("SearchPosters request: request={}", request);
+        Logging.time();
+
+        // 키워드 추출
+        String keyword = request.getKeyword();
+
         try {
-            log.info("SearchPosters request: request={}", request);
-            Logging.time();
-
-            // 키워드 추출
-            String keyword = request.getKeyword();
-
             // 제목 또는 설명에 키워드가 포함되어 있는 포스터들 조회
             List<PosterDto> searchedPosters = posterService.searchPosters(keyword, page, size).getContent();
+            GetPostersResponse result = new GetPostersResponse(searchedPosters);
+
+            return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 검색 메서드 실행
+            List<PosterDto> searchedPosters = posterService.searchGuestPosters(keyword, page, size).getContent();
             GetPostersResponse result = new GetPostersResponse(searchedPosters);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
