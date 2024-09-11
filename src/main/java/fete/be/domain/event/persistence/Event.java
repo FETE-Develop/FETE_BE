@@ -45,6 +45,11 @@ public class Event {
 
     @Column(name = "description", length = 300)
     private String description;  // 이벤트 관련 상세 설명
+
+    @Column(name = "mood")
+    @Enumerated(EnumType.STRING)
+    private Mood mood;  // 이벤트 무드
+
     @Column(name = "genre")
     @Enumerated(EnumType.STRING)
     private Genre genre;  // 이벤트 장르
@@ -98,6 +103,7 @@ public class Event {
         }
 
         event.description = request.getDescription();
+        event.mood = Mood.convertMoodEnum(request.getMood());
         event.genre = request.getGenre();
         event.homepageUrl = request.getHomepageUrl();
 
@@ -131,6 +137,7 @@ public class Event {
         event.longitude = request.getPlace().getLongitude();
 
         event.description = request.getDescription();
+        event.mood = Mood.convertMoodEnum(request.getMood());
         event.genre = request.getGenre();
         event.homepageUrl = request.getHomepageUrl();
 

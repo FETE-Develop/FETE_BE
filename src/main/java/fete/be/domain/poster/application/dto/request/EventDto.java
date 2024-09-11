@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.Genre;
+import fete.be.domain.event.persistence.Mood;
 import fete.be.domain.event.persistence.TicketInfoDto;
 import lombok.Getter;
 import lombok.ToString;
@@ -22,6 +23,7 @@ public class EventDto {
     private Place place;   // 위치 정보
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
+    private String mood;  // 이벤트 무드
     private Genre genre;  // 이벤트 장르
     private String homepageUrl;  // 이벤트 관련 홈페이지 주소
     private List<ArtistDto> artists;  // 이벤트 라인업
