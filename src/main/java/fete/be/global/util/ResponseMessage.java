@@ -134,6 +134,10 @@ public enum ResponseMessage {
 
     // NOTICE
     NOTICE_NO_EXIST(1800, "해당 공지사항이 존재하지 않습니다."),
+    NOTICE_GET_SIMPLE_NOTICES(1801, "공지사항 전체 조회에 성공하였습니다."),
+    NOTICE_GET_SIMPLE_NOTICES_FAIL(1802, "공지사항 전체 조회에 실패하였습니다."),
+    NOTICE_GET_NOTICE(1803, "공지사항 단건 조회에 성공하였습니다."),
+    NOTICE_GET_NOTICE_FAIL(1804, "공지사항 단건 조회에 실패하였습니다."),
     ;
 
     private int code;
