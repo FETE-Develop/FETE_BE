@@ -107,6 +107,12 @@ public enum ResponseMessage {
     ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS(7030, "아티스트 프로필 이미지 등록이 성공하였습니다."),
     ADMIN_REGISTER_ARTIST_PROFILE_FAIL(7031, "아티스트 프로필 이미지 등록이 실패하였습니다."),
     ADMIN_INVALID_ARTIST_PROFILE_COUNT(7032, "아티스트 프로필 이미지 개수가 일치하지 않습니다."),
+    ADMIN_CREATE_NOTICE_SUCCESS(7033, "공지사항 생성이 성공하였습니다."),
+    ADMIN_CREATE_NOTICE_FAIL(7034, "공지사항 생성이 실패하였습니다."),
+    ADMIN_MODIFY_NOTICE_SUCCESS(7035, "공지사항 수정이 성공하였습니다."),
+    ADMIN_MODIFY_NOTICE_FAIL(7036, "공지사항 수정이 실패하였습니다."),
+    ADMIN_DELETE_NOTICE_SUCCESS(7037, "공지사항 삭제가 성공하였습니다."),
+    ADMIN_DELETE_NOTICE_FAIL(7038, "공지사항 삭제가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),
@@ -125,6 +131,9 @@ public enum ResponseMessage {
     // NOTIFICATION
     NOTIFICATION_STORE_FCM_TOKEN(1700, "유저의 FCM 키 저장이 성공하였습니다."),
     NOTIFICATION_STORE_FCM_TOKEN_FAILURE(1701, "유저의 FCM 키 저장이 실패하였습니다."),
+
+    // NOTICE
+    NOTICE_NO_EXIST(1800, "해당 공지사항이 존재하지 않습니다."),
     ;
 
     private int code;

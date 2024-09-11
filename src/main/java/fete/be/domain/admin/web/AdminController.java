@@ -4,9 +4,11 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
+import fete.be.domain.admin.exception.NotFoundNoticeException;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.notice.application.NoticeService;
 import fete.be.domain.notification.application.NotificationService;
 import fete.be.domain.notification.application.dto.request.PushMessageRequest;
 import fete.be.domain.payment.application.PaymentService;
@@ -37,6 +39,7 @@ public class AdminController {
     private final PopupService popupService;
     private final CategoryService categoryService;
     private final NotificationService notificationService;
+    private final NoticeService noticeService;
 
 
     /**
@@ -425,6 +428,73 @@ public class AdminController {
             return new ApiResponse(ResponseMessage.ADMIN_NOTIFICATION_FAILURE.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse(ResponseMessage.ADMIN_NOTIFICATION_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 공지사항 등록 API
+     *
+     * @param CreateNoticeRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/notices")
+    public ApiResponse createNotice(@RequestBody CreateNoticeRequest request) {
+        log.info("CreateNotice API: request={}", request);
+        Logging.time();
+
+        try {
+            // 공지사항 등록
+            noticeService.createNotice(request);
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_NOTICE_SUCCESS.getCode(), ResponseMessage.ADMIN_CREATE_NOTICE_SUCCESS.getMessage());
+        } catch (Exception e) {
+            return new ApiResponse(ResponseMessage.ADMIN_CREATE_NOTICE_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 공지사항 수정 API
+     *
+     * @param Long                noticeId
+     * @param ModifyNoticeRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/notices/{noticeId}")
+    public ApiResponse modifyNotice(
+            @PathVariable("noticeId") Long noticeId,
+            @RequestBody ModifyNoticeRequest request
+    ) {
+        log.info("ModifyNotice API: noticeId={}, request={}", noticeId, request);
+        Logging.time();
+
+        try {
+            // 공지사항 수정
+            noticeService.modifyNotice(noticeId, request);
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_NOTICE_SUCCESS.getCode(), ResponseMessage.ADMIN_MODIFY_NOTICE_SUCCESS.getMessage());
+        } catch (NotFoundNoticeException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_MODIFY_NOTICE_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 공지사항 삭제 API
+     *
+     * @param Long noticeId
+     * @return ApiResponse
+     */
+    @DeleteMapping("/notices/{noticeId}")
+    public ApiResponse deleteNotice(@PathVariable("noticeId") Long noticeId) {
+        log.info("DeleteNotice API: noticeId={}", noticeId);
+        Logging.time();
+
+        try {
+            // 공지사항 삭제
+            noticeService.deleteNotice(noticeId);
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_NOTICE_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_NOTICE_SUCCESS.getMessage());
+        } catch (NotFoundNoticeException e) {
+            return new ApiResponse(ResponseMessage.ADMIN_DELETE_NOTICE_FAIL.getCode(), e.getMessage());
         }
     }
 }
