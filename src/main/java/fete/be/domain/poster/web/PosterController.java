@@ -41,11 +41,8 @@ public class PosterController {
         log.info("WritePoster request={}", request);
         Logging.time();
 
-        // 현재 요청한 Member의 email을 추출해서 member 찾아오기
-        Member findMember = memberService.findMemberByEmail();
-
-        // request 정보, 찾은 member 정보를 서비스 단으로 넘겨서 포스터 생성 및 저장
-        Long savedPosterId = posterService.writePoster(findMember, request);
+        // 포스터 등록 실행
+        Long savedPosterId = posterService.writePoster(request);
 
         return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
     }

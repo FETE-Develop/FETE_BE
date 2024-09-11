@@ -41,7 +41,10 @@ public class PosterService {
 
 
     @Transactional
-    public Long writePoster(Member member, WritePosterRequest request) {
+    public Long writePoster(WritePosterRequest request) {
+        // 현재 요청한 Member의 email을 추출해서 member 찾아오기
+        Member member = memberService.findMemberByEmail();
+
         Poster poster = Poster.createPoster(member, request);
         Poster savedPoster = posterRepository.save(poster);
 
