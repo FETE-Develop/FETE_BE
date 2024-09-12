@@ -1,4 +1,4 @@
-package fete.be.domain.event.application.dto;
+package fete.be.domain.event.application.dto.request;
 
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import lombok.Getter;

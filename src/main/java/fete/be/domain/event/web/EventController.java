@@ -2,9 +2,10 @@ package fete.be.domain.event.web;
 
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
-import fete.be.domain.event.application.dto.BuyTicketRequest;
-import fete.be.domain.event.application.dto.BuyTicketResponse;
-import fete.be.domain.event.application.dto.ParticipantDto;
+import fete.be.domain.event.application.dto.request.BuyTicketRequest;
+import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
+import fete.be.domain.event.application.dto.response.BuyTicketResponse;
+import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.domain.event.exception.IncorrectTicketPriceException;
 import fete.be.domain.event.exception.IncorrectTicketTypeException;
@@ -78,6 +79,34 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 구매하려는 티켓의 수량이 충분한지 확인하는 API
+     */
+    @PostMapping("/{posterId}/tickets/check")
+    public ApiResponse checkTicketsQuantity(
+            @PathVariable("posterId") Long posterId,
+            @RequestBody CheckTicketsQuantityRequest checkTicketsQuantityRequest
+    ) {
+        log.info("CheckTicketsQuantity request: {}", checkTicketsQuantityRequest);
+        Logging.time();
+
+        try {
+            // 티켓 수량 검사
+            eventService.checkTicketsQuantity(posterId, checkTicketsQuantityRequest);
+
+            return new ApiResponse<>(ResponseMessage.TICKET_ENOUGH_QUANTITY.getCode(), ResponseMessage.TICKET_ENOUGH_QUANTITY.getMessage());
+        } catch (InsufficientTicketsException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
+        } catch (IncorrectTicketPriceException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
+        } catch (IncorrectTicketTypeException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
         }
     }
 
