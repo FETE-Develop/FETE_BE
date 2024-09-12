@@ -2,12 +2,10 @@ package fete.be.domain.event.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.*;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
-import fete.be.domain.event.application.dto.ParticipantDto;
+import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
@@ -19,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -1,4 +1,4 @@
-package fete.be.domain.event.application.dto;
+package fete.be.domain.event.application.dto.request;
 
 import lombok.Getter;
 import lombok.ToString;
