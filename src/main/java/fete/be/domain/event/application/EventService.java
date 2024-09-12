@@ -1,7 +1,8 @@
 package fete.be.domain.event.application;
 
-import fete.be.domain.event.application.dto.BuyTicketDto;
-import fete.be.domain.event.application.dto.BuyTicketRequest;
+import fete.be.domain.event.application.dto.request.BuyTicketDto;
+import fete.be.domain.event.application.dto.request.BuyTicketRequest;
+import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.domain.event.exception.IncorrectTicketPriceException;
 import fete.be.domain.event.exception.IncorrectTicketTypeException;
@@ -18,6 +19,7 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
+import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -123,30 +125,13 @@ public class EventService {
         // 실제 DB의 티켓 정보
         List<Ticket> tickets = poster.getEvent().getTickets();
 
+        // 요청 결제 정보
         int ticketPrice = requestTicket.getTicketPrice();
         int ticketNumber = requestTicket.getTicketNumber();
         String ticketType = requestTicket.getTicketType();
 
-        // 결제 요청 정보와 실제 DB 정보와 일치하는지 검증
-        boolean findTicketType = false;
-        for (Ticket ticket : tickets) {
-            if (ticket.getTicketType().equals(ticketType)) {
-                findTicketType = true;
-                // 결제 요청된 티켓의 수량만큼 구매 가능한지 검사
-                if (!Ticket.canBuyTicket(ticket, ticketNumber)) {
-                    throw new InsufficientTicketsException("티켓의 수량이 충분하지 않습니다.");
-                }
-                // 결제 요청된 티켓 가격과 실제 티켓 가격 비교
-                if (ticket.getTicketPrice() != ticketPrice) {
-                    throw new IncorrectTicketPriceException("티켓의 가격이 올바르지 않습니다.");
-                }
-            }
-        }
-
-        // 티켓의 종류가 일치하는 것이 없는 경우
-        if (!findTicketType) {
-            throw new IncorrectTicketTypeException("티켓의 종류가 올바르지 않습니다.");
-        }
+        // 티켓 정보 검증
+        canBuy(requestTicket, tickets);
 
         // 티켓 개수만큼 Participant 객체 생성해서 리스트에 넣기
         for (int i = 0; i < ticketNumber; i++) {
@@ -212,5 +197,50 @@ public class EventService {
         // QR 코드 발급
         String qrCodeBase64 = qrCodeService.generateQRCodeBase64(participant, 250, 250);
         return qrCodeBase64;
+    }
+
+    /**
+     * 구매하려는 티켓의 수량이 충분한지 확인하는 메서드
+     */
+    public void checkTicketsQuantity(Long posterId, CheckTicketsQuantityRequest request) {
+        // posterId로 포스터 찾기
+        Poster poster = posterService.findPosterByPosterId(posterId);
+
+        // 실제 DB의 티켓 정보
+        List<Ticket> tickets = poster.getEvent().getTickets();
+
+        // 결제 정보 검증
+        List<BuyTicketDto> requestTickets = request.getTickets();
+        for (BuyTicketDto requestTicket : requestTickets) {
+            canBuy(requestTicket, tickets);
+        }
+    }
+
+    private void canBuy(BuyTicketDto requestTicket, List<Ticket> tickets) {
+        // 요청 결제 정보
+        int ticketPrice = requestTicket.getTicketPrice();
+        int ticketNumber = requestTicket.getTicketNumber();
+        String ticketType = requestTicket.getTicketType();
+
+        // 결제 요청 정보와 실제 DB 정보와 일치하는지 검증
+        boolean findTicketType = false;
+        for (Ticket ticket : tickets) {
+            if (ticket.getTicketType().equals(ticketType)) {
+                findTicketType = true;
+                // 결제 요청된 티켓의 수량만큼 구매 가능한지 검사
+                if (!Ticket.canBuyTicket(ticket, ticketNumber)) {
+                    throw new InsufficientTicketsException(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getMessage());
+                }
+                // 결제 요청된 티켓 가격과 실제 티켓 가격 비교
+                if (ticket.getTicketPrice() != ticketPrice) {
+                    throw new IncorrectTicketPriceException(ResponseMessage.TICKET_INVALID_AMOUNT.getMessage());
+                }
+            }
+        }
+
+        // 티켓의 종류가 일치하는 것이 없는 경우
+        if (!findTicketType) {
+            throw new IncorrectTicketTypeException(ResponseMessage.TICKET_INVALID_TYPE.getMessage());
+        }
     }
 }
