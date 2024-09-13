@@ -4,6 +4,7 @@ import fete.be.domain.event.persistence.Event;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
 import fete.be.domain.ticket.persistence.Participant;
+import fete.be.global.util.UUIDGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -36,6 +37,8 @@ public class Payment {
 
     @Column(name = "is_paid")
     private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
+    @Column(name = "payment_code")
+    private String paymentCode;  // 결제 시, 발급 받는 고유의 결제번호
 
     // 토스에서 제공하는 응답 값 (중요)-----------
     private int totalAmount;  // 총 결제 금액
@@ -79,18 +82,20 @@ public class Payment {
     // 결제 완료로 전환
     public static void completePayment(Payment payment) {
         payment.isPaid = true;
-
-        LocalDateTime currentTime = LocalDateTime.now();
-        payment.paymentAt = currentTime;
+        payment.paymentAt = LocalDateTime.now();
     }
 
     // 결제 취소로 전환
     public static void cancelPayment(Payment payment) {
         payment.isPaid = false;
         payment.totalAmount = 0;  // 결제 취소되었기 때문에 결제 금액을 0원으로 변경
+        payment.updatedAt = LocalDateTime.now();
+    }
 
-        LocalDateTime currentTime = LocalDateTime.now();
-        payment.updatedAt = currentTime;
+    // 결제번호 생성
+    public static void generatePaymentCode(Payment payment, String paymentCode) {
+        payment.paymentCode = paymentCode;
+        payment.updatedAt = LocalDateTime.now();
     }
 
     // 토스 응답 값 업데이트 메서드
@@ -100,9 +105,7 @@ public class Payment {
         payment.method = tossPaymentResponse.getMethod();
         payment.paymentKey = tossPaymentResponse.getPaymentKey();
         payment.orderId = tossPaymentResponse.getOrderId();
-
-        LocalDateTime currentTime = LocalDateTime.now();
-        payment.paymentAt = currentTime;
+        payment.paymentAt = LocalDateTime.now();
 
         return payment;
     }
@@ -111,9 +114,7 @@ public class Payment {
     public static Payment updateTossCancelInfo(Payment payment, String lastTransactionKey, String cancelReason) {
         payment.lastTransactionKey = lastTransactionKey;
         payment.cancelReason = cancelReason;
-
-        LocalDateTime currentTime = LocalDateTime.now();
-        payment.updatedAt = currentTime;
+        payment.updatedAt = LocalDateTime.now();
 
         return payment;
     }
@@ -121,9 +122,7 @@ public class Payment {
     // 무료 티켓 취소 시, 필드 업데이트
     public static Payment updateCancelInfo(Payment payment, String cancelReason) {
         payment.cancelReason = cancelReason;
-
-        LocalDateTime currentTime = LocalDateTime.now();
-        payment.updatedAt = currentTime;
+        payment.updatedAt = LocalDateTime.now();
 
         return payment;
     }
