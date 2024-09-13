@@ -20,6 +20,7 @@ import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.global.util.ResponseMessage;
+import fete.be.global.util.UUIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,9 @@ public class EventService {
         // 1. 무료 이벤트일 때
         if (requestAmount == FREE) {
             // 티켓 개수만큼 QR 코드 발급
+            String paymentCode = UUIDGenerator.generateUUID();
             for (Participant participant : participants) {
+                updatePaymentInfo(participant, paymentCode);
                 qrCodes.add(makeQRCode(participant));
             }
             return qrCodes;
@@ -110,11 +113,25 @@ public class EventService {
         List<Participant> paidParticipants = tossService.executePayment(tossPaymentRequest, participants);
 
         // 3) 결제가 성공적으로 완료되었을 때, QR 코드 발급
+        String paymentCode = UUIDGenerator.generateUUID();
         for (Participant participant : paidParticipants) {
+            updatePaymentInfo(participant, paymentCode);
             qrCodes.add(makeQRCode(participant));
         }
 
         return qrCodes;
+    }
+
+    /**
+     * 결제 정보 업데이트
+     */
+    private void updatePaymentInfo(Participant participant, String paymentCode) {
+        // 결제 완료로 변경
+        Payment.completePayment(participant.getPayment());
+        // 총 수익 반영
+        Event.updateTotalProfit(participant.getEvent(), participant.getPayment().getTotalAmount());
+        // 결제번호 발급
+        Payment.generatePaymentCode(participant.getPayment(), paymentCode);
     }
 
     /**
@@ -188,12 +205,6 @@ public class EventService {
      * Participant에 QR 코드를 1개 발급해주는 메서드
      */
     private String makeQRCode(Participant participant) throws Exception {
-        // 결제 완료로 변경
-        Payment.completePayment(participant.getPayment());
-
-        // 총 수익 반영
-        Event.updateTotalProfit(participant.getEvent(), participant.getPayment().getTotalAmount());
-
         // QR 코드 발급
         String qrCodeBase64 = qrCodeService.generateQRCodeBase64(participant, 250, 250);
         return qrCodeBase64;

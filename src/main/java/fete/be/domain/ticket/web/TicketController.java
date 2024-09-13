@@ -1,13 +1,13 @@
 package fete.be.domain.ticket.web;
 
+import fete.be.domain.event.exception.NotFoundEventException;
+import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.payment.application.TossService;
-import fete.be.domain.payment.application.dto.request.TossCancelRequest;
 import fete.be.domain.payment.exception.InvalidCancelReasonException;
 import fete.be.domain.payment.exception.InvalidPaymentStatusException;
 import fete.be.domain.ticket.application.dto.request.CancelTicketsRequest;
-import fete.be.domain.ticket.application.dto.response.GetTicketInfoResponse;
-import fete.be.domain.ticket.application.dto.response.GetTicketsResponse;
-import fete.be.domain.ticket.application.dto.response.TicketDto;
+import fete.be.domain.ticket.application.dto.request.GetEventTicketsRequest;
+import fete.be.domain.ticket.application.dto.response.*;
 import fete.be.domain.ticket.application.TicketService;
 import fete.be.domain.ticket.exception.InvalidRefundAmountException;
 import fete.be.global.util.ApiResponse;
@@ -30,19 +30,54 @@ public class TicketController {
 
 
     /**
-     * 구매한 티켓 조회 API
+     * 구매한 티켓의 이벤트 목록 조회 API
      *
-     * @return ApiResponse<GetTicketsResponse>
+     * @return ApiResponse<GetMyTicketsEventResponse>
      */
     @GetMapping
-    public ApiResponse<GetTicketsResponse> getTickets() {
+    public ApiResponse<GetMyTicketsEventResponse> getEvents() {
         log.info("GetTickets request");
         Logging.time();
 
-        List<TicketDto> tickets = ticketService.getTickets();
-        GetTicketsResponse result = new GetTicketsResponse(tickets);
+        try {
+            List<TicketEventDto> ticketEventInfos = ticketService.getEvents();
+            GetMyTicketsEventResponse result = new GetMyTicketsEventResponse(ticketEventInfos);
 
-        return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);
+            return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_NO_EXIST.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 이벤트에서 구매한 나의 티켓 주문 내역 조회 API
+     * - eventId와 paymentCode를 전달 받기
+     * @return 이벤트 정보, 해당 이벤트에서 주문한 티켓 정보들(결제 상태, 가격, 종류, participantId)
+     * -> eventId로 이벤트 정보 조회(이벤트 이름, 시작 시간, 종료 시간, 주소, 대표 이미지)
+     * -> paymentCode로 Payment(=티켓) 조회(결제 상태, 가격, 종류, participantId)해서 리스트화
+     */
+    @GetMapping("/event-tickets")
+    public ApiResponse<GetEventTicketsResponse> getEventTickets(@RequestBody GetEventTicketsRequest request) {
+        log.info("GetEventTickets request={}", request);
+        Logging.time();
+
+        // 요청 값 추출
+        Long eventId = request.getEventId();
+        String paymentCode = request.getPaymentCode();
+
+        try {
+            // 이벤트 정보
+            SimpleEventDto eventDto = ticketService.getEventInfo(eventId);
+
+            // 해당 이벤트에서 주문한 티켓 정보들
+            List<SimpleTicketDto> ticketDtos = ticketService.getTickets(paymentCode);
+
+            GetEventTicketsResponse result = new GetEventTicketsResponse(eventDto, ticketDtos);
+            return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);
+        } catch (NotFoundEventException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_NO_EXIST.getCode(), e.getMessage());
+        }
     }
 
 
