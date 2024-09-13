@@ -7,6 +7,7 @@ import fete.be.domain.event.persistence.TicketInfoDto;
 import fete.be.domain.poster.application.dto.request.Place;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.poster.persistence.PosterImage;
+import fete.be.global.util.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -38,6 +39,7 @@ public class PosterDto {
 
     private Boolean isLike;  // 사용자의 관심 등록 상태
     private int likeCount;  // 포스터의 관심 등록 수
+    private Status status;  // 포스터 상태
 
     public PosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
@@ -78,5 +80,6 @@ public class PosterDto {
 
         this.isLike = isLike;
         this.likeCount = poster.getLikeCount();
+        this.status = poster.getStatus();
     }
 }
