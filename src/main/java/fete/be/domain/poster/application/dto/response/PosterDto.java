@@ -51,7 +51,8 @@ public class PosterDto {
         this.eventName = poster.getEvent().getEventName();
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
-        this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
+        this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getSimpleAddress(),
+                poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(

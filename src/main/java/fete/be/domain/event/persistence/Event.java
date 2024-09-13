@@ -35,6 +35,8 @@ public class Event {
 
     @Column(name = "address")
     private String address;  // 주소
+    @Column(name = "simple_address")
+    private String simpleAddress;  // 간단 주소
     @Column(name = "latitude")
     private double latitude;  // 위도
     @Column(name = "longitude")
@@ -93,6 +95,7 @@ public class Event {
         event.endDate = request.getEndDate();
 
         event.address = request.getPlace().getAddress();
+        event.simpleAddress = request.getPlace().getSimpleAddress();
         event.latitude = request.getPlace().getLatitude();
         event.longitude = request.getPlace().getLongitude();
 
@@ -133,6 +136,7 @@ public class Event {
         event.endDate = request.getEndDate();
 
         event.address = request.getPlace().getAddress();
+        event.simpleAddress = request.getPlace().getSimpleAddress();
         event.latitude = request.getPlace().getLatitude();
         event.longitude = request.getPlace().getLongitude();
 
