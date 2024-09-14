@@ -24,8 +24,6 @@ public class FirebaseConfig {
     FirebaseApp initFirebase() throws IOException {
         ByteArrayInputStream serviceAccount = new ByteArrayInputStream(Base64Util.decodeBytes(serviceAccountBase64));
 
-//        InputStream serviceAccount = new ClassPathResource("firebase/firebase-adminsdk.json").getInputStream();
-
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
