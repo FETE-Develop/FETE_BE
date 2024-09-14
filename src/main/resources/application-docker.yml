@@ -64,6 +64,13 @@ kakao:
   client-secret: ${KAKAO_CLIENT_SECRET}
   redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:8080/login/oauth2/code/kakao}
 
+aws:
+  s3:
+    bucket-name: ${AWS_S3_BUCKET_NAME}
+  region: ${AWS_REGION}
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+
 firebase:
   service-account: ${FIREBASE_SERVICE_ACCOUNT}
 
