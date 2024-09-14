@@ -57,7 +57,7 @@ public class TicketController {
      * -> eventId로 이벤트 정보 조회(이벤트 이름, 시작 시간, 종료 시간, 주소, 대표 이미지)
      * -> paymentCode로 Payment(=티켓) 조회(결제 상태, 가격, 종류, participantId)해서 리스트화
      */
-    @GetMapping("/event-tickets")
+    @PostMapping("/event-tickets")
     public ApiResponse<GetEventTicketsResponse> getEventTickets(@RequestBody GetEventTicketsRequest request) {
         log.info("GetEventTickets request={}", request);
         Logging.time();
