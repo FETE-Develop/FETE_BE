@@ -74,3 +74,5 @@ aws:
 firebase:
   service-account: ${FIREBASE_SERVICE_ACCOUNT}
 
+logging.level:
+  org.hibernate.SQL: info
