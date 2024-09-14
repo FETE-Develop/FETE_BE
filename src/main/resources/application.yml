@@ -2,22 +2,5 @@ spring:
   config:
     import: application-secret.yml
 
-  jpa:
-    open-in-view: false
-    database-platform: org.hibernate.dialect.H2Dialect
-    hibernate:
-      ddl-auto: create
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 10MB
-      max-request-size: 10MB
-
 logging.level:
   org.hibernate.SQL: info
