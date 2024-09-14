@@ -142,6 +142,13 @@ public enum ResponseMessage {
     NOTICE_GET_SIMPLE_NOTICES_FAIL(1802, "공지사항 전체 조회에 실패하였습니다."),
     NOTICE_GET_NOTICE(1803, "공지사항 단건 조회에 성공하였습니다."),
     NOTICE_GET_NOTICE_FAIL(1804, "공지사항 단건 조회에 실패하였습니다."),
+
+    // IMAGE
+    S3_UPLOAD_SUCCESS(1900, "이미지 업로드가 성공하였습니다."),
+    S3_UPLOAD_FAIL(1901, "이미지 업로드가 실패하였습니다."),
+    AWS_SDK_ERROR(1902, "AWS SDK에 오류가 발생했습니다."),
+    IMAGE_DUPLICATE(1903, "중복 이미지가 존재합니다."),
+    INVALID_EXTENSION(1904, "이미지의 확장자가 올바르지 않습니다."),
     ;
 
     private int code;
