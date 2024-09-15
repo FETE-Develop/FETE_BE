@@ -5,8 +5,10 @@ import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.domain.member.application.dto.response.SocialLoginResponse;
+import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
 import fete.be.domain.member.oauth.kakao.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.oauth.apple.dto.AppleLoginRequest;
@@ -256,7 +258,7 @@ public class MemberController {
 
             Long grantedMemberId = memberService.grantAdmin(request);
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_OK.getCode(), ResponseMessage.MEMBER_ADMIN_OK.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (GuestUserException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_REJECT.getCode(), e.getMessage());
         }
     }
@@ -276,8 +278,25 @@ public class MemberController {
 
             Long modifiedMemberId = memberService.modify(request);
             return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_SUCCESS.getCode(), ResponseMessage.MEMBER_MODIFY_SUCCESS.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (GuestUserException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 회원 프로필 조회 API
+     */
+    @GetMapping("/my-profile")
+    public ApiResponse<GetMyProfileResponse> getMyProfile() {
+        log.info("GetMyProfile API");
+        Logging.time();
+
+        try {
+            GetMyProfileResponse result = memberService.getMyProfile();
+            return new ApiResponse<>(ResponseMessage.MEMBER_GET_PROFILE_SUCCESS.getCode(), ResponseMessage.MEMBER_GET_PROFILE_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_GET_PROFILE_FAIL.getCode(), e.getMessage());
         }
     }
 }

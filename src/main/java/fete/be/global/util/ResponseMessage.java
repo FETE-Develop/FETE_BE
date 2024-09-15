@@ -17,6 +17,8 @@ public enum ResponseMessage {
     MEMBER_MODIFY_FAILURE(604, "회원 정보 변경에 실패하였습니다."),
     MEMBER_NO_EXIST(605, "해당 회원이 존재하지 않습니다."),
     MEMBER_BLOCKED(606, "차단된 회원입니다."),
+    MEMBER_GET_PROFILE_SUCCESS(607, "프로필 조회에 성공하였습니다."),
+    MEMBER_GET_PROFILE_FAIL(608, "프로필 조회에 실패하였습니다."),
 
     // EMAIL
     EMAIL_SEND_SUCCESS(700, "이메일 전송이 성공하였습니다."),
