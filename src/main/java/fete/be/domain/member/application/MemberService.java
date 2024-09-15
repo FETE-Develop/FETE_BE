@@ -4,6 +4,7 @@ import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
@@ -155,5 +156,11 @@ public class MemberService {
     public List<String> getAllTokens() {
         List<String> tokens = memberRepository.findByFcmTokenIsNotNull();
         return tokens;
+    }
+
+    public GetMyProfileResponse getMyProfile() {
+        // 유저 조회
+        Member member = findMemberByEmail();
+        return new GetMyProfileResponse(member);
     }
 }
