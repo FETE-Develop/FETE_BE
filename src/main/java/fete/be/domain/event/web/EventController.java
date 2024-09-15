@@ -1,11 +1,12 @@
 package fete.be.domain.event.web;
 
+import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
+import fete.be.domain.event.application.dto.request.VerifyQRCodeRequest;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
-import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.domain.event.exception.IncorrectTicketPriceException;
 import fete.be.domain.event.exception.IncorrectTicketTypeException;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -67,21 +69,48 @@ public class EventController {
     @PostMapping("/verify/{posterId}")
     public ApiResponse verifyQRCode(
             @PathVariable("posterId") Long posterId,
-            @RequestBody ParticipantDto participantDto
+            @RequestBody VerifyQRCodeRequest request
     ) {
-        try {
-            log.info("VerifyQRCode request: posterId={}, body={}", posterId, participantDto);
-            Logging.time();
+        log.info("VerifyQRCode request: posterId={}", posterId);
+        Logging.time();
 
+        // QR 정보 (Base64Image)
+        String value = request.getValue();
+
+        try {
             // 유저의 QR 코드 검증, 이벤트 장소 검증
-            Long participantId = qrCodeService.verifyQRCode(posterId, participantDto);
+            Long participantId = qrCodeService.verifyQRCode(posterId, value);
 
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
+//
+//    @PostMapping("/verify")
+//    public ApiResponse verifyQRCode(
+//            @RequestPart("posterId") Long posterId,
+//            @RequestPart MultipartFile file
+//    ) {
+//        try {
+//
+//            // 유저의 QR 코드 검증, 이벤트 장소 검증
+//            Long participantId = qrCodeService.verifyQRCode(file, posterId);
+//
+//            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
+//        } catch (IllegalArgumentException e) {
+//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+//        } catch (NotFoundException e) {
+//            throw new RuntimeException(e);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     /**
      * 구매하려는 티켓의 수량이 충분한지 확인하는 API
