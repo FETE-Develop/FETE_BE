@@ -44,8 +44,9 @@ public class TicketService {
                     List<Participant> participants = entry.getValue();
 
                     Event event = participants.get(0).getEvent();
+                    Payment payment = participants.get(0).getPayment();
 
-                    return new TicketEventDto(event, entry.getKey());
+                    return new TicketEventDto(event, payment, entry.getKey());
                 })
                 .collect(Collectors.toList());
     }

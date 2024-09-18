@@ -29,7 +29,7 @@ public class Participant {
     private Payment payment;  // 결제 상태
 
     @Column(name = "is_participated")
-    private Boolean isParticipated;  // 참여 여부
+    private Boolean isParticipated;  // 티켓 사용 여부
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
     @Column(name = "updated_at")
