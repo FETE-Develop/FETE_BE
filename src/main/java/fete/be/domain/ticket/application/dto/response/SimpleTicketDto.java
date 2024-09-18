@@ -11,11 +11,13 @@ public class SimpleTicketDto {
     private String ticketType;
     private int ticketPrice;
     private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
+    private Boolean isParticipated;  // 티켓 사용 여부
 
     public SimpleTicketDto(Payment payment) {
         this.participantId = payment.getParticipant().getParticipantId();
         this.ticketType = payment.getTicketType();
         this.ticketPrice = payment.getTicketPrice();
         this.isPaid = payment.getIsPaid();
+        this.isParticipated = payment.getParticipant().getIsParticipated();
     }
 }
