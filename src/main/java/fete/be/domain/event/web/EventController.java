@@ -1,16 +1,16 @@
 package fete.be.domain.event.web;
 
-import com.google.zxing.NotFoundException;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
-import fete.be.domain.event.application.dto.request.VerifyQRCodeRequest;
+import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
 import fete.be.domain.event.exception.IncorrectPaymentAmountException;
 import fete.be.domain.event.exception.IncorrectTicketPriceException;
 import fete.be.domain.event.exception.IncorrectTicketTypeException;
 import fete.be.domain.event.exception.InsufficientTicketsException;
+import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -69,25 +68,18 @@ public class EventController {
     @PostMapping("/verify/{posterId}")
     public ApiResponse verifyQRCode(
             @PathVariable("posterId") Long posterId,
-            @RequestBody VerifyQRCodeRequest request
+            @RequestBody ParticipantDto request
     ) {
         log.info("VerifyQRCode request: posterId={}", posterId);
         Logging.time();
 
-        // QR 정보 (Base64Image)
-        String value = request.getValue();
-
         try {
             // 유저의 QR 코드 검증, 이벤트 장소 검증
-            Long participantId = qrCodeService.verifyQRCode(posterId, value);
+            Long participantId = qrCodeService.verifyQRCode(posterId, request);
 
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundPosterException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
-        } catch (NotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

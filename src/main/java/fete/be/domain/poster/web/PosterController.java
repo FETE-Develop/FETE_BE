@@ -2,7 +2,6 @@ package fete.be.domain.poster.web;
 
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.exception.GuestUserException;
-import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.SearchPostersRequest;
@@ -157,7 +156,7 @@ public class PosterController {
             PosterDto result = posterService.getGuestPoster(posterId, findStatus);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.POSTER_INVALID_POSTER.getCode(), e.getMessage());
+            return new ApiResponse<>(ResponseMessage.POSTER_NO_EXIST.getCode(), e.getMessage());
         }
     }
 
