@@ -1,6 +1,8 @@
 package fete.be.domain.poster.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
@@ -40,6 +42,9 @@ public class PosterDto {
     private Boolean isLike;  // 사용자의 관심 등록 상태
     private int likeCount;  // 포스터의 관심 등록 수
     private Status status;  // 포스터 상태
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private AccountDto account;  // 결제 정보
 
     public PosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
@@ -81,5 +86,49 @@ public class PosterDto {
         this.isLike = isLike;
         this.likeCount = poster.getLikeCount();
         this.status = poster.getStatus();
+    }
+
+    public PosterDto(Poster poster, Boolean isLike, AccountDto account) {
+        this.posterId = poster.getPosterId();
+        this.title = poster.getTitle();
+
+        this.posterImages = poster.getPosterImages().stream()
+                .map(PosterImage::getImageUrl)
+                .collect(Collectors.toList());
+
+        this.institution = poster.getInstitution();
+        this.eventName = poster.getEvent().getEventName();
+        this.startDate = poster.getEvent().getStartDate();
+        this.endDate = poster.getEvent().getEndDate();
+        this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getSimpleAddress(),
+                poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
+
+        this.tickets = poster.getEvent().getTickets().stream()
+                .map(ticket -> new TicketInfoDto(
+                        ticket.getTicketType(),
+                        ticket.getDescription(),
+                        ticket.getTicketPrice(),
+                        ticket.getMaxTicketCount()
+                ))
+                .collect(Collectors.toList());
+
+        this.description = poster.getEvent().getDescription();
+        this.mood = poster.getEvent().getMood().getKoreanValue();
+        this.genre = poster.getEvent().getGenre();
+        this.homepageUrl = poster.getEvent().getHomepageUrl();
+
+        this.artists = poster.getEvent().getArtists().stream()
+                .map(artist -> new ArtistDto(
+                        artist.getName(),
+                        artist.getInfoUrl(),
+                        artist.getImageUrl()
+                ))
+                .collect(Collectors.toList());
+
+        this.isLike = isLike;
+        this.likeCount = poster.getLikeCount();
+        this.status = poster.getStatus();
+
+        this.account = account;
     }
 }

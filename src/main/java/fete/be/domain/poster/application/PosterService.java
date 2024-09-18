@@ -1,11 +1,13 @@
 package fete.be.domain.poster.application;
 
 import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
+import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
 import fete.be.domain.event.persistence.*;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
+import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -137,6 +139,13 @@ public class PosterService {
 
         // 관심 등록 상태
         Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+
+        // 이벤트 등록자라면, 계좌 정보를 포함하여 반환
+        AccountDto account;
+        if (member.equals(poster.getMember())) {
+            account = new AccountDto(poster.getEvent().getAccountNumber(), poster.getEvent().getBankName());
+            return new PosterDto(poster, isLike, account);
+        }
 
         // 찾은 Poster를 PosterDto에 담아 반환
         return new PosterDto(poster, isLike);
