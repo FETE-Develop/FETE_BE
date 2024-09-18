@@ -162,7 +162,7 @@ public class PosterController {
 
 
     /**
-     * 자신이 등록한 포스터 조회 API
+     * 내가 등록한 포스터 조회 API
      *
      * @param int page
      * @param int size

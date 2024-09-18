@@ -178,7 +178,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail();
 
         // 조건에 맞는 데이터 조회
-        return posterRepository.findByMember(member, pageable)
+        return posterRepository.findByMemberAndStatusNot(member, Status.DELETE, pageable)
                 .map(poster -> {
                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
