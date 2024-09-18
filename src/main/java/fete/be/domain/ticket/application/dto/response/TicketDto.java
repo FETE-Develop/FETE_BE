@@ -22,6 +22,11 @@ public class TicketDto {
     private String ticketType;
     private int ticketPrice;
     private Boolean isPaid;  // 결제 상태 : 지불 = true, 미지불 = false
+    private int totalAmount;  // 총 결제 금액
+    private String method;  // 결제 수단
+    private String cancelReason;  // 취소 사유
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime paymentAt;  // 결제일자
 
     public TicketDto(Participant participant) {
         this.participantId = participant.getParticipantId();
@@ -33,5 +38,9 @@ public class TicketDto {
         this.ticketType = participant.getPayment().getTicketType();
         this.ticketPrice = participant.getPayment().getTicketPrice();
         this.isPaid = participant.getPayment().getIsPaid();
+        this.totalAmount = participant.getPayment().getTotalAmount();
+        this.method = participant.getPayment().getMethod();
+        this.cancelReason = participant.getPayment().getCancelReason();
+        this.paymentAt = participant.getPayment().getPaymentAt();
     }
 }
