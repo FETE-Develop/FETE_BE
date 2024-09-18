@@ -9,6 +9,7 @@ import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
+import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
@@ -58,7 +59,7 @@ public class PosterService {
 
     public Poster findPosterByPosterId(Long posterId) {
         return posterRepository.findById(posterId).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage()));
+                () -> new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage()));
     }
 
     @Transactional
@@ -131,7 +132,7 @@ public class PosterService {
 
         // posterId로 해당 Poster 찾아오기
         Poster poster = posterRepository.findByStatusAndPosterId(status, posterId).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
+                () -> new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage())
         );
 
         // 관심 등록 상태
@@ -144,7 +145,7 @@ public class PosterService {
     public PosterDto getGuestPoster(Long posterId, Status status) {
         // posterId로 해당 Poster 찾아오기
         Poster poster = posterRepository.findByStatusAndPosterId(status, posterId).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage())
+                () -> new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage())
         );
 
         // 관심 등록 상태
@@ -161,7 +162,7 @@ public class PosterService {
 
         // 승인 요청한 포스터의 수와 찾은 포스터의 수가 일치하지 않는 경우
         if (posters.size() != posterIds.size()) {
-            throw new IllegalArgumentException(ResponseMessage.POSTER_INVALID_POSTER.getMessage());
+            throw new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage());
         }
 
         for (Poster poster : posters) {
