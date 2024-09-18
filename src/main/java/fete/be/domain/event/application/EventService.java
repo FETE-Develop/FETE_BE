@@ -3,10 +3,7 @@ package fete.be.domain.event.application;
 import fete.be.domain.event.application.dto.request.BuyTicketDto;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
-import fete.be.domain.event.exception.IncorrectPaymentAmountException;
-import fete.be.domain.event.exception.IncorrectTicketPriceException;
-import fete.be.domain.event.exception.IncorrectTicketTypeException;
-import fete.be.domain.event.exception.InsufficientTicketsException;
+import fete.be.domain.event.exception.*;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.TossService;
@@ -252,6 +249,17 @@ public class EventService {
         // 티켓의 종류가 일치하는 것이 없는 경우
         if (!findTicketType) {
             throw new IncorrectTicketTypeException(ResponseMessage.TICKET_INVALID_TYPE.getMessage());
+        }
+    }
+
+    public void checkEventManager(Long posterId) {
+        Member member = memberService.findMemberByEmail();
+
+        Poster poster = posterService.findPosterByPosterId(posterId);
+        Member manager = poster.getMember();
+
+        if (!member.equals(manager)) {
+            throw new IncorrectEventManagerException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
         }
     }
 }
