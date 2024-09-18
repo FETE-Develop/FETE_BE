@@ -1,15 +1,16 @@
 package fete.be.domain.event.web;
 
+import fete.be.domain.admin.application.dto.response.AccountDto;
+import fete.be.domain.admin.application.dto.response.GetPaymentsResponse;
+import fete.be.domain.admin.application.dto.response.PaymentDto;
 import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
 import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
-import fete.be.domain.event.exception.IncorrectPaymentAmountException;
-import fete.be.domain.event.exception.IncorrectTicketPriceException;
-import fete.be.domain.event.exception.IncorrectTicketTypeException;
-import fete.be.domain.event.exception.InsufficientTicketsException;
+import fete.be.domain.event.exception.*;
+import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -28,6 +29,7 @@ public class EventController {
 
     private final EventService eventService;
     private final QRCodeService qrCodeService;
+    private final PaymentService paymentService;
 
 
     /**
@@ -65,6 +67,13 @@ public class EventController {
     }
 
 
+    /**
+     * 티켓 QR 코드 검증 API
+     *
+     * @param Long           posterId
+     * @param ParticipantDto request
+     * @return
+     */
     @PostMapping("/verify/{posterId}")
     public ApiResponse verifyQRCode(
             @PathVariable("posterId") Long posterId,
@@ -80,6 +89,42 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
         } catch (NotFoundPosterException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 이벤트 담당자의 결제 정보 조회 API
+     *
+     * @param Long posterId
+     * @param int  page
+     * @param int  size
+     * @return ApiResponse<GetPaymentsResponse>
+     */
+    @GetMapping("/payments-info/{posterId}")
+    public ApiResponse<GetPaymentsResponse> getPayments(
+            @PathVariable("posterId") Long posterId,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        log.info("GetPayments API: posterId={}", posterId);
+        Logging.time();
+
+        try {
+            // 이벤트 담당자 검증
+            eventService.checkEventManager(posterId);
+
+            List<PaymentDto> payments = paymentService.getPayments(posterId, page, size);
+            int totalProfit = paymentService.getTotalProfit(posterId);
+            AccountDto account = paymentService.getAccount(posterId);
+
+            GetPaymentsResponse result = new GetPaymentsResponse(payments, totalProfit, account);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS.getCode(), ResponseMessage.ADMIN_GET_PAYMENTS.getMessage(), result);
+        } catch (IncorrectEventManagerException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS_FAIL.getCode(), e.getMessage());
+        } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_GET_PAYMENTS_FAIL.getCode(), e.getMessage());
         }
     }
 
