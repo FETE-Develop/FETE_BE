@@ -8,5 +8,5 @@ Tech Stack
 
 Team Member (BackEnd)
 ---
-강건영 : 스프링, 스프링부트, JPA, AWS, Redis<br>
-변상연 : AWS, 도커, 리눅스, CI/CD
+- 강건영 : 스프링, 스프링부트, JPA, AWS(EC2, RDS, S3, ElastiCache), Redis<br>
+- 변상연 : AWS, 도커, 리눅스, CI/CD
