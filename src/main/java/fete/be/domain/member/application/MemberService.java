@@ -3,9 +3,12 @@ package fete.be.domain.member.application;
 import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
+import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.FindIdResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.exception.GuestUserException;
+import fete.be.domain.member.exception.NotFoundMemberException;
 import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
@@ -42,8 +45,9 @@ public class MemberService {
     @Value("${admin.key}")
     private String adminKey;
 
+
     @Transactional
-    public void signup(SignupRequestDto request) {
+    public void signUp(SignupRequestDto request) {
         // email 중복 검사
         if (isDuplicateEmail(request.getEmail())) {
             throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
@@ -57,6 +61,24 @@ public class MemberService {
 
         // 검증에 성공할 경우
         Member member = Member.createMember(request);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void oauthSignUp(OAuthSignupRequest request) {
+        // email 중복 검사
+        if (isDuplicateEmail(request.getEmail())) {
+            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 차단된 유저인지 검사
+        boolean isBlocked = blockedMemberRepository.existsByPhoneNumber(request.getPhoneNumber());
+        if (isBlocked) {
+            throw new IllegalArgumentException(ResponseMessage.MEMBER_BLOCKED.getMessage());
+        }
+
+        // 검증에 성공할 경우
+        Member member = Member.createOAuthMember(request);
         memberRepository.save(member);
     }
 
@@ -171,5 +193,23 @@ public class MemberService {
 
         // 회원 정보 삭제
         memberRepository.delete(member);
+    }
+
+    public FindIdResponse findId(String phoneNumber) {
+        // phoneNumber로 회원 조회
+        Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(
+                () -> new NotFoundMemberException(ResponseMessage.MEMBER_NOT_FOUND.getMessage())
+        );
+
+        // 계정 타입 조회
+        MemberType memberType = member.getMemberType();
+
+        // 이메일 계정이라면 이메일 정보 포함해서 반환
+        if (memberType.equals(MemberType.EMAIL)) {
+            return new FindIdResponse(memberType, member.getEmail());
+        }
+
+        // 나머지는 계정 타입만 반환
+        return new FindIdResponse(memberType);
     }
 }

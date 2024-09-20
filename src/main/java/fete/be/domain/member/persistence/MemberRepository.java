@@ -16,4 +16,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Page<Member> findAll(Pageable pageable);
 
     List<String> findByFcmTokenIsNotNull();
+
+    Optional<Member> findByPhoneNumber(String phoneNumber);
 }

@@ -20,7 +20,10 @@ public enum ResponseMessage {
     MEMBER_GET_PROFILE_SUCCESS(607, "프로필 조회에 성공하였습니다."),
     MEMBER_GET_PROFILE_FAIL(608, "프로필 조회에 실패하였습니다."),
     MEMBER_DEACTIVATE_SUCCESS(609, "회원 탈퇴에 성공하였습니다."),
-    MEMBER_DEACTIVATE_FAIL(609, "회원 탈퇴에 성공하였습니다."),
+    MEMBER_DEACTIVATE_FAIL(610, "회원 탈퇴에 성공하였습니다."),
+    MEMBER_FIND_ID_SUCCESS(611, "아이디 조회에 성공하였습니다."),
+    MEMBER_FIND_ID_FAIL(612, "아이디 조회에 실패하였습니다."),
+    MEMBER_NOT_FOUND(613, "해당 정보로 등록된 회원이 존재하지 않습니다."),
 
     // EMAIL
     EMAIL_SEND_SUCCESS(700, "이메일 전송이 성공하였습니다."),
