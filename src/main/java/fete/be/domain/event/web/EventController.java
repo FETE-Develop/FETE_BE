@@ -68,7 +68,7 @@ public class EventController {
 
 
     /**
-     * 티켓 QR 코드 검증 API
+     * 티켓 QR 코드 인증 API
      *
      * @param Long           posterId
      * @param ParticipantDto request
@@ -88,6 +88,12 @@ public class EventController {
 
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
         } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        } catch (AlreadyUsedQRCodeException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        } catch (InvalidEventPlaceException e) {
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        } catch (IncorrectQRCodeException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
         }
     }

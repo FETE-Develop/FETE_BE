@@ -2,12 +2,13 @@ package fete.be.domain.event.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.*;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import fete.be.domain.event.application.dto.request.ParticipantDto;
+import fete.be.domain.event.exception.AlreadyUsedQRCodeException;
+import fete.be.domain.event.exception.IncorrectQRCodeException;
+import fete.be.domain.event.exception.InvalidEventPlaceException;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
@@ -118,7 +119,7 @@ public class QRCodeService {
     public Long verifyQRCode(Long posterId, ParticipantDto participantDto) {
         // DB에서 원본 데이터를 조회
         Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
-                () -> new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
+                () -> new IncorrectQRCodeException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
 
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
@@ -126,17 +127,17 @@ public class QRCodeService {
         // 검증 로직
         // 해당 QR 코드가 사용된 적 있는지 확인
         if (originalParticipant.getIsParticipated()) {
-            throw new IllegalArgumentException(ResponseMessage.EVENT_QR_ALREADY_USED.getMessage());
+            throw new AlreadyUsedQRCodeException(ResponseMessage.EVENT_QR_ALREADY_USED.getMessage());
         }
 
         // 해당 QR 코드가 올바른 이벤트 장소에서 대조하고 있는지 확인
         if (!poster.getEvent().getEventId().equals(participantDto.getEventId())) {
-            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+            throw new InvalidEventPlaceException(ResponseMessage.EVENT_INVALID_PLACE.getMessage());
         }
 
         // QR 데이터와 원본 데이터 비교
         if (!isValid(participantDto, originalParticipant)) {
-            throw new IllegalArgumentException(ResponseMessage.EVENT_INVALID_QR.getMessage());
+            throw new IncorrectQRCodeException(ResponseMessage.EVENT_INVALID_QR.getMessage());
         }
 
         // 정상 로직일 경우, 이벤트 참여 완료 처리
