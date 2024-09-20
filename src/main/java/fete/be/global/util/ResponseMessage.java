@@ -58,6 +58,7 @@ public enum ResponseMessage {
     EVENT_QR_ALREADY_USED(1105, "이미 사용된 QR 코드입니다."),
     EVENT_NO_EXIST(1106, "해당 이벤트가 존재하지 않습니다."),
     EVENT_INCORRECT_MANAGER(1107, "해당 이벤트의 담당자가 아닙니다."),
+    EVENT_INVALID_PLACE(1108, "올바르지 않은 이벤트 장소입니다."),
 
     // TICKET
     TICKET_SUCCESS(1200, "티켓 조회에 성공하였습니다."),
