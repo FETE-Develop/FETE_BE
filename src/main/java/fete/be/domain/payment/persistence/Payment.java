@@ -57,6 +57,8 @@ public class Payment {
     private LocalDateTime updatedAt;  // 수정일자
     @Column(name = "payment_at")
     private LocalDateTime paymentAt;  // 결제일자
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;  // 취소일자
 
 
     // 생성 메서드
@@ -83,12 +85,14 @@ public class Payment {
     public static void completePayment(Payment payment) {
         payment.isPaid = true;
         payment.paymentAt = LocalDateTime.now();
+        payment.updatedAt = LocalDateTime.now();
     }
 
     // 결제 취소로 전환
     public static void cancelPayment(Payment payment) {
         payment.isPaid = false;
         payment.totalAmount = 0;  // 결제 취소되었기 때문에 결제 금액을 0원으로 변경
+        payment.canceledAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
     }
 
@@ -106,6 +110,7 @@ public class Payment {
         payment.paymentKey = tossPaymentResponse.getPaymentKey();
         payment.orderId = tossPaymentResponse.getOrderId();
         payment.paymentAt = LocalDateTime.now();
+        payment.updatedAt = LocalDateTime.now();
 
         return payment;
     }
@@ -114,6 +119,7 @@ public class Payment {
     public static Payment updateTossCancelInfo(Payment payment, String lastTransactionKey, String cancelReason) {
         payment.lastTransactionKey = lastTransactionKey;
         payment.cancelReason = cancelReason;
+        payment.canceledAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
 
         return payment;
@@ -122,6 +128,7 @@ public class Payment {
     // 무료 티켓 취소 시, 필드 업데이트
     public static Payment updateCancelInfo(Payment payment, String cancelReason) {
         payment.cancelReason = cancelReason;
+        payment.canceledAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
 
         return payment;
