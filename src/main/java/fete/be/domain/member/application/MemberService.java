@@ -163,4 +163,13 @@ public class MemberService {
         Member member = findMemberByEmail();
         return new GetMyProfileResponse(member);
     }
+
+    @Transactional
+    public void deactivateMember() {
+        // 삭제할 회원 조회
+        Member member = findMemberByEmail();
+
+        // 회원 정보 삭제
+        memberRepository.delete(member);
+    }
 }
