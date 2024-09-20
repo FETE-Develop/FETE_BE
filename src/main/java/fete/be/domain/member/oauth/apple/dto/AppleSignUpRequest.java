@@ -1,6 +1,7 @@
 package fete.be.domain.member.oauth.apple.dto;
 
 import fete.be.domain.member.persistence.Gender;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +13,7 @@ import lombok.ToString;
 public class AppleSignUpRequest {
     private String idToken;  // 애플 응답 - idToken
 
+    @Nullable
     private String profileImage;  // 프로필 이미지
     private String userName;  // 유저 이름
     @Column(nullable = false, length = 30)

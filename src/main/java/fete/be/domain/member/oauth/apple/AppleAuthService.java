@@ -1,7 +1,7 @@
 package fete.be.domain.member.oauth.apple;
 
 import fete.be.domain.member.application.dto.request.LoginRequestDto;
-import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
 import fete.be.domain.member.oauth.apple.dto.AppleSignUpRequest;
 import fete.be.domain.member.persistence.Member;
@@ -67,8 +67,8 @@ public class AppleAuthService {
     /**
      * 애플 계정 정보와 사용자로부터 입력 받은 정보로 회원가입 DTO 생성
      */
-    public SignupRequestDto createSignUpDto(AppleUserInfo appleUserInfo, AppleSignUpRequest request) {
-        SignupRequestDto signupRequestDto = new SignupRequestDto(appleUserInfo, request);
-        return signupRequestDto;
+    public OAuthSignupRequest createSignUpDto(AppleUserInfo appleUserInfo, AppleSignUpRequest request) {
+        OAuthSignupRequest oAuthSignupRequest = new OAuthSignupRequest(appleUserInfo, request);
+        return oAuthSignupRequest;
     }
 }
