@@ -2,10 +2,7 @@ package fete.be.domain.member.web;
 
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.application.dto.request.*;
-import fete.be.domain.member.application.dto.response.FindIdResponse;
-import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
-import fete.be.domain.member.application.dto.response.LoginResponseDto;
-import fete.be.domain.member.application.dto.response.SocialLoginResponse;
+import fete.be.domain.member.application.dto.response.*;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.exception.NotFoundMemberException;
 import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
@@ -336,6 +333,28 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.MEMBER_FIND_ID_SUCCESS.getCode(), ResponseMessage.MEMBER_FIND_ID_SUCCESS.getMessage(), result);
         } catch (NotFoundMemberException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_FIND_ID_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 비밀번호 찾기 API
+     */
+    @PostMapping("/find-password")
+    public ApiResponse<FindPasswordResponse> findPassword(@RequestBody FindPasswordRequest request) {
+        log.info("FindPassword API");
+        Logging.time();
+
+        // 이메일 추출
+        String email = request.getEmail();
+
+        try {
+            // 이메일로 회원을 조회하여 임시 비밀번호 발급
+            FindPasswordResponse result = memberService.findPassword(email);
+
+            return new ApiResponse<>(ResponseMessage.MEMBER_FIND_PW_SUCCESS.getCode(), ResponseMessage.MEMBER_FIND_PW_SUCCESS.getMessage(), result);
+        } catch (NotFoundMemberException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_FIND_PW_FAIL.getCode(), e.getMessage());
         }
     }
 }

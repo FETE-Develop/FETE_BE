@@ -177,10 +177,14 @@ public class Member {
     // FCM 토큰 저장 메서드
     public static Member storeToken(Member member, String fcmToken) {
         member.fcmToken = fcmToken;
-
-        LocalDateTime currentTime = LocalDateTime.now();
-        member.updatedAt = currentTime;
+        member.updatedAt = LocalDateTime.now();
 
         return member;
+    }
+
+    // 임시 비밀번호 설정
+    public static void resetPassword(Member member, String newPassword) {
+        member.password = newPassword;
+        member.updatedAt = LocalDateTime.now();
     }
 }
