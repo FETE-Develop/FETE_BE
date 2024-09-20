@@ -7,7 +7,6 @@ import fete.be.domain.event.persistence.*;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
-import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -249,7 +248,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail();
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByTitleContainingOrEventDescriptionContaining(keyword, keyword, pageable)
+        return posterRepository.findByStatusAndTitleContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
@@ -261,7 +260,7 @@ public class PosterService {
         Pageable pageable = createPageable(page, size);
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByTitleContainingOrEventDescriptionContaining(keyword, keyword, pageable)
+        return posterRepository.findByStatusAndTitleContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = false;
                     return new PosterDto(poster, isLike);
