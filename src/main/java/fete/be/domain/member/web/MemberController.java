@@ -316,4 +316,26 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.MEMBER_DEACTIVATE_FAIL.getCode(), e.getMessage());
         }
     }
+
+
+    /**
+     * 아이디 찾기 API
+     */
+    @PostMapping("/find-id")
+    public ApiResponse<FindIdResponse> findId(@RequestBody FindIdRequest request) {
+        log.info("FindId API");
+        Logging.time();
+
+        // 휴대전화 번호 추출
+        String phoneNumber = request.getPhoneNumber();
+
+        try {
+            // 휴대전화 번호로 아이디 조회
+            FindIdResponse result = memberService.findId(phoneNumber);
+
+            return new ApiResponse<>(ResponseMessage.MEMBER_FIND_ID_SUCCESS.getCode(), ResponseMessage.MEMBER_FIND_ID_SUCCESS.getMessage(), result);
+        } catch (NotFoundMemberException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_FIND_ID_FAIL.getCode(), e.getMessage());
+        }
+    }
 }

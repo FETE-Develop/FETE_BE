@@ -194,4 +194,22 @@ public class MemberService {
         // 회원 정보 삭제
         memberRepository.delete(member);
     }
+
+    public FindIdResponse findId(String phoneNumber) {
+        // phoneNumber로 회원 조회
+        Member member = memberRepository.findByPhoneNumber(phoneNumber).orElseThrow(
+                () -> new NotFoundMemberException(ResponseMessage.MEMBER_NOT_FOUND.getMessage())
+        );
+
+        // 계정 타입 조회
+        MemberType memberType = member.getMemberType();
+
+        // 이메일 계정이라면 이메일 정보 포함해서 반환
+        if (memberType.equals(MemberType.EMAIL)) {
+            return new FindIdResponse(memberType, member.getEmail());
+        }
+
+        // 나머지는 계정 타입만 반환
+        return new FindIdResponse(memberType);
+    }
 }
