@@ -299,4 +299,22 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.MEMBER_GET_PROFILE_FAIL.getCode(), e.getMessage());
         }
     }
+
+
+    /**
+     * 회원 탈퇴 API
+     */
+    @PostMapping("/deactivate")
+    public ApiResponse deactivateMember() {
+        log.info("DeactivateMember API");
+        Logging.time();
+
+        try {
+            // 회원 삭제
+            memberService.deactivateMember();
+            return new ApiResponse<>(ResponseMessage.MEMBER_DEACTIVATE_SUCCESS.getCode(), ResponseMessage.MEMBER_DEACTIVATE_SUCCESS.getMessage());
+        } catch (GuestUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_DEACTIVATE_FAIL.getCode(), e.getMessage());
+        }
+    }
 }
