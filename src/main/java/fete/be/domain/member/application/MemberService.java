@@ -6,6 +6,7 @@ import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.FindIdResponse;
+import fete.be.domain.member.application.dto.response.FindPasswordResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.member.exception.NotFoundMemberException;
@@ -14,6 +15,7 @@ import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.SecurityUtil;
+import fete.be.global.util.UUIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -211,5 +213,20 @@ public class MemberService {
 
         // 나머지는 계정 타입만 반환
         return new FindIdResponse(memberType);
+    }
+
+    @Transactional
+    public FindPasswordResponse findPassword(String email) {
+        // email로 회원 조회
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundMemberException(ResponseMessage.MEMBER_NOT_FOUND.getMessage())
+        );
+
+        // 임시 비밀번호를 발급하여 설정
+        String newPassword = UUIDGenerator.generatePassword(16);
+        Member.resetPassword(member, newPassword);
+
+        // 임시 비밀번호 반환
+        return new FindPasswordResponse(newPassword);
     }
 }
