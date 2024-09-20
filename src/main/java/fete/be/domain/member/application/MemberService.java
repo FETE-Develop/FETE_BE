@@ -3,9 +3,12 @@ package fete.be.domain.member.application;
 import fete.be.domain.admin.application.dto.response.MemberDto;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
+import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.FindIdResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.exception.GuestUserException;
+import fete.be.domain.member.exception.NotFoundMemberException;
 import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
@@ -42,8 +45,9 @@ public class MemberService {
     @Value("${admin.key}")
     private String adminKey;
 
+
     @Transactional
-    public void signup(SignupRequestDto request) {
+    public void signUp(SignupRequestDto request) {
         // email 중복 검사
         if (isDuplicateEmail(request.getEmail())) {
             throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
@@ -57,6 +61,24 @@ public class MemberService {
 
         // 검증에 성공할 경우
         Member member = Member.createMember(request);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void oauthSignUp(OAuthSignupRequest request) {
+        // email 중복 검사
+        if (isDuplicateEmail(request.getEmail())) {
+            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 차단된 유저인지 검사
+        boolean isBlocked = blockedMemberRepository.existsByPhoneNumber(request.getPhoneNumber());
+        if (isBlocked) {
+            throw new IllegalArgumentException(ResponseMessage.MEMBER_BLOCKED.getMessage());
+        }
+
+        // 검증에 성공할 경우
+        Member member = Member.createOAuthMember(request);
         memberRepository.save(member);
     }
 

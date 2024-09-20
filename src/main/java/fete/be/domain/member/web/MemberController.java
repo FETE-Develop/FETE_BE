@@ -1,14 +1,13 @@
 package fete.be.domain.member.web;
 
 import fete.be.domain.member.application.MemberService;
-import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
-import fete.be.domain.member.application.dto.request.LoginRequestDto;
-import fete.be.domain.member.application.dto.request.ModifyRequestDto;
-import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.request.*;
+import fete.be.domain.member.application.dto.response.FindIdResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.domain.member.application.dto.response.SocialLoginResponse;
 import fete.be.domain.member.exception.GuestUserException;
+import fete.be.domain.member.exception.NotFoundMemberException;
 import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
 import fete.be.domain.member.oauth.kakao.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.oauth.apple.dto.AppleLoginRequest;
@@ -52,7 +51,7 @@ public class MemberController {
             log.info("Signup request: {}", request);
             Logging.time();
 
-            memberService.signup(request);
+            memberService.signUp(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), e.getMessage());
@@ -116,10 +115,10 @@ public class MemberController {
             KakaoUserInfoResponse userInfo = e.getUserInfo();
 
             // 카카오 계정 정보, 사용자로부터 입력 받은 정보로 회원가입 DTO 생성
-            SignupRequestDto signUpDto = kakaoAuthService.createSignUpDto(userInfo, request);
+            OAuthSignupRequest signUpDto = kakaoAuthService.createSignUpDto(userInfo, request);
 
             // 회원가입 실행
-            memberService.signup(signUpDto);
+            memberService.oauthSignUp(signUpDto);
 
             // 카카오 로그인 재실행
             KakaoLoginRequest kakaoLoginRequest = new KakaoLoginRequest(accessToken, request.getRefreshToken());
@@ -196,10 +195,10 @@ public class MemberController {
             AppleUserInfo appleUserInfo = e.getAppleUserInfo();
 
             // 애플 계정 정보, 사용자로부터 입력 받은 정보로 회원가입 DTO 생성
-            SignupRequestDto signUpDto = appleAuthService.createSignUpDto(appleUserInfo, request);
+            OAuthSignupRequest signUpDto = appleAuthService.createSignUpDto(appleUserInfo, request);
 
             // 회원가입 실행
-            memberService.signup(signUpDto);
+            memberService.oauthSignUp(signUpDto);
 
             // 애플 로그인 재실행
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest(idToken);
