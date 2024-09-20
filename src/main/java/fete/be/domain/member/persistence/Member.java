@@ -1,12 +1,14 @@
 package fete.be.domain.member.persistence;
 
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
+import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.global.util.UUIDGenerator;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -26,16 +28,23 @@ public class Member {
     @Column(name = "member_id")
     private Long memberId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "member_type")
+    private MemberType memberType;  // 계정 타입
+
     @NotBlank
     @Email
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(name = "oauth_id")
+    private String oauthId;
 
     @NotBlank
-//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
+    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
     private String password;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @Nullable
     private ProfileImage profileImage;  // 프로필 이미지
 
     @NotBlank
@@ -55,6 +64,7 @@ public class Member {
 
     @NotBlank
     @Pattern(regexp = "^\\d{10,11}$", message = "전화번호는 10~11 자리의 숫자만 입력 가능합니다.")
+    @Column(nullable = false, unique = true)
     private String phoneNumber;  // 휴대전화 번호
 
     @Enumerated(EnumType.STRING)
@@ -83,10 +93,40 @@ public class Member {
     private String fcmToken;  // 유저의 고유한 푸시 알림용 FCM 토큰
 
 
-    // 생성 메서드
+    // 이메일 유저 생성 메서드
     public static Member createMember(SignupRequestDto request) {
         Member member = new Member();
+
+        member.memberType = MemberType.EMAIL;
         member.email = request.getEmail();
+        member.password = request.getPassword();
+
+        // 프로필 이미지 생성
+        member.profileImage = ProfileImage.createProfileImage(member, request.getProfileImage());
+
+        member.userName = request.getUserName();
+        member.introduction = request.getIntroduction();
+        member.birth = request.getBirth();
+        member.gender = request.getGender();
+        member.phoneNumber = request.getPhoneNumber();
+        member.role = Role.USER;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        member.createdAt = currentTime;
+        member.updatedAt = currentTime;
+        member.status = Status.ACTIVE;
+        member.customerKey = UUIDGenerator.generateUUID();
+
+        return member;
+    }
+
+    // OAuth 유저 생성 메서드
+    public static Member createOAuthMember(OAuthSignupRequest request) {
+        Member member = new Member();
+
+        member.memberType = request.getMemberType();
+        member.email = request.getEmail();
+        member.oauthId = request.getOauthId();
         member.password = request.getPassword();
 
         // 프로필 이미지 생성
