@@ -165,6 +165,9 @@ public enum ResponseMessage {
     AWS_SDK_ERROR(1902, "AWS SDK에 오류가 발생했습니다."),
     IMAGE_DUPLICATE(1903, "중복 이미지가 존재합니다."),
     INVALID_EXTENSION(1904, "이미지의 확장자가 올바르지 않습니다."),
+    S3_FILE_NO_EXIST(1905, "해당 파일이 S3에 존재하지 않습니다."),
+    S3_DELETE_SUCCESS(1906, "이미지 삭제가 성공하였습니다."),
+    S3_DELETE_FAIL(1907, "이미지 삭제가 실패하였습니다."),
     ;
 
     private int code;

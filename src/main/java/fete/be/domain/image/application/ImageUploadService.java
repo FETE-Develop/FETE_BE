@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Service
@@ -77,6 +79,33 @@ public class ImageUploadService {
         }
 
         return amazonS3.getUrl(bucket, randomFileName).toString();
+    }
+
+    /**
+     * 여러 장의 이미지를 삭제
+     * @param fileUrls
+     * @throws URISyntaxException
+     */
+    public void deleteFiles(List<String> fileUrls) throws URISyntaxException {
+        // 여러 이미지 삭제
+        for (String fileUrl : fileUrls) {
+            deleteFile(fileUrl);
+        }
+    }
+
+    /**
+     * 이미지 1장 삭제
+     */
+    public void deleteFile(String fileUrl) throws URISyntaxException {
+        URI uri = new URI(fileUrl);
+        String key = uri.getPath().substring(1);
+
+        // 파일이 S3에 존재할 경우
+        if (amazonS3.doesObjectExist(bucket, key)) {
+            amazonS3.deleteObject(bucket, key);
+        } else {  // 존재하지 않을 경우
+            throw new NotFoundFileInS3Exception(ResponseMessage.S3_FILE_NO_EXIST.getMessage());
+        }
     }
 
     /**
