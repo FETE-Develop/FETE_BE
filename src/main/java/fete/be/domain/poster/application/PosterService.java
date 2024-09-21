@@ -4,6 +4,7 @@ import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
 import fete.be.domain.event.persistence.*;
+import fete.be.domain.image.application.ImageUploadService;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
@@ -11,6 +12,7 @@ import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.exception.NotFoundPosterException;
+import fete.be.domain.poster.exception.ProfileImageCountExceedException;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
@@ -25,6 +27,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +43,18 @@ public class PosterService {
     private final EventRepository eventRepository;
     private final PosterLikeRepository posterLikeRepository;
     private final MemberService memberService;
+    private final ImageUploadService imageUploadService;
 
 
     @Transactional
     public Long writePoster(WritePosterRequest request) {
         // 현재 요청한 Member의 email을 추출해서 member 찾아오기
         Member member = memberService.findMemberByEmail();
+
+        // 포스터 이미지 개수가 10개를 초과할 경우
+        if (request.getPosterImgUrls().length > 10) {
+            throw new ProfileImageCountExceedException(ResponseMessage.POSTER_IMAGE_COUNT_EXCEED.getMessage());
+        }
 
         Poster poster = Poster.createPoster(member, request);
         Poster savedPoster = posterRepository.save(poster);
@@ -64,7 +73,7 @@ public class PosterService {
     }
 
     @Transactional
-    public Long updatePoster(Long posterId, ModifyPosterRequest request) {
+    public Long updatePoster(Long posterId, ModifyPosterRequest request) throws URISyntaxException {
         // 현재 API 요청을 보낸 Member 찾기
         Member member = memberService.findMemberByEmail();
 
@@ -77,14 +86,14 @@ public class PosterService {
         }
 
         // 업데이트 진행
-        Poster updatePoster = Poster.updatePoster(poster, request);
+        Poster updatePoster = Poster.updatePoster(poster, request, imageUploadService);
         posterRepository.save(updatePoster);
 
         return updatePoster.getPosterId();
     }
 
     @Transactional
-    public Long deletePoster(Long posterId) {
+    public Long deletePoster(Long posterId) throws URISyntaxException {
         // 현재 API 요청을 보낸 Member 찾기
         Member member = memberService.findMemberByEmail();
 
@@ -97,7 +106,7 @@ public class PosterService {
         }
 
         // 소프트 삭제 실행 (status 필드를 DELETE로 변경)
-        Poster deletePoster = Poster.deletePoster(poster);
+        Poster deletePoster = Poster.deletePoster(poster, imageUploadService);
         return deletePoster.getPosterId();
     }
 

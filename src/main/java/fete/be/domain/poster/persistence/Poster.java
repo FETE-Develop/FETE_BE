@@ -2,6 +2,7 @@ package fete.be.domain.poster.persistence;
 
 import fete.be.domain.category.persistence.Category;
 import fete.be.domain.event.persistence.Event;
+import fete.be.domain.image.application.ImageUploadService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
@@ -10,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,11 +87,17 @@ public class Poster {
     }
 
     // 업데이트 메서드
-    public static Poster updatePoster(Poster poster, ModifyPosterRequest request) {
+    public static Poster updatePoster(Poster poster, ModifyPosterRequest request, ImageUploadService imageUploadService) throws URISyntaxException {
         poster.title = request.getTitle();
 
-        // 기존의 포스터 이미지를 삭제하고, 전달된 이미지를 추가
+        // 기존의 포스터 이미지를 S3와 DB에서 삭제
+        for (PosterImage posterImage : poster.posterImages) {
+            log.info("posterURL={}", posterImage.getImageUrl());
+            imageUploadService.deleteFile(posterImage.getImageUrl());
+        }
         poster.posterImages.clear();
+
+        // 전달된 이미지를 새롭게 추가
         for (String posterImgUrl : request.getPosterImgUrls()) {
             PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
             poster.posterImages.add(posterImage);
@@ -108,9 +116,16 @@ public class Poster {
     }
 
     // 삭제 메서드
-    public static Poster deletePoster(Poster poster) {
+    public static Poster deletePoster(Poster poster, ImageUploadService imageUploadService) throws URISyntaxException {
         // status를 DELETE로 변경
         poster.status = Status.DELETE;
+
+        // S3에서 이미지 삭제
+        for (PosterImage posterImage : poster.posterImages) {
+            imageUploadService.deleteFile(posterImage.getImageUrl());
+        }
+        // DB에서 이미지 삭제
+        poster.posterImages.clear();
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;

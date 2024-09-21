@@ -60,6 +60,7 @@ public enum ResponseMessage {
     POSTER_INVALID_EVENT(1004, "해당 이벤트가 존재하지 않습니다."),
     POSTER_SEARCH_SUCCESS(1005, "포스터 검색에 성공하였습니다."),
     POSTER_SEARCH_FAILURE(1006, "포스터 검색에 실패하였습니다."),
+    POSTER_IMAGE_COUNT_EXCEED(1007, "포스터 이미지 개수가 초과되었습니다."),
 
     // EVENT
     EVENT_QR_SUCCESS(1100, "QR 코드 발급에 성공하였습니다."),
