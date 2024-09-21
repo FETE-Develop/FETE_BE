@@ -8,8 +8,7 @@ import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.application.dto.response.FindIdResponse;
 import fete.be.domain.member.application.dto.response.FindPasswordResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
-import fete.be.domain.member.exception.GuestUserException;
-import fete.be.domain.member.exception.NotFoundMemberException;
+import fete.be.domain.member.exception.*;
 import fete.be.domain.member.persistence.*;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
@@ -52,13 +51,18 @@ public class MemberService {
     public void signUp(SignupRequestDto request) {
         // email 중복 검사
         if (isDuplicateEmail(request.getEmail())) {
-            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+            throw new DuplicateEmailException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 휴대전화 번호 중복 검사
+        if (isDuplicatePhoneNumber(request.getPhoneNumber())) {
+            throw new DuplicatePhoneNumberException(ResponseMessage.SIGNUP_DUPLICATE_PHONE_NUMBER.getMessage());
         }
 
         // 차단된 유저인지 검사
         boolean isBlocked = blockedMemberRepository.existsByPhoneNumber(request.getPhoneNumber());
         if (isBlocked) {
-            throw new IllegalArgumentException(ResponseMessage.MEMBER_BLOCKED.getMessage());
+            throw new BlockedUserException(ResponseMessage.MEMBER_BLOCKED.getMessage());
         }
 
         // 검증에 성공할 경우
@@ -70,13 +74,18 @@ public class MemberService {
     public void oauthSignUp(OAuthSignupRequest request) {
         // email 중복 검사
         if (isDuplicateEmail(request.getEmail())) {
-            throw new IllegalArgumentException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+            throw new DuplicateEmailException(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getMessage());
+        }
+
+        // 휴대전화 번호 중복 검사
+        if (isDuplicatePhoneNumber(request.getPhoneNumber())) {
+            throw new DuplicatePhoneNumberException(ResponseMessage.SIGNUP_DUPLICATE_PHONE_NUMBER.getMessage());
         }
 
         // 차단된 유저인지 검사
         boolean isBlocked = blockedMemberRepository.existsByPhoneNumber(request.getPhoneNumber());
         if (isBlocked) {
-            throw new IllegalArgumentException(ResponseMessage.MEMBER_BLOCKED.getMessage());
+            throw new BlockedUserException(ResponseMessage.MEMBER_BLOCKED.getMessage());
         }
 
         // 검증에 성공할 경우
@@ -101,6 +110,10 @@ public class MemberService {
 
     public boolean isDuplicateEmail(String email) {
         return memberRepository.existsByEmail(email);
+    }
+
+    public boolean isDuplicatePhoneNumber(String phoneNumber) {
+        return memberRepository.existsByPhoneNumber(phoneNumber);
     }
 
     public Member findMemberByEmail() {

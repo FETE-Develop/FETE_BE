@@ -38,7 +38,8 @@ public enum ResponseMessage {
 
     // SIGNUP
     SIGNUP_SUCCESS(800, "성공적으로 회원가입 하였습니다."),
-    SIGNUP_DUPLICATE_EMAIL(801, "중복된 이메일 입니다."),
+    SIGNUP_DUPLICATE_EMAIL(801, "중복되는 이메일 입니다."),
+    SIGNUP_DUPLICATE_PHONE_NUMBER(802, "중복되는 휴대전화 번호 입니다."),
 
     // LOGIN
     LOGIN_SUCCESS(900, "로그인에 성공하였습니다."),
