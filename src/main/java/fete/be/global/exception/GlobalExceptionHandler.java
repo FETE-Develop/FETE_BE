@@ -2,7 +2,9 @@ package fete.be.global.exception;
 
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.ResponseMessage;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,5 +27,19 @@ public class GlobalExceptionHandler {
     public ApiResponse handleException(Exception e) {
         log.error("[exceptionHandle] Exception", e);
         return new ApiResponse(ResponseMessage.INTERNAL_ERROR.getCode(), e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ApiResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        log.error("[exceptionHandle] DataIntegrityViolationException", e);
+        return new ApiResponse(ResponseMessage.BAD_REQUEST.getCode(), ResponseMessage.BAD_REQUEST.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ApiResponse handleConstraintViolationException(ConstraintViolationException e) {
+        log.error("[exceptionHandle] ConstraintViolationException", e);
+        return new ApiResponse(ResponseMessage.BAD_CONSTRAINT.getCode(), ResponseMessage.BAD_CONSTRAINT.getMessage());
     }
 }
