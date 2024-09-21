@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -40,6 +42,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public ApiResponse handleConstraintViolationException(ConstraintViolationException e) {
         log.error("[exceptionHandle] ConstraintViolationException", e);
-        return new ApiResponse(ResponseMessage.BAD_CONSTRAINT.getCode(), ResponseMessage.BAD_CONSTRAINT.getMessage());
+
+        // ConstraintViolation 객체에서 오류 메시지만 추출
+        String errorMessage = e.getConstraintViolations().stream()
+                .map(violation -> violation.getMessage())
+                .collect(Collectors.joining(", "));
+
+        return new ApiResponse(ResponseMessage.BAD_CONSTRAINT.getCode(), errorMessage);
     }
 }
