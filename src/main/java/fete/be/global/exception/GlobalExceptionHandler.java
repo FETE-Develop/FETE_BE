@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -46,6 +47,19 @@ public class GlobalExceptionHandler {
         // ConstraintViolation 객체에서 오류 메시지만 추출
         String errorMessage = e.getConstraintViolations().stream()
                 .map(violation -> violation.getMessage())
+                .collect(Collectors.joining(", "));
+
+        return new ApiResponse(ResponseMessage.BAD_CONSTRAINT.getCode(), errorMessage);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("[exceptionHandle] MethodArgumentNotValidException", e);
+
+        // fieldError에서 오류 메시지만 추출
+        String errorMessage = e.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getDefaultMessage())
                 .collect(Collectors.joining(", "));
 
         return new ApiResponse(ResponseMessage.BAD_CONSTRAINT.getCode(), errorMessage);

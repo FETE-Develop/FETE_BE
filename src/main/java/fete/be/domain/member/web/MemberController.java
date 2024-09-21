@@ -18,6 +18,7 @@ import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -370,6 +371,28 @@ public class MemberController {
             return new ApiResponse<>(ResponseMessage.MEMBER_FIND_PW_SUCCESS.getCode(), ResponseMessage.MEMBER_FIND_PW_SUCCESS.getMessage(), result);
         } catch (NotFoundMemberException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_FIND_PW_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 비밀번호 변경 API
+     */
+    @PostMapping("/modify-password")
+    public ApiResponse modifyPassword(@Valid @RequestBody ModifyPasswordRequest request) {
+        log.info("ModifyPassword API");
+        Logging.time();
+
+        // 변경할 비밀번호 추출
+        String password = request.getPassword();
+
+        try {
+            // 이메일로 회원을 조회하여 임시 비밀번호 발급
+            memberService.modifyPassword(password);
+
+            return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_PW_SUCCESS.getCode(), ResponseMessage.MEMBER_MODIFY_PW_SUCCESS.getMessage());
+        } catch (GuestUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_PW_FAIL.getCode(), e.getMessage());
         }
     }
 }

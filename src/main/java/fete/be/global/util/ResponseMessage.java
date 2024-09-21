@@ -28,6 +28,8 @@ public enum ResponseMessage {
     MEMBER_FIND_PW_SUCCESS(613, "비밀번호 조회에 성공하였습니다."),
     MEMBER_FIND_PW_FAIL(614, "비밀번호 조회에 실패하였습니다."),
     MEMBER_NOT_FOUND(615, "해당 정보로 등록된 회원이 존재하지 않습니다."),
+    MEMBER_MODIFY_PW_SUCCESS(616, "비밀번호 변경에 성공하였습니다."),
+    MEMBER_MODIFY_PW_FAIL(617, "비밀번호 변경에 실패하였습니다."),
 
     // EMAIL
     EMAIL_SEND_SUCCESS(700, "이메일 전송이 성공하였습니다."),
