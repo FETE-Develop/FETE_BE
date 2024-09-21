@@ -20,5 +20,4 @@ Team Member (BackEnd)
 
 ERD Diagram
 ---
-<img src="https://github.com/user-attachments/assets/dcc6131a-2e7e-4d45-b017-946775a9a9ad" alt="FETE_ERD" width="700"/>
-
+<img src="https://github.com/user-attachments/assets/af7aa072-413e-425e-a2ea-d6e8d64c7b52" alt="FETE_ERD" width="700"/>
