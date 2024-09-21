@@ -11,11 +11,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
+    Optional<Member> findByPhoneNumber(String phoneNumber);
+
     boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phoneNumber);
 
     Page<Member> findAll(Pageable pageable);
 
     List<String> findByFcmTokenIsNotNull();
-
-    Optional<Member> findByPhoneNumber(String phoneNumber);
 }

@@ -3,8 +3,7 @@ package fete.be.domain.member.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.application.dto.request.*;
 import fete.be.domain.member.application.dto.response.*;
-import fete.be.domain.member.exception.GuestUserException;
-import fete.be.domain.member.exception.NotFoundMemberException;
+import fete.be.domain.member.exception.*;
 import fete.be.domain.member.oauth.apple.exception.AppleUserNotFoundException;
 import fete.be.domain.member.oauth.kakao.exception.KakaoUserNotFoundException;
 import fete.be.domain.member.oauth.apple.dto.AppleLoginRequest;
@@ -50,8 +49,12 @@ public class MemberController {
 
             memberService.signUp(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (DuplicateEmailException e) {
             return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), e.getMessage());
+        } catch (DuplicatePhoneNumberException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_PHONE_NUMBER.getCode(), e.getMessage());
+        } catch (BlockedUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_BLOCKED.getCode(), e.getMessage());
         }
     }
 
@@ -120,6 +123,12 @@ public class MemberController {
             // 카카오 로그인 재실행
             KakaoLoginRequest kakaoLoginRequest = new KakaoLoginRequest(accessToken, request.getRefreshToken());
             return kakaoLogin(kakaoLoginRequest);
+        } catch (DuplicateEmailException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), e.getMessage());
+        } catch (DuplicatePhoneNumberException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_PHONE_NUMBER.getCode(), e.getMessage());
+        } catch (BlockedUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_BLOCKED.getCode(), e.getMessage());
         }
     }
 
@@ -200,6 +209,12 @@ public class MemberController {
             // 애플 로그인 재실행
             AppleLoginRequest appleLoginRequest = new AppleLoginRequest(idToken);
             return appleLogin(appleLoginRequest);
+        } catch (DuplicateEmailException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_EMAIL.getCode(), e.getMessage());
+        } catch (DuplicatePhoneNumberException e) {
+            return new ApiResponse<>(ResponseMessage.SIGNUP_DUPLICATE_PHONE_NUMBER.getCode(), e.getMessage());
+        } catch (BlockedUserException e) {
+            return new ApiResponse<>(ResponseMessage.MEMBER_BLOCKED.getCode(), e.getMessage());
         }
     }
 
