@@ -8,6 +8,7 @@ import fete.be.domain.poster.application.dto.request.SearchPostersRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.domain.poster.application.dto.response.PosterDto;
+import fete.be.domain.poster.exception.ProfileImageCountExceedException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +27,6 @@ import java.util.List;
 @RequestMapping("/api/posters")
 public class PosterController {
 
-    private final MemberService memberService;
     private final PosterService posterService;
 
 
@@ -40,10 +41,14 @@ public class PosterController {
         log.info("WritePoster request={}", request);
         Logging.time();
 
-        // 포스터 등록 실행
-        Long savedPosterId = posterService.writePoster(request);
+        try {
+            // 포스터 등록 실행
+            Long savedPosterId = posterService.writePoster(request);
 
-        return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
+        } catch (ProfileImageCountExceedException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
     }
 
 
@@ -59,15 +64,17 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestBody ModifyPosterRequest request
     ) {
-        try {
-            log.info("ModifyPoster request: posterId={}, request={}", posterId, request);
-            Logging.time();
+        log.info("ModifyPoster request: posterId={}, request={}", posterId, request);
+        Logging.time();
 
+        try {
             // posterId로 포스터를 찾아 수정사항 업데이트
             Long updatePosterId = posterService.updatePoster(posterId, request);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
 
         } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        } catch (URISyntaxException e) {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
@@ -90,6 +97,8 @@ public class PosterController {
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
 
         } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        } catch (URISyntaxException e) {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
@@ -140,8 +149,8 @@ public class PosterController {
     @GetMapping("/{posterId}")
     public ApiResponse<PosterDto> getPoster(
             @PathVariable("posterId") Long posterId,
-            @RequestParam(name = "status", defaultValue = "ACTIVE") String status)
-    {
+            @RequestParam(name = "status", defaultValue = "ACTIVE") String status
+    ) {
         log.info("GetPoster request: posterId={}, status={}", posterId, status);
         Logging.time();
 
@@ -242,8 +251,8 @@ public class PosterController {
      * - 키워드로 포스터 제목, 이벤트 설명 필드를 검색하는 API입니다.
      *
      * @param SearchPostersRequest request
-     * @param int page
-     * @param int size
+     * @param int                  page
+     * @param int                  size
      * @return ApiResponse<GetPostersResponse>
      */
     @PostMapping("/search")
