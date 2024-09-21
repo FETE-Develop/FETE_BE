@@ -8,6 +8,8 @@ public enum ResponseMessage {
     // GLOBAL
     INTERNAL_ERROR(500, "내부 오류가 발생했습니다."),
     NO_RESOURCE_ERROR(501, "잘못된 URI 입니다."),
+    BAD_REQUEST(502, "잘못된 요청 값입니다."),
+    BAD_CONSTRAINT(503, "잘못된 형식입니다."),
 
     // MEMBER
     MEMBER_ADMIN_OK(600, "관리자 권한을 획득하였습니다."),
