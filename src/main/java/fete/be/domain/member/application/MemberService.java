@@ -237,9 +237,18 @@ public class MemberService {
 
         // 임시 비밀번호를 발급하여 설정
         String newPassword = UUIDGenerator.generatePassword(16);
-        Member.resetPassword(member, newPassword);
+        Member.setPassword(member, newPassword);
 
         // 임시 비밀번호 반환
         return new FindPasswordResponse(newPassword);
+    }
+
+    @Transactional
+    public void modifyPassword(String password) {
+        // 유저 조회
+        Member member = findMemberByEmail();
+
+        // 비밀번호 설정
+        Member.setPassword(member, password);
     }
 }

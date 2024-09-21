@@ -160,7 +160,6 @@ public class Member {
 
     // 업데이트 메서드
     public static Member modifyMember(Member member, ModifyRequestDto request) {
-        member.password = request.getPassword();
         member.profileImage = ProfileImage.updateProfileImage(member.profileImage, request.getProfileImage());
         member.userName = request.getUserName();
         member.introduction = request.getIntroduction();
@@ -182,8 +181,8 @@ public class Member {
         return member;
     }
 
-    // 임시 비밀번호 설정
-    public static void resetPassword(Member member, String newPassword) {
+    // 비밀번호 설정
+    public static void setPassword(Member member, String newPassword) {
         member.password = newPassword;
         member.updatedAt = LocalDateTime.now();
     }
