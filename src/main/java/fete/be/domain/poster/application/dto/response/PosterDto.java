@@ -59,7 +59,7 @@ public class PosterDto {
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
         this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getSimpleAddress(),
-                poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
+                poster.getEvent().getDetailAddress(), poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(
@@ -101,7 +101,7 @@ public class PosterDto {
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
         this.place = new Place(poster.getEvent().getAddress(), poster.getEvent().getSimpleAddress(),
-                poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
+                poster.getEvent().getDetailAddress(), poster.getEvent().getLatitude(), poster.getEvent().getLongitude());
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(
