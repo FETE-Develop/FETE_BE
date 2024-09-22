@@ -87,7 +87,7 @@ public class PaymentService {
         Poster poster = posterService.findPosterByPosterId(posterId);
         Event event = poster.getEvent();
 
-        AccountDto account = new AccountDto(event.getBankName(), event.getAccountNumber());
+        AccountDto account = new AccountDto(event);
         return account;
     }
 }

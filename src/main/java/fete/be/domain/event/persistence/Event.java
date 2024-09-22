@@ -71,6 +71,8 @@ public class Event {
     private String bankName;  // 은행
     @Column(name = "account_number")
     private String accountNumber;  // 계좌번호
+    @Column(name = "account_holder")
+    private String accountHolder;  // 예금주
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
@@ -122,6 +124,7 @@ public class Event {
         // 계좌 정보
         event.bankName = request.getAccount().getBankName();
         event.accountNumber = request.getAccount().getAccountNumber();
+        event.accountHolder = request.getAccount().getAccountHolder();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.createdAt = currentTime;
@@ -159,6 +162,7 @@ public class Event {
         // 계좌 정보
         event.bankName = request.getAccount().getBankName();
         event.accountNumber = request.getAccount().getAccountNumber();
+        event.accountHolder = request.getAccount().getAccountHolder();
 
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;
