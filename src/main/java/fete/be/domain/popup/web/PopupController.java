@@ -51,7 +51,7 @@ public class PopupController {
 
 
     /**
-     * 팝업 그만보기 API
+     * 팝업 차단 API
      *
      * @param Long popupId
      * @return ApiResponse
@@ -65,9 +65,9 @@ public class PopupController {
             // 팝업 그만보기 실행
             popupService.dismissPopup(popupId);
 
-            return new ApiResponse<GetPopupsResponse>(ResponseMessage.POPUP_GET_POPUPS.getCode(), ResponseMessage.POPUP_GET_POPUPS.getMessage());
+            return new ApiResponse<GetPopupsResponse>(ResponseMessage.POPUP_DISMISS_POPUP.getCode(), ResponseMessage.POPUP_DISMISS_POPUP.getMessage());
         } catch (NotFoundPopupException e) {
-            return new ApiResponse<GetPopupsResponse>(ResponseMessage.POPUP_GET_POPUPS_FAIL.getCode(), e.getMessage());
+            return new ApiResponse<GetPopupsResponse>(ResponseMessage.POPUP_DISMISS_POPUP_FAIL.getCode(), e.getMessage());
         }
     }
 }
