@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -90,17 +91,31 @@ public class Poster {
     public static Poster updatePoster(Poster poster, ModifyPosterRequest request, ImageUploadService imageUploadService) throws URISyntaxException {
         poster.title = request.getTitle();
 
-        // 기존의 포스터 이미지를 S3와 DB에서 삭제
+        // 이미지에 수정된 것이 있는지 확인
+        boolean isChangedImage = false;
+        List<String> requestUrls = Arrays.asList(request.getPosterImgUrls());
         for (PosterImage posterImage : poster.posterImages) {
-            log.info("posterURL={}", posterImage.getImageUrl());
-            imageUploadService.deleteFile(posterImage.getImageUrl());
+            String originalUrl = posterImage.getImageUrl();
+            if (!requestUrls.contains(originalUrl)) {
+                isChangedImage = true;
+                break;
+            }
         }
-        poster.posterImages.clear();
 
-        // 전달된 이미지를 새롭게 추가
-        for (String posterImgUrl : request.getPosterImgUrls()) {
-            PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
-            poster.posterImages.add(posterImage);
+        // 이미지 수정이 필요한 경우
+        if (isChangedImage) {
+            // 기존의 포스터 이미지를 S3와 DB에서 삭제
+            for (PosterImage posterImage : poster.posterImages) {
+                log.info("posterURL={}", posterImage.getImageUrl());
+                imageUploadService.deleteFile(posterImage.getImageUrl());
+            }
+            poster.posterImages.clear();
+
+            // 전달된 이미지를 새롭게 추가
+            for (String posterImgUrl : request.getPosterImgUrls()) {
+                PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
+                poster.posterImages.add(posterImage);
+            }
         }
 
         poster.institution = request.getInstitution();
