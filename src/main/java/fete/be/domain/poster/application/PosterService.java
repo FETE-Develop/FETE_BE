@@ -151,7 +151,7 @@ public class PosterService {
         // 이벤트 등록자라면, 계좌 정보를 포함하여 반환
         AccountDto account;
         if (member.equals(poster.getMember())) {
-            account = new AccountDto(poster.getEvent().getAccountNumber(), poster.getEvent().getBankName());
+            account = new AccountDto(poster.getEvent());
             return new PosterDto(poster, isLike, account);
         }
 
