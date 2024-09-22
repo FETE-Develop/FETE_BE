@@ -49,8 +49,13 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/members/**", "/api/emails/**").permitAll()
-                .requestMatchers("/api/banners/**", "/api/popups/**", "/api/categories/**").permitAll()
+                .requestMatchers("/api/emails/**").permitAll()
+                .requestMatchers("/api/members/signup", "/api/members/login",
+                        "/api/members/kakao/signup", "/api/members/kakao/login",
+                        "/api/members/apple/signup", "/api/members/apple/login",
+                        "/api/members/admin", "/api/members/find-id", "/api/members/find-password").permitAll()
+                .requestMatchers("/api/banners/**", "/api/categories/**").permitAll()
+                .requestMatchers("/api/popups").permitAll()
                 .requestMatchers("/api/posters", "/api/posters/{posterId}", "/api/posters/search").permitAll()
                 .requestMatchers("/api/admins/**").hasRole("ADMIN")
                 .and()
