@@ -143,7 +143,9 @@ public enum ResponseMessage {
     // POPUP
     POPUP_GET_POPUPS(1500, "팝업 전체 조회에 성공하였습니다."),
     POPUP_GET_POPUPS_FAIL(1501, "팝업 전체 조회에 실패하였습니다."),
-    POPUP_NO_EXIST(1501, "해당 팝업이 존재하지 않습니다."),
+    POPUP_NO_EXIST(1502, "해당 팝업이 존재하지 않습니다."),
+    POPUP_DISMISS_POPUP(1503, "팝업 차단에 성공하였습니다."),
+    POPUP_DISMISS_POPUP_FAIL(1504, "팝업 차단에 실패하였습니다."),
 
     // CATEGORY
     CATEGORY_GET_CATEGORIES(1600, "카테고리가 전체 조회에 성공하였습니다."),
