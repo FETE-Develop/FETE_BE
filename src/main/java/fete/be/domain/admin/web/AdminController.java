@@ -13,6 +13,7 @@ import fete.be.domain.notification.application.NotificationService;
 import fete.be.domain.notification.application.dto.request.PushMessageRequest;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.popup.application.PopupService;
+import fete.be.domain.popup.exception.NotFoundPopupException;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.global.util.ApiResponse;
@@ -312,7 +313,7 @@ public class AdminController {
             Long modifiedPopupId = popupService.modifyPopup(popupId, request);
 
             return new ApiResponse(ResponseMessage.ADMIN_MODIFY_POPUP_SUCCESS.getCode(), ResponseMessage.ADMIN_MODIFY_POPUP_SUCCESS.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundPopupException e) {
             return new ApiResponse(ResponseMessage.ADMIN_MODIFY_POPUP_FAIL.getCode(), e.getMessage());
         }
     }
@@ -335,7 +336,7 @@ public class AdminController {
             popupService.deletePopup(popupId);
 
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_POPUP_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_POPUP_SUCCESS.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundPopupException e) {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_POPUP_FAIL.getCode(), e.getMessage());
         }
     }
