@@ -3,6 +3,7 @@ package fete.be.domain.category.web;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.category.application.dto.response.CategoryDto;
 import fete.be.domain.category.application.dto.response.GetCategoriesResponse;
+import fete.be.domain.member.exception.GuestUserException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -30,17 +31,21 @@ public class CategoryController {
      */
     @GetMapping
     public ApiResponse<GetCategoriesResponse> getCategories() {
-        try {
-            log.info("GetCategories API");
-            Logging.time();
+        log.info("GetCategories API");
+        Logging.time();
 
+        try {
             // 카테고리 전체 조회 (페이징 없이)
             List<CategoryDto> categories = categoryService.getCategories();
             GetCategoriesResponse result = new GetCategoriesResponse(categories);
 
             return new ApiResponse<>(ResponseMessage.CATEGORY_GET_CATEGORIES.getCode(), ResponseMessage.CATEGORY_GET_CATEGORIES.getMessage(), result);
-        } catch (IllegalArgumentException e) {
-            return new ApiResponse<>(ResponseMessage.CATEGORY_GET_CATEGORIES_FAIL.getCode(), e.getMessage());
+        } catch (GuestUserException e) {
+            // 게스트용 카테고리 전체 조회 (페이징 없이)
+            List<CategoryDto> categories = categoryService.getGuestCategories();
+            GetCategoriesResponse result = new GetCategoriesResponse(categories);
+
+            return new ApiResponse<>(ResponseMessage.CATEGORY_GET_CATEGORIES.getCode(), ResponseMessage.CATEGORY_GET_CATEGORIES.getMessage(), result);
         }
     }
 

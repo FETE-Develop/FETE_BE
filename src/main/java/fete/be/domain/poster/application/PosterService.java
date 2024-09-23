@@ -296,7 +296,10 @@ public class PosterService {
 
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
-                .map(poster -> new SimplePosterDto(poster));
+                .map(poster -> {
+                    Boolean isLike = false;
+                    return new SimplePosterDto(poster, isLike);
+                });
     }
 
     // 관리자용 아티스트 프로필 이미지 등록
