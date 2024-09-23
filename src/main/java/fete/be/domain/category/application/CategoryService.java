@@ -6,7 +6,10 @@ import fete.be.domain.admin.application.dto.response.SimplePosterDto;
 import fete.be.domain.category.application.dto.response.CategoryDto;
 import fete.be.domain.category.persistence.Category;
 import fete.be.domain.category.persistence.CategoryRepository;
+import fete.be.domain.member.application.MemberService;
+import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.persistence.PosterLikeRepository;
 import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +26,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CategoryService {
 
+    private final MemberService memberService;
     private final PosterService posterService;
     private final CategoryRepository categoryRepository;
+    private final PosterLikeRepository posterLikeRepository;
 
 
     @Transactional
@@ -64,12 +69,35 @@ public class CategoryService {
     }
 
     public List<CategoryDto> getCategories() {
+        // 유저 조회
+        Member member = memberService.findMemberByEmail();
+
         List<CategoryDto> categories = categoryRepository.findAll().stream()
                 .map(category -> new CategoryDto(
                         category.getCategoryId(),
                         category.getCategoryName(),
                         category.getPosters().stream()
-                                .map(poster -> new SimplePosterDto(poster))
+                                .map(poster -> {
+                                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
+                                    return new SimplePosterDto(poster, isLike);
+                                })
+                                .collect(Collectors.toList())
+                ))
+                .collect(Collectors.toList());
+
+        return categories;
+    }
+
+    public List<CategoryDto> getGuestCategories() {
+        List<CategoryDto> categories = categoryRepository.findAll().stream()
+                .map(category -> new CategoryDto(
+                        category.getCategoryId(),
+                        category.getCategoryName(),
+                        category.getPosters().stream()
+                                .map(poster -> {
+                                    Boolean isLike = false;
+                                    return new SimplePosterDto(poster, isLike);
+                                })
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
