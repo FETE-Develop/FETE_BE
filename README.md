@@ -7,14 +7,9 @@ FETE
 
 Tech Stack
 ---
-- Spring, Spring Boot, JPA, AWS, Docker, Redis
-
-</br>
-
-Team Member (BackEnd)
----
-- 강건영 : 스프링, 스프링부트, JPA, AWS(EC2, RDS, S3, ElastiCache), Redis<br>
-- 변상연 : AWS, 도커, 리눅스, CI/CD
+- Spring, Spring Boot, JPA, MySQL
+- AWS - EC2, RDS, S3, ElastiCache(Redis)
+- Docker, GitHub Actions
 
 </br>
 
