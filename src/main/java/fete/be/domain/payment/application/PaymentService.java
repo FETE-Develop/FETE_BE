@@ -60,7 +60,8 @@ public class PaymentService {
                             payment.getTicketPrice(),
                             payment.getIsPaid(),
                             payment.getTotalAmount(),
-                            payment.getPaymentAt()
+                            payment.getPaymentAt(),
+                            payment.getParticipant().getIsParticipated()
                     );
                 })
                 .collect(Collectors.toList());

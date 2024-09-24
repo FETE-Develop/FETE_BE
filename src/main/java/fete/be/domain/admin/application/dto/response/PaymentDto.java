@@ -16,4 +16,5 @@ public class PaymentDto {
     private int totalAmount;  // 총 결제 금액
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime paymentAt;  // 결제 일자
+    private Boolean isParticipated;  // 티켓 사용 여부
 }
