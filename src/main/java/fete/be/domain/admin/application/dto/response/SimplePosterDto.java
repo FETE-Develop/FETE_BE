@@ -20,6 +20,7 @@ public class SimplePosterDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime endDate;  // 이벤트 종료일
     private String address;  // 주소
+    private String simpleAddress;  // 간단 주소
     private Genre genre;  // 장르
     private Boolean isLike;  // 사용자의 관심 등록 상태
 
@@ -31,6 +32,7 @@ public class SimplePosterDto {
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
         this.address = poster.getEvent().getAddress();
+        this.simpleAddress = poster.getEvent().getSimpleAddress();
         this.genre = poster.getEvent().getGenre();
         this.isLike = isLike;
     }
