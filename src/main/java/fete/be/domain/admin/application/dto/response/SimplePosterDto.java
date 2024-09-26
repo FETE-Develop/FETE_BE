@@ -2,6 +2,7 @@ package fete.be.domain.admin.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.Genre;
+import fete.be.domain.event.persistence.Mood;
 import fete.be.domain.poster.persistence.Poster;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class SimplePosterDto {
     private LocalDateTime endDate;  // 이벤트 종료일
     private String address;  // 주소
     private String simpleAddress;  // 간단 주소
+    private Mood mood;  // 이벤트 무드
     private Genre genre;  // 장르
     private Boolean isLike;  // 사용자의 관심 등록 상태
 
@@ -33,6 +35,7 @@ public class SimplePosterDto {
         this.endDate = poster.getEvent().getEndDate();
         this.address = poster.getEvent().getAddress();
         this.simpleAddress = poster.getEvent().getSimpleAddress();
+        this.mood = poster.getEvent().getMood();
         this.genre = poster.getEvent().getGenre();
         this.isLike = isLike;
     }
