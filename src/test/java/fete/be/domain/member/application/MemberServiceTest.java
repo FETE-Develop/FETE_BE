@@ -7,11 +7,13 @@ import fete.be.domain.member.exception.DuplicatePhoneNumberException;
 import fete.be.domain.member.persistence.Gender;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
+import fete.be.global.jwt.JwtToken;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,6 +141,46 @@ class MemberServiceTest {
             // then
             assertThrows(BlockedUserException.class, () -> {
                 memberService.signUp(signupRequestDto);
+            });
+        }
+    }
+
+    @Nested
+    @DisplayName("로그인")
+    class Login {
+
+        @BeforeEach
+        void setUp() {
+            // 회원가입 실행
+            SignupRequestDto signupRequestDto = new SignupRequestDto("kky6335@gmail.com", "qwer1234!",
+                    "www.profile.image.com", "강건영", "강건영입니다.", "2000-11-30", Gender.MALE, "01020856335");
+            memberService.signUp(signupRequestDto);
+        }
+
+        @DisplayName("로그인 성공")
+        @Test
+        void 로그인_성공() {
+            // given
+            String id = "kky6335@gmail.com";
+            String password = "qwer1234!";
+
+            // when
+            JwtToken token = memberService.login(id, password);
+
+            // then
+            assertThat(token).isNotNull();
+        }
+
+        @DisplayName("로그인 실패")
+        @Test
+        void 로그인_실패() {
+            // given
+            String id = "kky6335@gmail.com";
+            String password = "1234qwer!";
+
+            // when & then
+            assertThrows(BadCredentialsException.class, () -> {
+                JwtToken token = memberService.login(id, password);
             });
         }
     }
