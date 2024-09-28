@@ -2,6 +2,7 @@ package fete.be.domain.member.application.dto.request;
 
 import fete.be.domain.member.persistence.Gender;
 import jakarta.annotation.Nullable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class SignupRequestDto {
     private String email;
     private String password;
