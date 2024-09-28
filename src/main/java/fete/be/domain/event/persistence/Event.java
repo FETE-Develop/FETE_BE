@@ -47,7 +47,7 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets = new ArrayList<>();  // 티켓 종류 및 가격 정보
 
-    @Column(name = "description", length = 300)
+    @Column(name = "description", length = 1000)
     private String description;  // 이벤트 관련 상세 설명
 
     @Column(name = "mood")
