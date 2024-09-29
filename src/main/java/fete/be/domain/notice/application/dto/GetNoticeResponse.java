@@ -13,6 +13,6 @@ import java.time.LocalDateTime;
 public class GetNoticeResponse {
     private String title;  // 제목
     private String content;  // 내용
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;  // 생성 일자
 }

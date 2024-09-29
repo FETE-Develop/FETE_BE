@@ -14,9 +14,9 @@ public class TicketDto {
     private Long participantId;
     private String eventName;
     private String posterImage;  // 대표 이미지 1장
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;
     private String address;
     private String ticketType;
@@ -25,7 +25,7 @@ public class TicketDto {
     private int totalAmount;  // 총 결제 금액
     private String method;  // 결제 수단
     private String cancelReason;  // 취소 사유
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentAt;  // 결제일자
 
     public TicketDto(Participant participant) {
