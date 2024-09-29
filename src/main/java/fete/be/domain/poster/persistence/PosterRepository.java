@@ -19,7 +19,7 @@ public interface PosterRepository extends JpaRepository<Poster, Long> {
 
     Page<Poster> findByPosterIdIn(List<Long> posterIds, Pageable pageable);
 
-    Page<Poster> findByStatusAndTitleContainingOrEventDescriptionContaining(Status status, String keyword1, String keyword2, Pageable pageable);
+    Page<Poster> findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status status, String keyword1, String keyword2, Pageable pageable);
 
     Optional<Poster> findByStatusAndPosterId(Status status, Long posterId);
 

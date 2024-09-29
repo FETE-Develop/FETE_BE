@@ -66,15 +66,6 @@ public class TicketService {
                 .collect(Collectors.toList());
     }
 
-//    public List<TicketDto> getTickets() {
-//        Member member = memberService.findMemberByEmail();
-//
-//        return participantRepository.findByMember(member)
-//                .stream()
-//                .map(participant -> new TicketDto(participant))
-//                .collect(Collectors.toList());
-//    }
-
     public GetTicketInfoResponse getTicketInfo(Long participantId) throws Exception {
         // participantId로 Participant 객체 찾아오기
         Participant participant = participantRepository.findById(participantId).orElseThrow(
