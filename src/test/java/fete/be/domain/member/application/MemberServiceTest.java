@@ -196,4 +196,10 @@ class MemberServiceTest {
     class Deactivate {
 
     }
+
+    @Nested
+    @DisplayName("유저 편의 기능")
+    class FindUserInfo {
+
+    }
 }
