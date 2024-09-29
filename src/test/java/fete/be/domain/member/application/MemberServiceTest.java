@@ -184,4 +184,16 @@ class MemberServiceTest {
             });
         }
     }
+
+    @Nested
+    @DisplayName("유저 프로필 수정")
+    class Modify {
+
+    }
+
+    @Nested
+    @DisplayName("유저 탈퇴")
+    class Deactivate {
+
+    }
 }
