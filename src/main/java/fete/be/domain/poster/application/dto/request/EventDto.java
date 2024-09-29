@@ -15,9 +15,9 @@ import java.util.List;
 @ToString
 public class EventDto {
     private String eventName;  // 이벤트 이름
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;  // 이벤트 시작일
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;  // 이벤트 종료일
     private Place place;   // 위치 정보
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격

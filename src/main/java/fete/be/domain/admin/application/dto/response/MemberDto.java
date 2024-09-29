@@ -22,7 +22,7 @@ public class MemberDto {
     private Gender gender;  // 성별(MALE / FEMALE)
     private String phoneNumber;  // 휴대전화 번호
     private Role role;  // 권한
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;  // 가입 날짜
     private Status status;  // 계정 상태
 }

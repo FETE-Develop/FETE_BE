@@ -11,6 +11,6 @@ import java.time.LocalDateTime;
 public class SimpleNotice {
     private Long noticeId;  // 공지사항 아이디
     private String title;  // 제목
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;  // 생성 일자
 }

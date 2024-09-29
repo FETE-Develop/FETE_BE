@@ -16,9 +16,9 @@ public class SimplePosterDto {
     private String title;  // 포스터 제목
     private String posterImage;  // 대표 이미지 1장
     private String manager;  // 담당자 이름
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startDate;  // 이벤트 시작일
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;  // 이벤트 종료일
     private String address;  // 주소
     private String simpleAddress;  // 간단 주소
