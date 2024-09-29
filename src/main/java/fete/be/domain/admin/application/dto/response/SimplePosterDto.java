@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SimplePosterDto {
     private Long posterId;  // 포스터 아이디
-    private String title;  // 포스터 제목
+    private String eventName;  // 이벤트 이름
     private String posterImage;  // 대표 이미지 1장
     private String manager;  // 담당자 이름
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -28,7 +28,7 @@ public class SimplePosterDto {
 
     public SimplePosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
-        this.title = poster.getTitle();
+        this.eventName = poster.getEvent().getEventName();
         this.posterImage = poster.getPosterImages().get(0).getImageUrl();
         this.manager = poster.getManager();
         this.startDate = poster.getEvent().getStartDate();

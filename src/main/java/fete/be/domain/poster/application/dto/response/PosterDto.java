@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PosterDto {
     private Long posterId;  // 포스터 아이디
-    private String title;  // 포스터 제목
     private List<String> posterImages;  // 포스터 이미지
     private String institution;  // 기관명
 
@@ -48,7 +47,6 @@ public class PosterDto {
 
     public PosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
-        this.title = poster.getTitle();
 
         this.posterImages = poster.getPosterImages().stream()
                 .map(PosterImage::getImageUrl)
@@ -90,7 +88,6 @@ public class PosterDto {
 
     public PosterDto(Poster poster, Boolean isLike, AccountDto account) {
         this.posterId = poster.getPosterId();
-        this.title = poster.getTitle();
 
         this.posterImages = poster.getPosterImages().stream()
                 .map(PosterImage::getImageUrl)

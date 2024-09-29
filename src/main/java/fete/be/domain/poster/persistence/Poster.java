@@ -32,9 +32,6 @@ public class Poster {
     @JoinColumn(name = "member_id")
     private Member member;  // 등록자
 
-    @Column(name = "title", nullable = false, length = 30)
-    private String title;  // 포스터 제목
-
     @OneToMany(mappedBy = "poster", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PosterImage> posterImages = new ArrayList<>();  // 포스터 이미지 - 최대 10장
     private String institution;  // 주최 팀 or 주최자 명
@@ -66,7 +63,6 @@ public class Poster {
         Poster poster = new Poster();
 
         poster.member = member;
-        poster.title = request.getTitle();
 
         for (String posterImgUrl : request.getPosterImgUrls()) {
             PosterImage posterImage = PosterImage.createPosterImage(poster, posterImgUrl);
@@ -89,8 +85,6 @@ public class Poster {
 
     // 업데이트 메서드
     public static Poster updatePoster(Poster poster, ModifyPosterRequest request, ImageUploadService imageUploadService) throws URISyntaxException {
-        poster.title = request.getTitle();
-
         // 이미지에 수정된 것이 있는지 확인
         boolean isChangedImage = false;
         List<String> requestUrls = Arrays.asList(request.getPosterImgUrls());

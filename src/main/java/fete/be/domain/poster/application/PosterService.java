@@ -257,7 +257,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail();
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByStatusAndTitleContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
+        return posterRepository.findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
@@ -269,7 +269,7 @@ public class PosterService {
         Pageable pageable = createPageable(page, size);
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByStatusAndTitleContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
+        return posterRepository.findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = false;
                     return new PosterDto(poster, isLike);
@@ -333,7 +333,7 @@ public class PosterService {
                 size,
                 Sort.by(
                         Sort.Order.asc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
-                        Sort.Order.asc("title")  // 두 번째 정렬 기준: 이벤트 이름
+                        Sort.Order.asc("event.eventName")  // 두 번째 정렬 기준: 이벤트 이름
                 )
         );
         return pageable;
