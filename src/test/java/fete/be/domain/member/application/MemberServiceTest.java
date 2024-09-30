@@ -232,6 +232,35 @@ class MemberServiceTest {
     @DisplayName("유저 탈퇴")
     class Deactivate {
 
+        @BeforeEach
+        void setUp() {
+            // SecurityContext에 인증정보 임의로 설정
+            String tempEmail = "kky6335@gmail.com";
+            String tempPassword = "qwer1234!";
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tempEmail, tempPassword, List.of());
+            SecurityContext securityContext = new SecurityContextImpl(authentication);
+            SecurityContextHolder.setContext(securityContext);
+
+            // 계정 생성
+            SignupRequestDto signupRequestDto = new SignupRequestDto("kky6335@gmail.com", "qwer1234!",
+                    "www.profile.image.com", "강건영", "강건영입니다.", "2000-11-30", Gender.MALE, "01020856335");
+            memberService.signUp(signupRequestDto);
+        }
+
+        @Test
+        @DisplayName("유저 탈퇴 성공")
+        void 유저_탈퇴_성공() {
+            // given
+            Member currentMember = memberService.findMemberByEmail();
+
+            // when
+            memberService.deactivateMember();
+
+            // then
+            Optional<Member> deletedMember = memberRepository.findByEmail(currentMember.getEmail());
+            assertThat(deletedMember).isNotPresent();
+        }
     }
 
     @Nested

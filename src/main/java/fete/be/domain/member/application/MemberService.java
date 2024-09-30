@@ -174,7 +174,7 @@ public class MemberService {
 
     @Transactional
     public Long deactivateMember(Long memberId) {
-        // 탈퇴할 유저 조회
+        // 강퇴할 유저 조회
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException(ResponseMessage.MEMBER_NO_EXIST.getMessage())
         );
