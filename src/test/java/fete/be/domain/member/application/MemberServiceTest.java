@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 import java.util.Optional;
@@ -345,6 +346,25 @@ class MemberServiceTest {
                 assertThrows(NotFoundMemberException.class, () -> {
                     FindPasswordResponse passwordInfo = memberService.findPassword(email);
                 });
+            }
+        }
+
+        @Nested
+        @DisplayName("비밀번호 재설정")
+        class ModifyPassword {
+
+            @Test
+            @DisplayName("비밀번호 재설정 성공")
+            void 비밀번호_재설정_성공() {
+                // given
+                String newPassword = "1234qwer!";
+
+                // when
+                memberService.modifyPassword(newPassword);
+
+                // then - 새로운 비밀번호로 재설정했기 때문에 기존 비밀번호와 같지 않아야 한다.
+                Member member = memberService.findMemberByEmail();
+                assertThat(member.getPassword()).isNotEqualTo("qwer1234!");
             }
         }
     }
