@@ -2,12 +2,16 @@ package fete.be.domain.member.application;
 
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.member.application.dto.response.FindIdResponse;
+import fete.be.domain.member.application.dto.response.FindPasswordResponse;
 import fete.be.domain.member.exception.BlockedUserException;
 import fete.be.domain.member.exception.DuplicateEmailException;
 import fete.be.domain.member.exception.DuplicatePhoneNumberException;
+import fete.be.domain.member.exception.NotFoundMemberException;
 import fete.be.domain.member.persistence.Gender;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
+import fete.be.domain.member.persistence.MemberType;
 import fete.be.global.jwt.JwtToken;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -264,8 +268,84 @@ class MemberServiceTest {
     }
 
     @Nested
-    @DisplayName("유저 편의 기능")
+    @DisplayName("유저 계정 정보")
     class FindUserInfo {
 
+        @BeforeEach
+        void setUp() {
+            // SecurityContext에 인증정보 임의로 설정
+            String tempEmail = "kky6335@gmail.com";
+            String tempPassword = "qwer1234!";
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tempEmail, tempPassword, List.of());
+            SecurityContext securityContext = new SecurityContextImpl(authentication);
+            SecurityContextHolder.setContext(securityContext);
+
+            // 계정 생성
+            SignupRequestDto signupRequestDto = new SignupRequestDto("kky6335@gmail.com", "qwer1234!",
+                    "www.profile.image.com", "강건영", "강건영입니다.", "2000-11-30", Gender.MALE, "01020856335");
+            memberService.signUp(signupRequestDto);
+        }
+
+        @Nested
+        @DisplayName("아이디 찾기")
+        class FindId {
+
+            @Test
+            @DisplayName("아이디 찾기 성공")
+            void 아이디_찾기_성공() {
+                // given
+                String phoneNumber = "01020856335";
+
+                // when
+                FindIdResponse idInfo = memberService.findId(phoneNumber);
+
+                // then
+                assertThat(idInfo.getMemberType()).isEqualTo(MemberType.EMAIL);
+                assertThat(idInfo.getEmail()).isEqualTo("kky6335@gmail.com");
+            }
+
+            @Test
+            @DisplayName("실패 - 존재하지 않는 휴대전화 번호")
+            void 실패_미존재_전화번호() {
+                // given
+                String phoneNumber = "01012345678";  // 존재하지 않는 번호
+
+                // when & then
+                assertThrows(NotFoundMemberException.class, () -> {
+                    FindIdResponse idInfo = memberService.findId(phoneNumber);
+                });
+            }
+        }
+
+        @Nested
+        @DisplayName("비밀번호 찾기")
+        class FindPassword {
+
+            @Test
+            @DisplayName("비밀번호 찾기 성공")
+            void 비밀번호_찾기_성공() {
+                // given
+                String email = "kky6335@gmail.com";
+
+                // when
+                FindPasswordResponse passwordInfo = memberService.findPassword(email);
+
+                // then - 임시 비밀번호가 발급되기 때문에 원본 비밀번호와 달라야 한다.
+                assertThat(passwordInfo.getPassword()).isNotEqualTo("qwer1234!");
+            }
+
+            @Test
+            @DisplayName("실패 - 존재하지 않는 이메일")
+            void 실패_미존재_이메일() {
+                // given
+                String email = "kgy6335@gmail.com";  // 존재하지 않는 이메일
+
+                // when & then
+                assertThrows(NotFoundMemberException.class, () -> {
+                    FindPasswordResponse passwordInfo = memberService.findPassword(email);
+                });
+            }
+        }
     }
 }
