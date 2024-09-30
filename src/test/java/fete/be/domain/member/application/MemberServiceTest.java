@@ -1,5 +1,6 @@
 package fete.be.domain.member.application;
 
+import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
 import fete.be.domain.member.exception.BlockedUserException;
 import fete.be.domain.member.exception.DuplicateEmailException;
@@ -9,14 +10,20 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberRepository;
 import fete.be.global.jwt.JwtToken;
 import jakarta.validation.ConstraintViolationException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -135,7 +142,7 @@ class MemberServiceTest {
 
             // when : 회원가입 -> 강퇴(=차단) -> 재가입
             memberService.signUp(signupRequestDto);
-            Optional<Member> member = memberRepository.findById(1L);
+            Optional<Member> member = memberRepository.findByEmail("kky6335@gmail.com");
             memberService.deactivateMember(member.get().getMemberId());
 
             // then
@@ -189,12 +196,71 @@ class MemberServiceTest {
     @DisplayName("유저 프로필 수정")
     class Modify {
 
+        @BeforeEach
+        void setUp() {
+            // SecurityContext에 인증정보 임의로 설정
+            String tempEmail = "kky6335@gmail.com";
+            String tempPassword = "qwer1234!";
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tempEmail, tempPassword, List.of());
+            SecurityContext securityContext = new SecurityContextImpl(authentication);
+            SecurityContextHolder.setContext(securityContext);
+
+            // 계정 생성
+            SignupRequestDto signupRequestDto = new SignupRequestDto("kky6335@gmail.com", "qwer1234!",
+                    "www.profile.image.com", "강건영", "강건영입니다.", "2000-11-30", Gender.MALE, "01020856335");
+            memberService.signUp(signupRequestDto);
+        }
+
+        @Test
+        @DisplayName("유저 프로필 수정 성공")
+        void 프로필_수정_성공() {
+            // given
+            ModifyRequestDto modifyDto = new ModifyRequestDto("www.newProfile.image.com", "강하원", "강하원입니다.", "2000-12-30", Gender.FEMALE, "01012345678");
+
+            // when
+            Long modifiedMemberId = memberService.modify(modifyDto);
+
+            // then
+            Member member = memberRepository.findById(modifiedMemberId).orElseThrow();
+            assertThat(member.getUserName()).isEqualTo("강하원");
+            assertThat(member.getBirth()).isEqualTo("2000-12-30");
+        }
     }
 
     @Nested
     @DisplayName("유저 탈퇴")
     class Deactivate {
 
+        @BeforeEach
+        void setUp() {
+            // SecurityContext에 인증정보 임의로 설정
+            String tempEmail = "kky6335@gmail.com";
+            String tempPassword = "qwer1234!";
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(tempEmail, tempPassword, List.of());
+            SecurityContext securityContext = new SecurityContextImpl(authentication);
+            SecurityContextHolder.setContext(securityContext);
+
+            // 계정 생성
+            SignupRequestDto signupRequestDto = new SignupRequestDto("kky6335@gmail.com", "qwer1234!",
+                    "www.profile.image.com", "강건영", "강건영입니다.", "2000-11-30", Gender.MALE, "01020856335");
+            memberService.signUp(signupRequestDto);
+        }
+
+        @Test
+        @DisplayName("유저 탈퇴 성공")
+        void 유저_탈퇴_성공() {
+            // given
+            Member currentMember = memberService.findMemberByEmail();
+
+            // when
+            memberService.deactivateMember();
+
+            // then
+            Optional<Member> deletedMember = memberRepository.findByEmail(currentMember.getEmail());
+            assertThat(deletedMember).isNotPresent();
+        }
     }
 
     @Nested

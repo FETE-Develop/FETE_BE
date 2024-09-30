@@ -2,11 +2,13 @@ package fete.be.domain.member.application.dto.request;
 
 import fete.be.domain.member.persistence.Gender;
 import jakarta.annotation.Nullable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@AllArgsConstructor
 public class ModifyRequestDto {
     @Nullable
     private String profileImage;
