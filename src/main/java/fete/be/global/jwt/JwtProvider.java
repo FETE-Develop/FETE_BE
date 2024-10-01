@@ -40,14 +40,13 @@ public class JwtProvider {
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 1))  // 30분
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15))  // 15일
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))  // 1시간
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))  // 1일
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))  // 14일
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
