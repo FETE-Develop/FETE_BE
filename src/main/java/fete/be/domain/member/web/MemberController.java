@@ -14,6 +14,7 @@ import fete.be.domain.member.oauth.kakao.KakaoAuthService;
 import fete.be.domain.member.oauth.kakao.dto.KakaoLoginRequest;
 import fete.be.domain.member.oauth.kakao.dto.KakaoSignUpRequest;
 import fete.be.domain.member.oauth.kakao.dto.KakaoUserInfoResponse;
+import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -34,6 +35,7 @@ public class MemberController {
     private final MemberService memberService;
     private final KakaoAuthService kakaoAuthService;
     private final AppleAuthService appleAuthService;
+    private final JwtProvider jwtProvider;
 
 
     /**
@@ -394,5 +396,18 @@ public class MemberController {
         } catch (GuestUserException e) {
             return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_PW_FAIL.getCode(), e.getMessage());
         }
+    }
+
+
+    @PostMapping("/check-token")
+    public ApiResponse<Boolean> checkJwtToken(@RequestBody CheckJwtTokenRequest request) {
+        log.info("CheckJwtToken API");
+        Logging.time();
+
+        // 확인할 토큰 추출
+        String token = request.getToken();
+
+        Boolean isValidToken = jwtProvider.validateToken(token);
+        return new ApiResponse<>(ResponseMessage.MEMBER_CHECK_TOKEN.getCode(), ResponseMessage.MEMBER_CHECK_TOKEN.getMessage(), isValidToken);
     }
 }

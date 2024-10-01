@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/members/signup", "/api/members/login",
                         "/api/members/kakao/signup", "/api/members/kakao/login",
                         "/api/members/apple/signup", "/api/members/apple/login",
-                        "/api/members/admin", "/api/members/find-id", "/api/members/find-password").permitAll()
+                        "/api/members/admin", "/api/members/find-id", "/api/members/find-password", "/api/members/check-token").permitAll()
                 .requestMatchers("/api/banners/**", "/api/categories/**").permitAll()
                 .requestMatchers("/api/popups").permitAll()
                 .requestMatchers("/api/posters", "/api/posters/{posterId}", "/api/posters/search").permitAll()
