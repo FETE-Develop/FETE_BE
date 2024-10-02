@@ -31,6 +31,8 @@ public enum ResponseMessage {
     MEMBER_MODIFY_PW_SUCCESS(616, "비밀번호 변경에 성공하였습니다."),
     MEMBER_MODIFY_PW_FAIL(617, "비밀번호 변경에 실패하였습니다."),
     MEMBER_CHECK_TOKEN(618, "토큰의 유효성 확인 결과입니다."),
+    TOKEN_INVALID(619, "유효하지 않은 토큰입니다."),
+    TOKEN_GENERATE_SUCCESS(620, "토큰 발급에 성공하였습니다."),
 
     // EMAIL
     EMAIL_SEND_SUCCESS(700, "이메일 전송이 성공하였습니다."),
