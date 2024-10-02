@@ -1,5 +1,6 @@
 package fete.be.domain.poster.persistence;
 
+import fete.be.domain.banner.persistence.Banner;
 import fete.be.domain.category.persistence.Category;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.image.application.ImageUploadService;
@@ -42,9 +43,14 @@ public class Poster {
 
     @OneToOne(mappedBy = "poster", cascade = CascadeType.ALL)
     private Event event;  // 등록할 이벤트
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;  // 카테고리
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "banner_id")
+    private Banner banner;  // 배너
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;  // 생성일자
@@ -175,5 +181,10 @@ public class Poster {
     // 카테고리 설정 메서드
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    // 배너 설정 메서드
+    public void setBanner(Banner banner) {
+        this.banner = banner;
     }
 }
