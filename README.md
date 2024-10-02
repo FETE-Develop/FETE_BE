@@ -15,4 +15,4 @@ Tech Stack
 
 ERD Diagram
 ---
-<img src="https://github.com/user-attachments/assets/af7aa072-413e-425e-a2ea-d6e8d64c7b52" alt="FETE_ERD" width="700"/>
+<img src="https://github.com/user-attachments/assets/4ee1d694-a905-41aa-9299-dfe537af1c15" alt="FETE_ERD" width="700"/>
