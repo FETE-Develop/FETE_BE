@@ -10,6 +10,7 @@ import fete.be.domain.member.application.dto.response.FindPasswordResponse;
 import fete.be.domain.member.application.dto.response.GetMyProfileResponse;
 import fete.be.domain.member.exception.*;
 import fete.be.domain.member.persistence.*;
+import fete.be.global.jwt.CustomUserDetailsService;
 import fete.be.global.jwt.JwtProvider;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ResponseMessage;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,7 @@ public class MemberService {
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
+    private final CustomUserDetailsService userDetailsService;
 
     @Value("${admin.key}")
     private String adminKey;
@@ -250,5 +253,26 @@ public class MemberService {
 
         // 비밀번호 설정
         Member.setPassword(member, password);
+    }
+
+    public String generateAccessToken(String refreshToken) {
+        // 토큰의 유효성 검사를 통과하지 못한 경우
+        if (!jwtProvider.validateToken(refreshToken)) {
+            throw new InvalidJwtTokenException(ResponseMessage.TOKEN_INVALID.getMessage());
+        }
+
+        // 새로운 accessToken 발급
+        String userName = jwtProvider.getUserNameFromRefreshToken(refreshToken);
+
+        // UserDetails 가져오기
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+
+        // 인증 객체 반환
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
+        // 새로운 accessToken 발급
+        String accessToken = jwtProvider.generateAccessToken(authentication);
+
+        return accessToken;
     }
 }

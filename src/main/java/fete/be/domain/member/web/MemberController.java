@@ -399,6 +399,12 @@ public class MemberController {
     }
 
 
+    /**
+     * 토큰 유효성 검사 API
+     *
+     * @param CheckJwtTokenRequest request
+     * @return ApiResponse<Boolean>
+     */
     @PostMapping("/check-token")
     public ApiResponse<Boolean> checkJwtToken(@RequestBody CheckJwtTokenRequest request) {
         log.info("CheckJwtToken API");
@@ -409,5 +415,26 @@ public class MemberController {
 
         Boolean isValidToken = jwtProvider.validateToken(token);
         return new ApiResponse<>(ResponseMessage.MEMBER_CHECK_TOKEN.getCode(), ResponseMessage.MEMBER_CHECK_TOKEN.getMessage(), isValidToken);
+    }
+
+
+    /**
+     * refreshToken을 통해 accessToken을 발급해주는 API
+     *
+     * @param GenerateAccessTokenRequest request
+     * @return ApiResponse<String>
+     */
+    @PostMapping("/check-refresh")
+    public ApiResponse<String> generateAccessToken(@RequestBody GenerateAccessTokenRequest request) {
+        log.info("GenerateAccessToken API");
+        Logging.time();
+
+        // refreshToken 추출
+        String refreshToken = request.getRefreshToken();
+
+        // 토큰의 유효성 확인 후, 새로운 accessToken 발급
+        String accessToken = memberService.generateAccessToken(refreshToken);
+
+        return new ApiResponse<>(ResponseMessage.TOKEN_GENERATE_SUCCESS.getCode(), ResponseMessage.TOKEN_GENERATE_SUCCESS.getMessage(), accessToken);
     }
 }

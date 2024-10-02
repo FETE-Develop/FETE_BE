@@ -31,6 +31,30 @@ public class JwtProvider {
     }
 
     public JwtToken generateToken(Authentication authentication) {
+        // Access Token 생성
+        String accessToken = generateAccessToken(authentication);
+
+        // Refresh Token 생성
+        String refreshToken = generateRefreshToken(authentication);
+
+        return JwtToken.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    private String generateRefreshToken(Authentication authentication) {
+        String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))  // 14일
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+
+        return refreshToken;
+    }
+
+    public String generateAccessToken(Authentication authentication) {
         // 권한 설정
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -43,19 +67,9 @@ public class JwtProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))  // 24시간
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))  // 14일
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return JwtToken.builder()
-                .grantType("Bearer")
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return accessToken;
     }
+
 
     public Authentication getAuthentication(String accessToken) {
         // JWT 토큰 복호화
@@ -74,6 +88,16 @@ public class JwtProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    public String getUserNameFromRefreshToken(String refreshToken) {
+        // JWT 토큰 복호화
+        Claims claims = parseClaims(refreshToken);
+
+        // refreshToken에서 사용자 이름 추출
+        String userName = claims.getSubject();
+
+        return userName;
+    }
+
     // accessToken을 복호화
     private Claims parseClaims(String accessToken) {
         try {
@@ -87,7 +111,7 @@ public class JwtProvider {
         }
     }
 
-    // Filter에서 사용되는 토큰 유효성 검사
+    // 토큰의 유효성 검사
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
