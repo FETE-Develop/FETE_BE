@@ -142,6 +142,7 @@ public enum ResponseMessage {
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),
     BANNER_GET_BANNERS_FAIL(1401, "배너 전체 조회에 실패하였습니다."),
     BANNER_NO_EXIST(1402, "해당 배너가 존재하지 않습니다."),
+    POSTER_ALREADY_EXIST(1403, "해당 포스터의 배너가 존재합니다."),
 
     // POPUP
     POPUP_GET_POPUPS(1500, "팝업 전체 조회에 성공하였습니다."),

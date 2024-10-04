@@ -3,9 +3,11 @@ package fete.be.domain.banner.application;
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
 import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
 import fete.be.domain.banner.application.dto.response.BannerDto;
+import fete.be.domain.banner.exception.AlreadyExistsPosterException;
 import fete.be.domain.banner.persistence.Banner;
 import fete.be.domain.banner.persistence.BannerRepository;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.persistence.Poster;
 import fete.be.global.util.ResponseMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +30,15 @@ public class BannerService {
 
     @Transactional
     public Long createBanner(CreateBannerRequest request) {
+        // 연결할 posterId
+        Long posterId = request.getPosterId();
+        Poster poster = posterService.findPosterByPosterId(posterId);
+
+        // 해당 포스터로 연결된 배너가 존재하는지 검사
+        if (bannerRepository.existsByPoster(poster)) {
+            throw new AlreadyExistsPosterException(ResponseMessage.POSTER_ALREADY_EXIST.getMessage());
+        }
+
         Banner banner = Banner.createBanner(request, posterService);
         Banner savedBanner = bannerRepository.save(banner);
 
