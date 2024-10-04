@@ -104,9 +104,17 @@ public class Payment {
 
     // 토스 응답 값 업데이트 메서드
     public static Payment updateTossPaymentInfo(Payment payment, TossPaymentResponse tossPaymentResponse) {
-//        payment.totalAmount = tossPaymentResponse.getTotalAmount() / ticketNumber;
         payment.totalAmount = payment.ticketPrice;  // 추후에 할인 쿠폰이 생긴다면, 할인 쿠폰 정보 가져와서 차감해주면 됨
-        payment.method = tossPaymentResponse.getMethod();
+
+        // 카드사 정보가 존재한다면 함께 전달
+        String issuerCode = tossPaymentResponse.getCard().getIssuerCode();
+        if (issuerCode != null) {
+            String cardName = "(" + CardCode.convertCardCode(issuerCode) + ")";
+            payment.method = tossPaymentResponse.getMethod() + cardName;
+        } else {
+            payment.method = tossPaymentResponse.getMethod();
+        }
+
         payment.paymentKey = tossPaymentResponse.getPaymentKey();
         payment.orderId = tossPaymentResponse.getOrderId();
         payment.paymentAt = LocalDateTime.now();
