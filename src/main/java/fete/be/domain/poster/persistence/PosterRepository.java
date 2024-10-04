@@ -19,7 +19,8 @@ public interface PosterRepository extends JpaRepository<Poster, Long> {
 
     Page<Poster> findByPosterIdIn(List<Long> posterIds, Pageable pageable);
 
-    Page<Poster> findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status status, String keyword1, String keyword2, Pageable pageable);
+    @Query("SELECT p FROM Poster p WHERE (p.event.eventName LIKE %:keyword% OR p.event.description LIKE %:keyword%) AND p.status = 'ACTIVE'")
+    Page<Poster> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
     Optional<Poster> findByStatusAndPosterId(Status status, Long posterId);
 
