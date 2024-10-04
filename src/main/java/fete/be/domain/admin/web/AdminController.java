@@ -6,6 +6,7 @@ import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
 import fete.be.domain.admin.exception.NotFoundNoticeException;
 import fete.be.domain.banner.application.BannerService;
+import fete.be.domain.banner.exception.AlreadyExistsPosterException;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.notice.application.NoticeService;
@@ -217,6 +218,8 @@ public class AdminController {
             Long savedBannerId = bannerService.createBanner(request);
 
             return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER.getCode(), ResponseMessage.ADMIN_CREATE_BANNER.getMessage());
+        } catch (AlreadyExistsPosterException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER_FAIL.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_CREATE_BANNER_FAIL.getCode(), e.getMessage());
         }
