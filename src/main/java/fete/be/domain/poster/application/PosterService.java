@@ -257,7 +257,7 @@ public class PosterService {
         Member member = memberService.findMemberByEmail();
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
+        return posterRepository.findByKeyword(keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                     return new PosterDto(poster, isLike);
@@ -269,7 +269,7 @@ public class PosterService {
         Pageable pageable = createPageable(page, size);
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
-        return posterRepository.findByStatusAndEventEventNameContainingOrEventDescriptionContaining(Status.ACTIVE, keyword, keyword, pageable)
+        return posterRepository.findByKeyword(keyword, pageable)
                 .map(poster -> {
                     Boolean isLike = false;
                     return new PosterDto(poster, isLike);
