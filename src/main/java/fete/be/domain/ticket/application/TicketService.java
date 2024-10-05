@@ -9,6 +9,7 @@ import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.payment.persistence.PaymentRepository;
 import fete.be.domain.ticket.application.dto.response.*;
 import fete.be.domain.member.persistence.Member;
+import fete.be.domain.ticket.exception.QRCodeGenerationException;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.global.util.ResponseMessage;
@@ -62,7 +63,17 @@ public class TicketService {
 
     public List<SimpleTicketDto> getTickets(String paymentCode) {
         return paymentRepository.findByPaymentCode(paymentCode).stream()
-                .map(payment -> new SimpleTicketDto(payment))
+                .map(payment -> {
+                    String qrCode = "";
+                    if (payment.getIsPaid()) {
+                        try {
+                            qrCode = qrCodeService.generateQRCodeBase64(payment.getParticipant(), 250, 250);
+                        } catch (Exception e) {
+                            throw new QRCodeGenerationException(ResponseMessage.EVENT_QR_FAILURE.getMessage());
+                        }
+                    }
+                    return new SimpleTicketDto(payment, qrCode);
+                })
                 .collect(Collectors.toList());
     }
 
