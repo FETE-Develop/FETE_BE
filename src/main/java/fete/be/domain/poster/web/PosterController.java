@@ -16,6 +16,7 @@ import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
@@ -124,14 +125,20 @@ public class PosterController {
         Status findStatus = Status.valueOf(status);
 
         try {
-            List<PosterDto> posters = posterService.getPosters(findStatus, page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(posters);
+            Page<PosterDto> pageInfo = posterService.getPosters(findStatus, page, size);
+            List<PosterDto> posters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
             // 게스트용 포스터 전체 조회 메서드 실행
-            List<PosterDto> posters = posterService.getGuestPosters(findStatus, page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(posters);
+            Page<PosterDto> pageInfo = posterService.getGuestPosters(findStatus, page, size);
+            List<PosterDto> posters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (Exception e) {
@@ -186,8 +193,11 @@ public class PosterController {
             log.info("GetMyPosters request");
             Logging.time();
 
-            List<PosterDto> myPosters = posterService.getMyPosters(page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(myPosters);
+            Page<PosterDto> pageInfo = posterService.getMyPosters(page, size);
+            List<PosterDto> myPosters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(myPosters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
@@ -236,8 +246,11 @@ public class PosterController {
             log.info("GetLikePosters request");
             Logging.time();
 
-            List<PosterDto> likePosters = posterService.getLikePosters(page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(likePosters);
+            Page<PosterDto> pageInfo = posterService.getLikePosters(page, size);
+            List<PosterDto> myLikePosters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(myLikePosters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_SUCCESS.getCode(), ResponseMessage.LIKE_GET_POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
@@ -269,14 +282,20 @@ public class PosterController {
 
         try {
             // 제목 또는 설명에 키워드가 포함되어 있는 포스터들 조회
-            List<PosterDto> searchedPosters = posterService.searchPosters(keyword, page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(searchedPosters);
+            Page<PosterDto> pageInfo = posterService.searchPosters(keyword, page, size);
+            List<PosterDto> searchedPosters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(searchedPosters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
             // 게스트용 검색 메서드 실행
-            List<PosterDto> searchedPosters = posterService.searchGuestPosters(keyword, page, size).getContent();
-            GetPostersResponse result = new GetPostersResponse(searchedPosters);
+            Page<PosterDto> pageInfo = posterService.searchGuestPosters(keyword, page, size);
+            List<PosterDto> searchedPosters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(searchedPosters, totalPages);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
