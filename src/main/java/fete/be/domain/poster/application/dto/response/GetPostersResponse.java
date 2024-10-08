@@ -9,4 +9,5 @@ import java.util.List;
 @AllArgsConstructor
 public class GetPostersResponse {
     private List<PosterDto> posters;
+    private int totalPages;
 }
