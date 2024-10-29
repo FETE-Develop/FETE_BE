@@ -5,6 +5,12 @@ FETE
 
 </br>
 
+App Store
+---
+https://apps.apple.com/kr/app/fete/id6720755427
+
+</br>
+
 Tech Stack
 ---
 - Spring, Spring Boot, JPA, MySQL
