@@ -1,6 +1,7 @@
 package fete.be.domain.member.application;
 
 import fete.be.domain.admin.application.dto.response.MemberDto;
+import fete.be.domain.admin.exception.AdminOnlyAccessException;
 import fete.be.domain.member.application.dto.request.GrantAdminRequestDto;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -274,5 +276,38 @@ public class MemberService {
         String accessToken = jwtProvider.generateAccessToken(authentication);
 
         return accessToken;
+    }
+
+    @Transactional
+    public JwtToken adminLogin(String id, String password) {
+        // 1. id, password를 기반으로 Authentication 객체 생성
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(id, password);
+
+        // 2. 실제 검증이 이루어지는 코드
+        // authenticate 메서드가 실행될 때, 우리가 만들어준 CustomUserDetailService에서 만든 loadUserByUsername 메서드가 실행된다.
+        // loadUserByUsername 메서드에 우리가 직접 검증 코드를 작성해줘야 한다.
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        // 관리자가 아닐 경우
+        if (!isAdmin(id)) {
+            throw new AdminOnlyAccessException(ResponseMessage.IS_NOT_ADMIN.getMessage());
+        }
+
+        // 3. 관리자 권한을 가지고 있는 경우, 토큰 반환
+        JwtToken token = jwtProvider.generateToken(authentication);
+        return token;
+    }
+
+    public boolean isAdmin(String email) {
+        // 유저 조회
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new NotFoundMemberException(ResponseMessage.MEMBER_NO_EXIST.getMessage())
+        );
+
+        // ADMIN 권한이 있을 경우
+        if (member.getRole().equals(Role.ADMIN)) {
+            return true;
+        }
+        return false;
     }
 }

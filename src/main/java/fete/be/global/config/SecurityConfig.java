@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/banners/**", "/api/categories/**").permitAll()
                 .requestMatchers("/api/popups").permitAll()
                 .requestMatchers("/api/posters", "/api/posters/{posterId}", "/api/posters/search").permitAll()
+                .requestMatchers("/api/admins/login").permitAll()
                 .requestMatchers("/api/admins/**").hasRole("ADMIN")
                 .and()
                 .exceptionHandling()

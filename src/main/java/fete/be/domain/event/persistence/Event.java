@@ -193,4 +193,12 @@ public class Event {
         LocalDateTime currentTime = LocalDateTime.now();
         event.updatedAt = currentTime;
     }
+
+    // 관리자용 간단 주소 업데이트 메서드
+    public void updateSimpleAddress(String simpleAddress) {
+        this.simpleAddress = simpleAddress;
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        this.updatedAt = currentTime;
+    }
 }
