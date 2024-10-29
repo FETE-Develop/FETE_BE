@@ -4,11 +4,14 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import fete.be.domain.admin.application.dto.request.*;
 import fete.be.domain.admin.application.dto.response.*;
+import fete.be.domain.admin.exception.AdminOnlyAccessException;
 import fete.be.domain.admin.exception.NotFoundNoticeException;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.banner.exception.AlreadyExistsPosterException;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.member.application.MemberService;
+import fete.be.domain.member.application.dto.request.LoginRequestDto;
+import fete.be.domain.member.application.dto.response.LoginResponseDto;
 import fete.be.domain.notice.application.NoticeService;
 import fete.be.domain.notification.application.NotificationService;
 import fete.be.domain.notification.application.dto.request.PushMessageRequest;
@@ -17,6 +20,7 @@ import fete.be.domain.popup.application.PopupService;
 import fete.be.domain.popup.exception.NotFoundPopupException;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
+import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
 import fete.be.global.util.ResponseMessage;
@@ -499,6 +503,36 @@ public class AdminController {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_NOTICE_SUCCESS.getCode(), ResponseMessage.ADMIN_DELETE_NOTICE_SUCCESS.getMessage());
         } catch (NotFoundNoticeException e) {
             return new ApiResponse(ResponseMessage.ADMIN_DELETE_NOTICE_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 관리자 로그인 API
+     * - filterChain을 통해 ADMIN 권한을 가진 유저만 접근 가능하도록 설정
+     *
+     * @param LoginRequestDto request
+     * @return ApiResponse<LoginResponseDto>
+     */
+    @PostMapping("/login")
+    public ApiResponse<LoginResponseDto> adminLogin(@RequestBody LoginRequestDto request) {
+        log.info("AdminLogin request: {}", request);
+        Logging.time();
+
+        try {
+            // 로그인 검증 이후, 토큰 발급
+            JwtToken token = memberService.adminLogin(request.getEmail(), request.getPassword());
+
+            // 일치하는 유저가 없을 경우
+            if (token == null) {
+                return new ApiResponse(ResponseMessage.LOGIN_FAILURE.getCode(), ResponseMessage.LOGIN_FAILURE.getMessage());
+            }
+
+            // 일치하는 유저가 있는 경우 - 정상 로그인 로직
+            LoginResponseDto result = new LoginResponseDto(token);
+            return new ApiResponse<>(ResponseMessage.LOGIN_SUCCESS.getCode(), ResponseMessage.LOGIN_SUCCESS.getMessage(), result);
+        } catch (AdminOnlyAccessException e) {
+            return new ApiResponse<>(ResponseMessage.LOGIN_FAILURE.getCode(), ResponseMessage.IS_NOT_ADMIN.getMessage());
         }
     }
 }

@@ -137,6 +137,7 @@ public enum ResponseMessage {
     ADMIN_MODIFY_NOTICE_FAIL(7036, "공지사항 수정이 실패하였습니다."),
     ADMIN_DELETE_NOTICE_SUCCESS(7037, "공지사항 삭제가 성공하였습니다."),
     ADMIN_DELETE_NOTICE_FAIL(7038, "공지사항 삭제가 실패하였습니다."),
+    IS_NOT_ADMIN(7039, "관리자 권한이 없습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),
