@@ -322,6 +322,17 @@ public class PosterService {
         Artist.updateInfoUrls(artists, imageUrls);
     }
 
+    // 관리자용 간단 주소 변경
+    @Transactional
+    public void modifySimpleAddress(Long posterId, String simpleAddress) {
+        // 수정할 포스터 조회
+        Poster poster = findPosterByPosterId(posterId);
+        Event event = poster.getEvent();
+
+        // 간단 주소 변경
+        event.updateSimpleAddress(simpleAddress);
+    }
+
     /**
      * Pageable 객체 생성
      * - 첫 번째 정렬 기준 : 이벤트의 시작 날짜

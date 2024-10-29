@@ -19,6 +19,7 @@ import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.popup.application.PopupService;
 import fete.be.domain.popup.exception.NotFoundPopupException;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
 import fete.be.global.jwt.JwtToken;
 import fete.be.global.util.ApiResponse;
@@ -123,6 +124,33 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.ADMIN_INVALID_ARTIST_PROFILE_COUNT.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 이벤트 간단 주소 변경 API
+     *
+     * @param Long posterId
+     * @param ModifySimpleAddressRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/posters/address/{posterId}")
+    public ApiResponse modifySimpleAddress(
+            @PathVariable("posterId") Long posterId,
+            @RequestBody ModifySimpleAddressRequest request
+    ) {
+        log.info("ModifySimpleAddress API: posterId={}, request={}", posterId, request);
+        Logging.time();
+        String simpleAddress = request.getSimpleAddress();
+
+        try {
+            // 간단 주소 변경
+            posterService.modifySimpleAddress(posterId, simpleAddress);
+
+            return new ApiResponse<>(ResponseMessage.ADMIN_MODIFY_SIMPLE_ADDRESS_SUCCESS.getCode(), ResponseMessage.ADMIN_MODIFY_SIMPLE_ADDRESS_SUCCESS.getMessage());
+        } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_MODIFY_SIMPLE_ADDRESS_FAIL.getCode(), e.getMessage());
         }
     }
 
@@ -535,4 +563,5 @@ public class AdminController {
             return new ApiResponse<>(ResponseMessage.LOGIN_FAILURE.getCode(), ResponseMessage.IS_NOT_ADMIN.getMessage());
         }
     }
+
 }
