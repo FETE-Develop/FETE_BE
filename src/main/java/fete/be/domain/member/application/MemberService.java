@@ -196,7 +196,7 @@ public class MemberService {
     }
 
     public List<String> getAllTokens() {
-        List<String> tokens = memberRepository.findByFcmTokenIsNotNull();
+        List<String> tokens = memberRepository.findAllFcmTokens();
         return tokens;
     }
 
