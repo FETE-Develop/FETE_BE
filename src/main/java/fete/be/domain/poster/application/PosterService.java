@@ -8,6 +8,7 @@ import fete.be.domain.image.application.ImageUploadService;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
+import fete.be.domain.member.persistence.Role;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -80,9 +81,11 @@ public class PosterService {
         // posterId로 포스터 찾기
         Poster poster = findPosterByPosterId(posterId);
 
-        // 수정을 요청한 사용자가 해당 포스터의 작성자가 아닌 경우
+        // 수정을 요청한 사용자가 해당 포스터의 작성자가 아닌 경우 (관리자는 가능)
         if (!poster.getMember().equals(member)) {
-            throw new IllegalArgumentException(ResponseMessage.POSTER_INVALID_USER.getMessage());
+            if (!member.getRole().equals(Role.ADMIN)) {
+                throw new IllegalArgumentException(ResponseMessage.POSTER_INVALID_USER.getMessage());
+            }
         }
 
         // 업데이트 진행
