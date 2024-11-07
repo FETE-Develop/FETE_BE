@@ -8,6 +8,7 @@ FETE
 App Store
 ---
 10월 초 심사 과정에 들어가, 10월 27일 App Store에 출시되었습니다.</br>
+현재는 베타 테스트 버전입니다. </br>
 https://apps.apple.com/kr/app/fete/id6720755427
 
 </br>
