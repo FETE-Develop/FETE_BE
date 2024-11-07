@@ -32,6 +32,7 @@ public class Artist {
 
         artist.name = artistDto.getName();
         artist.infoUrl = artistDto.getInfoUrl();
+        artist.imageUrl = "";
         artist.event = event;
 
         return artist;
