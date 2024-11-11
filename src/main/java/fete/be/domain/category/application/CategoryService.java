@@ -11,6 +11,7 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.PosterLikeRepository;
 import fete.be.global.util.ResponseMessage;
+import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,7 @@ public class CategoryService {
                         category.getCategoryId(),
                         category.getCategoryName(),
                         category.getPosters().stream()
+                                .filter(poster -> poster.getStatus().equals(Status.ACTIVE))
                                 .map(poster -> {
                                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
                                     return new SimplePosterDto(poster, isLike);
@@ -94,6 +96,7 @@ public class CategoryService {
                         category.getCategoryId(),
                         category.getCategoryName(),
                         category.getPosters().stream()
+                                .filter(poster -> poster.getStatus().equals(Status.ACTIVE))
                                 .map(poster -> {
                                     Boolean isLike = false;
                                     return new SimplePosterDto(poster, isLike);
