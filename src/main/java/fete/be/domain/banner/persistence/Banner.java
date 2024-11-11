@@ -49,11 +49,15 @@ public class Banner {
         banner.content = request.getContent();
         banner.imageUrl = request.getImageUrl();
 
-        // 포스터 연결
+        // 이전 포스터 연결 해제
+        Poster oldPoster = banner.getPoster();
+        oldPoster.setBanner(null);
+
+        // 새로운 포스터 연결
         Long posterId = request.getPosterId();
-        Poster poster = posterService.findPosterByPosterId(posterId);
-        banner.poster = poster;
-        poster.setBanner(banner);
+        Poster newPoster = posterService.findPosterByPosterId(posterId);
+        banner.poster = newPoster;
+        newPoster.setBanner(banner);
 
         return banner;
     }
