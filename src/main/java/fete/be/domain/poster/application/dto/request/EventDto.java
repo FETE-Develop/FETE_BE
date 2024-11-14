@@ -20,8 +20,8 @@ public class EventDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;  // 이벤트 종료일
     private Place place;   // 위치 정보
-    private boolean isFree;  // 무료 티켓 여부
-    private boolean isBookingUnavailable;  // FETE 예매 불가 여부
+    private Boolean isFree;  // 무료 티켓 여부
+    private Boolean isBookingUnavailable;  // FETE 예매 불가 여부
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
     private String mood;  // 이벤트 무드

@@ -45,9 +45,9 @@ public class Event {
     private double longitude;  // 경도
 
     @Column(name = "is_free")
-    private boolean isFree;  // 무료 티켓 여부
+    private Boolean isFree;  // 무료 티켓 여부
     @Column(name = "is_booking_unavailable")
-    private boolean isBookingUnavailable;  // FETE 예매 불가 여부
+    private Boolean isBookingUnavailable;  // FETE 예매 불가 여부
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets = new ArrayList<>();  // 티켓 종류 및 가격 정보
 
@@ -108,8 +108,8 @@ public class Event {
         event.latitude = request.getPlace().getLatitude();
         event.longitude = request.getPlace().getLongitude();
 
-        event.isFree = request.isFree();
-        event.isBookingUnavailable = request.isBookingUnavailable();
+        event.isFree = request.getIsFree();
+        event.isBookingUnavailable = request.getIsBookingUnavailable();
         
         // 티켓 종류 및 가격 생성
         for (TicketInfoDto ticketInfoDto : request.getTickets()) {
