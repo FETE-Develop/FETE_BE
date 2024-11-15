@@ -3,11 +3,13 @@ package fete.be.domain.admin.application.dto.response;
 import fete.be.domain.event.persistence.Event;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class AccountDto {
     private String bankName;  // 은행
     private String accountNumber;  // 계좌번호

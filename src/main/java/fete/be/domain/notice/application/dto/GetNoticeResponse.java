@@ -3,6 +3,7 @@ package fete.be.domain.notice.application.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetNoticeResponse {
     private String title;  // 제목
     private String content;  // 내용

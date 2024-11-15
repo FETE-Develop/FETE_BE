@@ -7,11 +7,13 @@ import fete.be.domain.member.persistence.Role;
 import fete.be.global.util.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberDto {
     private Long memberId;
     private String email;

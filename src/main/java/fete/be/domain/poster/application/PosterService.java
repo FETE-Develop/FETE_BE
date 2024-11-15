@@ -1,5 +1,7 @@
 package fete.be.domain.poster.application;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
@@ -9,6 +11,7 @@ import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.member.persistence.Role;
+import fete.be.domain.poster.application.dto.request.Filter;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
@@ -20,10 +23,7 @@ import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PosterService {
 
+    private final JPAQueryFactory queryFactory;
     private final PosterRepository posterRepository;
     private final EventRepository eventRepository;
     private final PosterLikeRepository posterLikeRepository;
@@ -137,6 +138,107 @@ public class PosterService {
                     Boolean isLike = false;
                     return new PosterDto(poster, isLike);
                 });
+    }
+
+    // 다중 필터링 포스터 조회
+    public Page<PosterDto> getPostersWithFilters(int page, int size, Filter filter) {
+        // 페이징 조건 추가
+        Pageable pageable = createPageable(page, size);
+
+        // Member 정보
+        Member member = memberService.findMemberByEmail();
+
+        // 사용할 QClass
+        QPoster poster = QPoster.poster;
+        QEvent event = QEvent.event;
+
+        // 동적 쿼리
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 포스터 상태 필터 적용 (필수)
+        builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+
+        // 필터링 조건 추가 (선택)
+        if (filter.getSimpleAddress() != null) {
+            builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
+        }
+        if (filter.getMood() != null) {
+            builder.and(poster.event.mood.eq(Mood.convertMoodEnum(filter.getMood())));
+        }
+        if (filter.getGenre() != null) {
+            builder.and(poster.event.genre.eq(Genre.convertGenreEnum(filter.getGenre())));
+        }
+        if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
+            builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));
+        }
+        if (filter.getStartDate() != null && filter.getEndDate() != null) {
+            builder.and(event.startDate.goe(filter.getStartDate()).and(event.endDate.loe(filter.getEndDate())));
+        }
+
+        // 최종 조회 쿼리 실행
+        List<Poster> result = queryFactory.selectFrom(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // 관심 등록 상태를 반영하여 PosterDto에 담아 반환
+        return new PageImpl<>(result.stream()
+                .map(posterItem -> {
+                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), posterItem.getPosterId()).isPresent();
+                    return new PosterDto(posterItem, isLike);
+                })
+                .collect(Collectors.toList()), pageable, result.size());
+    }
+
+    // 게스트용 필터링 포스터 조회 메서드
+    public Page<PosterDto> getGuestPostersWithFilters(int page, int size, Filter filter) {
+        // 페이징 조건 추가
+        Pageable pageable = createPageable(page, size);
+
+        // 사용할 QClass
+        QPoster poster = QPoster.poster;
+        QEvent event = QEvent.event;
+
+        // 동적 쿼리
+        BooleanBuilder builder = new BooleanBuilder();
+
+        // 포스터 상태 필터 적용 (필수)
+        builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+
+        // 필터링 조건 추가 (선택)
+        if (filter.getSimpleAddress() != null) {
+            builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
+        }
+        if (filter.getMood() != null) {
+            builder.and(poster.event.mood.eq(Mood.convertMoodEnum(filter.getMood())));
+        }
+        if (filter.getGenre() != null) {
+            builder.and(poster.event.genre.eq(Genre.convertGenreEnum(filter.getGenre())));
+        }
+        if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
+            builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));
+        }
+        if (filter.getStartDate() != null && filter.getEndDate() != null) {
+            builder.and(event.startDate.goe(filter.getStartDate()).and(event.endDate.loe(filter.getEndDate())));
+        }
+
+        // 최종 조회 쿼리 실행
+        List<Poster> result = queryFactory.selectFrom(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        // PosterDto에 담아 반환
+        return new PageImpl<>(result.stream()
+                .map(posterItem -> {
+                    Boolean isLike = false;
+                    return new PosterDto(posterItem, isLike);
+                })
+                .collect(Collectors.toList()), pageable, result.size());
     }
 
     public PosterDto getPoster(Long posterId, Status status) {

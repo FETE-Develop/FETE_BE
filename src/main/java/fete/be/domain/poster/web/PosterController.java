@@ -3,6 +3,7 @@ package fete.be.domain.poster.web;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.poster.application.PosterService;
+import fete.be.domain.poster.application.dto.request.Filter;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.SearchPostersRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
@@ -135,6 +136,42 @@ public class PosterController {
         } catch (GuestUserException e) {
             // 게스트용 포스터 전체 조회 메서드 실행
             Page<PosterDto> pageInfo = posterService.getGuestPosters(findStatus, page, size);
+            List<PosterDto> posters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (Exception e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 포스터 전체 조회 (필터링) API
+     */
+    @GetMapping("/filter")
+    public ApiResponse<GetPostersResponse> getPostersWithFilters(
+            @RequestBody Filter request,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size
+    ) {
+        log.info("GetPostersWithFilters request");
+        Logging.time();
+
+        try {
+            // 필터링 포스터 조회
+            Page<PosterDto> pageInfo = posterService.getPostersWithFilters(page, size, request);
+            List<PosterDto> posters = pageInfo.getContent();
+            int totalPages = pageInfo.getTotalPages();
+
+            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+
+            return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 필터링 포스터 조회
+            Page<PosterDto> pageInfo = posterService.getGuestPostersWithFilters(page, size, request);
             List<PosterDto> posters = pageInfo.getContent();
             int totalPages = pageInfo.getTotalPages();
 

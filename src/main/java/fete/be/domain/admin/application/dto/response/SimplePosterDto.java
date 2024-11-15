@@ -6,11 +6,13 @@ import fete.be.domain.event.persistence.Mood;
 import fete.be.domain.poster.persistence.Poster;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class SimplePosterDto {
     private Long posterId;  // 포스터 아이디
     private String eventName;  // 이벤트 이름

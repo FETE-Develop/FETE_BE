@@ -2,11 +2,13 @@ package fete.be.domain.popup.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class PopupDto {
     private Long popupId;  // 팝업 아이디
     private String imageUrl;  // 팝업 이미지

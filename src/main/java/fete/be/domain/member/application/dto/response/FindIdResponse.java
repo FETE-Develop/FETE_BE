@@ -3,10 +3,12 @@ package fete.be.domain.member.application.dto.response;
 import fete.be.domain.member.persistence.MemberType;
 import jakarta.annotation.Nullable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class FindIdResponse {
     private MemberType memberType;
     @Nullable

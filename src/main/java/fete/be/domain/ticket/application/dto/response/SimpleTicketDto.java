@@ -3,9 +3,11 @@ package fete.be.domain.ticket.application.dto.response;
 import fete.be.domain.payment.persistence.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class SimpleTicketDto {
     private Long participantId;
     private String ticketType;

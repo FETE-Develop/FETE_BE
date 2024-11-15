@@ -3,11 +3,13 @@ package fete.be.domain.admin.application.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PaymentDto {
     private MemberDto member;  // 결제한 유저
     private String ticketType;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션

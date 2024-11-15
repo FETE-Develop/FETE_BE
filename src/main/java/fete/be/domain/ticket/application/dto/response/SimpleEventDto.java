@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.Event;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class SimpleEventDto {
     private String eventName;
     private String posterImage;  // 대표 이미지 1장
