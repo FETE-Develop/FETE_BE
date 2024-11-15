@@ -5,11 +5,13 @@ import fete.be.domain.event.persistence.EventType;
 import fete.be.domain.ticket.persistence.Participant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class TicketDto {
     private Long participantId;
     private String eventName;

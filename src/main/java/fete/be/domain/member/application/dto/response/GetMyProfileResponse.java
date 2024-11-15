@@ -5,9 +5,11 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.member.persistence.MemberType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class GetMyProfileResponse {
     private MemberType memberType;
     private String email;

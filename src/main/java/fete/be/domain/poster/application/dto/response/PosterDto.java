@@ -12,6 +12,7 @@ import fete.be.domain.poster.persistence.PosterImage;
 import fete.be.global.util.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class PosterDto {
     private Long posterId;  // 포스터 아이디
     private List<String> posterImages;  // 포스터 이미지
@@ -36,7 +38,7 @@ public class PosterDto {
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
     private String mood;  // 무드
-    private Genre genre;  // 장르
+    private String genre;  // 장르
     private String homepageUrl;  // 이벤트 관련 홈페이지 주소
     private List<ArtistDto> artists;  // 이벤트 라인업
 
@@ -75,7 +77,7 @@ public class PosterDto {
 
         this.description = poster.getEvent().getDescription();
         this.mood = poster.getEvent().getMood().getKoreanValue();
-        this.genre = poster.getEvent().getGenre();
+        this.genre = poster.getEvent().getGenre().getKoreanValue();
         this.homepageUrl = poster.getEvent().getHomepageUrl();
 
         this.artists = poster.getEvent().getArtists().stream()
@@ -119,7 +121,7 @@ public class PosterDto {
 
         this.description = poster.getEvent().getDescription();
         this.mood = poster.getEvent().getMood().getKoreanValue();
-        this.genre = poster.getEvent().getGenre();
+        this.genre = poster.getEvent().getGenre().getKoreanValue();
         this.homepageUrl = poster.getEvent().getHomepageUrl();
 
         this.artists = poster.getEvent().getArtists().stream()

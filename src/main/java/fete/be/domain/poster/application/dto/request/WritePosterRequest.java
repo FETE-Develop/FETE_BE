@@ -1,10 +1,12 @@
 package fete.be.domain.poster.application.dto.request;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class WritePosterRequest {
     private String[] posterImgUrls;  // 포스터 이미지
     private String institution;  // 기관명

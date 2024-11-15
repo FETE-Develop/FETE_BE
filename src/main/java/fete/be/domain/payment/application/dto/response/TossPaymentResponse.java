@@ -1,10 +1,12 @@
 package fete.be.domain.payment.application.dto.response;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
+@NoArgsConstructor
 public class TossPaymentResponse {
     private String version;
     private String paymentKey;  // 결제 키 값 (중요)
