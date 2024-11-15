@@ -119,7 +119,7 @@ public class Event {
 
         event.description = request.getDescription();
         event.mood = Mood.convertMoodEnum(request.getMood());
-        event.genre = request.getGenre();
+        event.genre = Genre.convertGenreEnum(request.getGenre());
         event.homepageUrl = request.getHomepageUrl();
 
         // 라인업 생성
@@ -156,7 +156,7 @@ public class Event {
 
         event.description = request.getDescription();
         event.mood = Mood.convertMoodEnum(request.getMood());
-        event.genre = request.getGenre();
+        event.genre = Genre.convertGenreEnum(request.getGenre());
         event.homepageUrl = request.getHomepageUrl();
 
         // 라인업 생성
