@@ -1,6 +1,11 @@
 package fete.be.domain.event.persistence;
 
+import fete.be.domain.event.exception.InvalidMoodLengthException;
 import fete.be.domain.event.exception.NotFoundMoodException;
+import fete.be.global.util.ResponseMessage;
+
+import java.util.Arrays;
+import java.util.List;
 
 public enum Mood {
     TRENDY("트렌디한"),
@@ -39,5 +44,22 @@ public enum Mood {
             }
         }
         throw new NotFoundMoodException("일치하는 무드가 없습니다 : " + koreanValue);
+    }
+
+    // 무드의 최대 개수 및 올바른 값인지 검사
+    public static String checkInvalidMoods(String moods) {
+        List<String> compareMoods = Arrays.asList(moods.split(","));
+
+        // 최대 선택은 3개까지만 가능
+        if (compareMoods.size() > 3) {
+            throw new InvalidMoodLengthException(ResponseMessage.EVENT_INVALID_MOOD_LENGTH.getMessage());
+        }
+
+        // 무드 리스트에 존재하는 값인지 검사
+        for (String mood : compareMoods) {
+            convertMoodEnum(mood);
+        }
+
+        return moods;
     }
 }
