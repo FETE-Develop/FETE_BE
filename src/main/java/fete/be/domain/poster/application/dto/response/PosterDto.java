@@ -37,8 +37,8 @@ public class PosterDto {
     private Boolean isBookingUnavailable;  // FETE 예매 불가 여부
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
-    private String mood;  // 무드
-    private String genre;  // 장르
+    private String moods;  // 무드
+    private String genres;  // 장르
     private String homepageUrl;  // 이벤트 관련 홈페이지 주소
     private List<ArtistDto> artists;  // 이벤트 라인업
 
@@ -76,8 +76,8 @@ public class PosterDto {
                 .collect(Collectors.toList());
 
         this.description = poster.getEvent().getDescription();
-        this.mood = poster.getEvent().getMood().getKoreanValue();
-        this.genre = poster.getEvent().getGenre().getKoreanValue();
+        this.moods = poster.getEvent().getMoods();
+        this.genres = poster.getEvent().getGenres();
         this.homepageUrl = poster.getEvent().getHomepageUrl();
 
         this.artists = poster.getEvent().getArtists().stream()
@@ -120,8 +120,8 @@ public class PosterDto {
                 .collect(Collectors.toList());
 
         this.description = poster.getEvent().getDescription();
-        this.mood = poster.getEvent().getMood().getKoreanValue();
-        this.genre = poster.getEvent().getGenre().getKoreanValue();
+        this.moods = poster.getEvent().getMoods();
+        this.genres = poster.getEvent().getGenres();
         this.homepageUrl = poster.getEvent().getHomepageUrl();
 
         this.artists = poster.getEvent().getArtists().stream()
