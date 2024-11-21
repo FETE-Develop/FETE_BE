@@ -162,11 +162,15 @@ public class PosterService {
         if (filter.getSimpleAddress() != null) {
             builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
         }
-        if (filter.getMood() != null) {
-            builder.and(poster.event.mood.eq(Mood.convertMoodEnum(filter.getMood())));
+        if (filter.getMoods() != null) {
+            for (String mood : filter.getMoods().split(",")) {
+                builder.and(poster.event.moods.contains(mood.trim()));
+            }
         }
-        if (filter.getGenre() != null) {
-            builder.and(poster.event.genre.eq(Genre.convertGenreEnum(filter.getGenre())));
+        if (filter.getGenres() != null) {
+            for (String genre : filter.getGenres().split(",")) {
+                builder.and(poster.event.genres.contains(genre.trim()));
+            }
         }
         if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
             builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));
@@ -211,11 +215,15 @@ public class PosterService {
         if (filter.getSimpleAddress() != null) {
             builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
         }
-        if (filter.getMood() != null) {
-            builder.and(poster.event.mood.eq(Mood.convertMoodEnum(filter.getMood())));
+        if (filter.getMoods() != null) {
+            for (String mood : filter.getMoods().split(",")) {
+                builder.and(poster.event.moods.contains(mood.trim()));
+            }
         }
-        if (filter.getGenre() != null) {
-            builder.and(poster.event.genre.eq(Genre.convertGenreEnum(filter.getGenre())));
+        if (filter.getGenres() != null) {
+            for (String genre : filter.getGenres().split(",")) {
+                builder.and(poster.event.genres.contains(genre.trim()));
+            }
         }
         if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
             builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));

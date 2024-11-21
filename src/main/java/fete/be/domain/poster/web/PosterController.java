@@ -1,5 +1,7 @@
 package fete.be.domain.poster.web;
 
+import fete.be.domain.event.exception.InvalidMoodLengthException;
+import fete.be.domain.event.exception.NotFoundMoodException;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.poster.application.PosterService;
@@ -49,6 +51,10 @@ public class PosterController {
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
         } catch (ProfileImageCountExceedException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        } catch (InvalidMoodLengthException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
+        } catch (NotFoundMoodException e) {
             return new ApiResponse<>(ResponseMessage.POSTER_FAILURE.getCode(), e.getMessage());
         }
     }
@@ -151,7 +157,7 @@ public class PosterController {
     /**
      * 포스터 전체 조회 (필터링) API
      */
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ApiResponse<GetPostersResponse> getPostersWithFilters(
             @RequestBody Filter request,
             @RequestParam(name = "page", defaultValue = "0") int page,

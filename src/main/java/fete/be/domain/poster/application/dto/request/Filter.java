@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public class Filter {
     private String status;
     private String simpleAddress;
-    private String mood;
-    private String genre;
+    private String moods;
+    private String genres;
     private Integer minPrice;
     private Integer maxPrice;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
