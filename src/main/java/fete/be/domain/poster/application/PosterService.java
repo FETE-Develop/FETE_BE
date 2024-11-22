@@ -154,24 +154,35 @@ public class PosterService {
 
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder addressBuilder = new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
         builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
 
         // 필터링 조건 추가 (선택)
+        // 주소
         if (filter.getSimpleAddress() != null) {
-            builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
+            for (String address : filter.getSimpleAddress().split("/")) {
+                addressBuilder.or(event.simpleAddress.contains(address.trim()));
+            }
         }
+        builder.and(addressBuilder);
+
+        // 무드
         if (filter.getMoods() != null) {
             for (String mood : filter.getMoods().split(",")) {
                 builder.and(poster.event.moods.contains(mood.trim()));
             }
         }
+
+        // 장르
         if (filter.getGenres() != null) {
             for (String genre : filter.getGenres().split(",")) {
                 builder.and(poster.event.genres.contains(genre.trim()));
             }
         }
+
+        // 최소, 최대 가격
         if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
             builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));
         }
@@ -207,14 +218,20 @@ public class PosterService {
 
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder addressBuilder = new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
         builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
 
         // 필터링 조건 추가 (선택)
+        // 주소
         if (filter.getSimpleAddress() != null) {
-            builder.and(event.simpleAddress.contains(filter.getSimpleAddress()));
+            for (String address : filter.getSimpleAddress().split("/")) {
+                addressBuilder.or(event.simpleAddress.contains(address.trim()));
+            }
         }
+        builder.and(addressBuilder);
+
         if (filter.getMoods() != null) {
             for (String mood : filter.getMoods().split(",")) {
                 builder.and(poster.event.moods.contains(mood.trim()));
