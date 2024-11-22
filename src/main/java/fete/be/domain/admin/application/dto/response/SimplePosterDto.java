@@ -24,8 +24,8 @@ public class SimplePosterDto {
     private LocalDateTime endDate;  // 이벤트 종료일
     private String address;  // 주소
     private String simpleAddress;  // 간단 주소
-    private Mood mood;  // 이벤트 무드
-    private Genre genre;  // 장르
+    private String moods;  // 이벤트 무드
+    private String genres;  // 장르
     private Boolean isLike;  // 사용자의 관심 등록 상태
 
     public SimplePosterDto(Poster poster, Boolean isLike) {
@@ -37,8 +37,8 @@ public class SimplePosterDto {
         this.endDate = poster.getEvent().getEndDate();
         this.address = poster.getEvent().getAddress();
         this.simpleAddress = poster.getEvent().getSimpleAddress();
-        this.mood = poster.getEvent().getMood();
-        this.genre = poster.getEvent().getGenre();
+        this.moods = poster.getEvent().getMoods();
+        this.genres = poster.getEvent().getGenres();
         this.isLike = isLike;
     }
 }

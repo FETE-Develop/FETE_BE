@@ -54,13 +54,11 @@ public class Event {
     @Column(name = "description", length = 3000)
     private String description;  // 이벤트 관련 상세 설명
 
-    @Column(name = "mood")
-    @Enumerated(EnumType.STRING)
-    private Mood mood;  // 이벤트 무드
+    @Column(name = "moods")
+    private String moods;  // 이벤트 무드 (최대 3개)
 
-    @Column(name = "genre")
-    @Enumerated(EnumType.STRING)
-    private Genre genre;  // 이벤트 장르
+    @Column(name = "genres")
+    private String genres;  // 이벤트 장르 (최대 3개)
 
     @Column(name = "homepage_url")
     private String homepageUrl;  // 이벤트 관련 홈페이지 주소
@@ -118,8 +116,9 @@ public class Event {
         }
 
         event.description = request.getDescription();
-        event.mood = Mood.convertMoodEnum(request.getMood());
-        event.genre = Genre.convertGenreEnum(request.getGenre());
+        event.moods = Mood.checkInvalidMoods(request.getMoods());
+        event.genres = Genre.checkInvalidGenres(request.getGenres());
+
         event.homepageUrl = request.getHomepageUrl();
 
         // 라인업 생성
@@ -155,8 +154,8 @@ public class Event {
         event.longitude = request.getPlace().getLongitude();
 
         event.description = request.getDescription();
-        event.mood = Mood.convertMoodEnum(request.getMood());
-        event.genre = Genre.convertGenreEnum(request.getGenre());
+        event.moods = Mood.checkInvalidMoods(request.getMoods());
+        event.genres = Genre.checkInvalidGenres(request.getGenres());
         event.homepageUrl = request.getHomepageUrl();
 
         // 라인업 생성
