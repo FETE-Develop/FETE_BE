@@ -33,7 +33,14 @@ public class TicketDto {
     public TicketDto(Participant participant) {
         this.participantId = participant.getParticipantId();
         this.eventName = participant.getEvent().getEventName();
-        this.posterImage = participant.getEvent().getPoster().getPosterImages().get(0).getImageUrl();
+
+        // 대표 이미지가 삭제된 경우
+        if (participant.getEvent().getPoster().getPosterImages().size() == 0) {
+            this.posterImage = "";
+        } else {
+            this.posterImage = participant.getEvent().getPoster().getPosterImages().get(0).getImageUrl();
+        }
+
         this.startDate = participant.getEvent().getStartDate();
         this.endDate = participant.getEvent().getEndDate();
         this.address = participant.getEvent().getAddress();

@@ -22,7 +22,14 @@ public class SimpleEventDto {
 
     public SimpleEventDto(Event event) {
         this.eventName = event.getEventName();
-        this.posterImage = event.getPoster().getPosterImages().get(0).getImageUrl();
+
+        // 대표 이미지가 삭제된 경우
+        if (event.getPoster().getPosterImages().size() == 0) {
+            this.posterImage = "";
+        } else {
+            this.posterImage = event.getPoster().getPosterImages().get(0).getImageUrl();
+        }
+
         this.startDate = event.getStartDate();
         this.endDate = event.getEndDate();
         this.address = event.getAddress();

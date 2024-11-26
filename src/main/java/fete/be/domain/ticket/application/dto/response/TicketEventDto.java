@@ -31,7 +31,14 @@ public class TicketEventDto {
     public TicketEventDto(Event event, Payment payment, String paymentCode) {
         this.eventId = event.getEventId();
         this.eventName = event.getEventName();
-        this.posterImage = event.getPoster().getPosterImages().get(0).getImageUrl();
+
+        // 대표 이미지가 삭제된 경우
+        if (event.getPoster().getPosterImages().size() == 0) {
+            this.posterImage = "";
+        } else {
+            this.posterImage = event.getPoster().getPosterImages().get(0).getImageUrl();
+        }
+
         this.startDate = event.getStartDate();
         this.endDate = event.getEndDate();
         this.paymentCode = paymentCode;

@@ -31,7 +31,14 @@ public class SimplePosterDto {
     public SimplePosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
         this.eventName = poster.getEvent().getEventName();
-        this.posterImage = poster.getPosterImages().get(0).getImageUrl();
+
+        // 대표 이미지가 삭제된 경우
+        if (poster.getPosterImages().size() == 0) {
+            this.posterImage = "";
+        } else {
+            this.posterImage = poster.getPosterImages().get(0).getImageUrl();
+        }
+
         this.manager = poster.getManager();
         this.startDate = poster.getEvent().getStartDate();
         this.endDate = poster.getEvent().getEndDate();
