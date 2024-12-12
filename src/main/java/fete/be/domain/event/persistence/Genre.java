@@ -16,7 +16,8 @@ public enum Genre {
     JAZZ("JAZZ"),
     TRANCE("TRANCE"),
     AFROBEAT("AFROBEAT"),
-    POP("POP");
+    POP("POP"),
+    DUBSTEP("DUBSTEP");
 
     private String genre;
 
