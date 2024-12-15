@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +27,7 @@ public interface PosterRepository extends JpaRepository<Poster, Long> {
 
     @Query("select p from Poster p where p.status = 'ACTIVE' and p.event.endDate < :now")
     List<Poster> findEndDateBeforeNow(@Param("now")LocalDateTime now);  // 종료된 이벤트 조회
+
+    @Query("select p from Poster p where p.status = 'END' and p.event.endDate >= :sevenDaysAgo and p.event.endDate < :tomorrow")
+    List<Poster> findEndedWithin7Days(@Param("sevenDaysAgo") LocalDateTime sevenDaysAgo, @Param("tomorrow") LocalDateTime tomorrow);
 }

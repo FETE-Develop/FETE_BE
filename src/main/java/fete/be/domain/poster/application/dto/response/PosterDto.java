@@ -35,6 +35,7 @@ public class PosterDto {
     private Place place;  // 위치 정보
     private Boolean isFree;  // 무료 티켓 여부
     private Boolean isBookingUnavailable;  // FETE 예매 불가 여부
+    private Boolean isOnSitePurchase;  // 현장 구매 여부
     private List<TicketInfoDto> tickets;  // 티켓 종류 및 가격
     private String description;  // 이벤트 관련 상세 설명
     private String moods;  // 무드
@@ -65,6 +66,7 @@ public class PosterDto {
 
         this.isFree = poster.getEvent().getIsFree();
         this.isBookingUnavailable = poster.getEvent().getIsBookingUnavailable();
+        this.isOnSitePurchase = poster.getEvent().getIsOnSitePurchase();
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(
@@ -109,6 +111,7 @@ public class PosterDto {
 
         this.isFree = poster.getEvent().getIsFree();
         this.isBookingUnavailable = poster.getEvent().getIsBookingUnavailable();
+        this.isOnSitePurchase = poster.getEvent().getIsOnSitePurchase();
 
         this.tickets = poster.getEvent().getTickets().stream()
                 .map(ticket -> new TicketInfoDto(

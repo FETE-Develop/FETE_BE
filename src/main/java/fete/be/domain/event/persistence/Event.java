@@ -48,6 +48,8 @@ public class Event {
     private Boolean isFree;  // 무료 티켓 여부
     @Column(name = "is_booking_unavailable")
     private Boolean isBookingUnavailable;  // FETE 예매 불가 여부
+    @Column(name = "is_on_site_purchase")
+    private Boolean isOnSitePurchase;  // 현장 구매 여부
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets = new ArrayList<>();  // 티켓 종류 및 가격 정보
 
@@ -108,6 +110,7 @@ public class Event {
 
         event.isFree = request.getIsFree();
         event.isBookingUnavailable = request.getIsBookingUnavailable();
+        event.isOnSitePurchase = request.getIsOnSitePurchase();
         
         // 티켓 종류 및 가격 생성
         for (TicketInfoDto ticketInfoDto : request.getTickets()) {
