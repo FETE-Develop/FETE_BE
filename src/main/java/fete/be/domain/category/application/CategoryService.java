@@ -79,6 +79,8 @@ public class CategoryService {
         Member member = memberService.findMemberByEmail();
 
         List<CategoryDto> categories = categoryRepository.findAll().stream()
+                .filter(category -> category.getPosters().stream()
+                        .anyMatch(poster -> poster.getStatus().equals(Status.ACTIVE)))
                 .map(category -> new CategoryDto(
                         category.getCategoryId(),
                         category.getCategoryName(),
@@ -97,6 +99,8 @@ public class CategoryService {
 
     public List<CategoryDto> getGuestCategories() {
         List<CategoryDto> categories = categoryRepository.findAll().stream()
+                .filter(category -> category.getPosters().stream()
+                        .anyMatch(poster -> poster.getStatus().equals(Status.ACTIVE)))
                 .map(category -> new CategoryDto(
                         category.getCategoryId(),
                         category.getCategoryName(),
