@@ -160,6 +160,8 @@ public enum ResponseMessage {
     CATEGORY_GET_CATEGORIES(1600, "카테고리가 전체 조회에 성공하였습니다."),
     CATEGORY_GET_CATEGORIES_FAIL(1601, "카테고리가 전체 조회에 실패하였습니다."),
     CATEGORY_NO_EXIST(1602, "해당 카테고리가 존재하지 않습니다."),
+    GET_END_CATEGORY(1603, "종료된 이벤트 카테고리 조회에 성공하였습니다."),
+    GET_END_CATEGORY_FAIL(1604, "종료된 이벤트 카테고리 조회에 실패하였습니다."),
 
     // NOTIFICATION
     NOTIFICATION_STORE_FCM_TOKEN(1700, "유저의 FCM 키 저장이 성공하였습니다."),
