@@ -25,7 +25,8 @@ https://apps.apple.com/kr/app/fete/id6720755427
 ---
 - 회원가입, 로그인
   - JWT Token 방식
-  - Spring Security 사용
+  - Spring Security, OAuth 사용 (카카오, 애플)
+  - 이메일 인증 메일 발송 (ElastiCache(Redis) 사용)
   - 계정 종류 : 이메일, 카카오, 애플
 - 포스터
   - 포스터 등록/수정/삭제
