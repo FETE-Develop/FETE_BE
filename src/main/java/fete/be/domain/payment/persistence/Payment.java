@@ -107,12 +107,12 @@ public class Payment {
         payment.totalAmount = payment.ticketPrice;  // 추후에 할인 쿠폰이 생긴다면, 할인 쿠폰 정보 가져와서 차감해주면 됨
 
         // 카드사 정보가 존재한다면 함께 전달
-        String issuerCode = tossPaymentResponse.getCard().getIssuerCode();
-        if (issuerCode != null) {
+        if (tossPaymentResponse.getCard() == null || tossPaymentResponse.getCard().getIssuerCode() == null) {
+            payment.method = tossPaymentResponse.getMethod();
+        } else {
+            String issuerCode = tossPaymentResponse.getCard().getIssuerCode();
             String cardName = "(" + CardCode.convertCardCode(issuerCode) + ")";
             payment.method = tossPaymentResponse.getMethod() + cardName;
-        } else {
-            payment.method = tossPaymentResponse.getMethod();
         }
 
         payment.paymentKey = tossPaymentResponse.getPaymentKey();

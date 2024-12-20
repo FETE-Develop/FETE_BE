@@ -68,6 +68,22 @@ public class EventService {
         // 총 결제 요청 금액 계산
         int requestAmount = getRequestAmount(requestTickets);
 
+        // 여기에 payment.isPaid가 false일 때만 결제 실행되도록 로직 추가하기 -> 결제 중복 방지
+        Boolean isInitialPayment = true;
+        for (Participant participant : participants) {
+            Payment payment = participant.getPayment();
+            Boolean isPaid = payment.getIsPaid();
+            if (isPaid) {
+                isInitialPayment = false;
+                break;
+            }
+        }
+
+        // 이미 결제된 상태일 경우
+        if (!isInitialPayment) {
+            throw new AlreadyPaymentStateException(ResponseMessage.EVENT_ALREADY_PAYMENT_STATE.getMessage());
+        }
+
         // 결제 시스템 실행
         qrCodes = paymentSystem(requestAmount, participants, buyTicketRequest.getTossPaymentRequest(), qrCodes);
 
