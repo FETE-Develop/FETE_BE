@@ -77,6 +77,7 @@ public enum ResponseMessage {
     EVENT_INVALID_PLACE(1108, "올바르지 않은 이벤트 장소입니다."),
     EVENT_INVALID_MOOD_LENGTH(1109, "무드 선택은 최대 3개까지 가능합니다."),
     EVENT_INVALID_GENRE_LENGTH(1110, "장르 선택은 최대 3개까지 가능합니다."),
+    EVENT_ALREADY_PAYMENT_STATE(1111, "이미 결제된 상태입니다."),
 
     // TICKET
     TICKET_SUCCESS(1200, "티켓 조회에 성공하였습니다."),
