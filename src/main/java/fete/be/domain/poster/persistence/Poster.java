@@ -137,7 +137,9 @@ public class Poster {
 
         // S3에서 이미지 삭제
         for (PosterImage posterImage : poster.posterImages) {
-            imageUploadService.deleteFile(posterImage.getImageUrl());
+            if (!posterImage.getImageUrl().isBlank()) {
+                imageUploadService.deleteFile(posterImage.getImageUrl());
+            }
         }
         // DB에서 이미지 삭제
         poster.posterImages.clear();
