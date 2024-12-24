@@ -5,6 +5,7 @@ import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -15,6 +16,7 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class EventDto {
     private String eventName;  // 이벤트 이름
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
