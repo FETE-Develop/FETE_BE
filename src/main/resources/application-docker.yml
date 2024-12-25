@@ -6,6 +6,8 @@ server:
     key-store-password: ${KEY_STORE_PASSWORD}
 
 spring:
+  timezone: Asia/Seoul
+
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
