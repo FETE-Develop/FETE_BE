@@ -11,6 +11,7 @@ import fete.be.domain.poster.application.dto.request.EventDto;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.Place;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
+import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.poster.persistence.PosterRepository;
 import fete.be.global.jwt.JwtToken;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -123,6 +125,36 @@ class PosterServiceTest {
 
             // then
             assertThat(deletedPoster.getStatus()).isEqualTo(Status.DELETE);
+        }
+
+        @DisplayName("포스터 전체 조회")
+        @Test
+        void 성공_포스터_전체_조회() {
+            // given - 포스터 1개 등록했을 경우
+            WritePosterRequest writePosterRequest = generateWriteRequest();
+            Long posterId = posterService.writePoster(writePosterRequest);
+
+            // when
+            List<PosterDto> posters = posterService.getPosters(Status.WAIT, 0, 10).getContent();
+
+            // then
+            assertThat(posters.size()).isEqualTo(1);
+        }
+
+        @DisplayName("포스터 단건 조회")
+        @Test
+        void 성공_포스터_단건_조회() {
+            // given - 포스터 1개 등록했을 경우
+            WritePosterRequest writePosterRequest = generateWriteRequest();
+            Long posterId = posterService.writePoster(writePosterRequest);
+            Status wantedStatus = Status.WAIT;
+
+            // when
+            PosterDto poster = posterService.getPoster(posterId, wantedStatus);
+
+            // then
+            assertThat(poster.getPosterId()).isEqualTo(posterId);
+            assertThat(poster.getStatus()).isEqualTo(wantedStatus);
         }
 
 
