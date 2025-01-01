@@ -5,6 +5,7 @@ import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.exception.InvalidCancelReasonException;
 import fete.be.domain.payment.exception.InvalidPaymentStatusException;
+import fete.be.domain.payment.exception.InvalidTossResponseException;
 import fete.be.domain.ticket.application.dto.request.CancelTicketsRequest;
 import fete.be.domain.ticket.application.dto.request.GetEventTicketsRequest;
 import fete.be.domain.ticket.application.dto.response.*;
@@ -136,6 +137,8 @@ public class TicketController {
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.TICKET_CANCEL_FAILURE.getCode(), e.getMessage());
+        } catch (InvalidTossResponseException e) {
+            return new ApiResponse<>(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getCode(), e.getMessage());
         }
     }
 

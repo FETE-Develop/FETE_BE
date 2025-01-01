@@ -11,6 +11,7 @@ import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
 import fete.be.domain.event.exception.*;
 import fete.be.domain.payment.application.PaymentService;
+import fete.be.domain.payment.exception.InvalidTossResponseException;
 import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -63,6 +64,8 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (AlreadyPaymentStateException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+        } catch (InvalidTossResponseException e) {
+            return new ApiResponse<>(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         }

@@ -5,6 +5,7 @@ import fete.be.domain.payment.application.dto.request.TossCancelRequest;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
 import fete.be.domain.payment.exception.InvalidCancelReasonException;
+import fete.be.domain.payment.exception.InvalidTossResponseException;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.payment.persistence.PaymentRepository;
 import fete.be.domain.ticket.exception.InvalidRefundAmountException;
@@ -60,11 +61,17 @@ public class TossService {
         log.info("Before Toss API Call");
         log.info("Headers={}", headers.toString());
 
-        // 토스의 결제 승인 API 호출 후, TossPaymentResponse로 응답 받기
+        // 토스의 결제 승인 API 호출 준비
         String PAYMENT_URL = TOSS_URL + "confirm";
-        TossPaymentResponse tossPaymentResponse = restTemplate.postForObject(PAYMENT_URL, requestHttpEntity, TossPaymentResponse.class);
+        TossPaymentResponse tossPaymentResponse = null;
 
-        log.info("TossPaymentResponse={}", tossPaymentResponse);
+        // 토스의 결제 승인 API 호출 후, TossPaymentResponse 응답 받기
+        try {
+            tossPaymentResponse = restTemplate.postForObject(PAYMENT_URL, requestHttpEntity, TossPaymentResponse.class);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new InvalidTossResponseException(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getMessage());
+        }
 
         // 여러 개의 티켓 발급을 위해 participants에 복제
         for (Participant participant : participants) {
@@ -118,7 +125,13 @@ public class TossService {
         HttpEntity<TossCancelRequest> requestHttpEntity = new HttpEntity<>(tossCancelRequest, headers);
 
         // 토스 결제 취소 API 호출 이후, 응답 값 받기
-        TossPaymentResponse tossPaymentResponse = restTemplate.postForObject(CANCEL_URL, requestHttpEntity, TossPaymentResponse.class);
+        TossPaymentResponse tossPaymentResponse = null;
+        try {
+            tossPaymentResponse = restTemplate.postForObject(CANCEL_URL, requestHttpEntity, TossPaymentResponse.class);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new InvalidTossResponseException(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getMessage());
+        }
         log.info("TossPaymentResponse={}", tossPaymentResponse);
 
 

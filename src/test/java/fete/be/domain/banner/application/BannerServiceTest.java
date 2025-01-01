@@ -1,13 +1,11 @@
 package fete.be.domain.banner.application;
 
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
-import fete.be.domain.admin.application.dto.request.CreateCategoryRequest;
 import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.banner.application.dto.response.BannerDto;
 import fete.be.domain.banner.persistence.Banner;
 import fete.be.domain.banner.persistence.BannerRepository;
-import fete.be.domain.category.persistence.Category;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.TicketInfoDto;
 import fete.be.domain.member.application.MemberService;

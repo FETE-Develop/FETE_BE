@@ -1,11 +1,12 @@
-package fete.be.domain.category.persistence;
+package fete.be.domain.category.application;
 
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.admin.application.dto.request.CreateCategoryRequest;
 import fete.be.domain.admin.application.dto.request.ModifyCategoryRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
-import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.category.application.dto.response.CategoryDto;
+import fete.be.domain.category.persistence.Category;
+import fete.be.domain.category.persistence.CategoryRepository;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.TicketInfoDto;
 import fete.be.domain.member.application.MemberService;
@@ -39,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
-class CategoryTest {
+class CategoryServiceTest {
 
     @Autowired
     private MemberService memberService;
