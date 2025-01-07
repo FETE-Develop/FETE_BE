@@ -59,4 +59,4 @@ https://apps.apple.com/kr/app/fete/id6720755427
 
 ERD
 ---
-<img src="https://github.com/user-attachments/assets/4ee1d694-a905-41aa-9299-dfe537af1c15" alt="FETE_ERD" width="700"/>
+<img src="https://github.com/user-attachments/assets/59d2401a-e8c6-4804-a80b-0cf2e5a42473" alt="FETE_ERD" width="700"/>
