@@ -155,9 +155,13 @@ public class PosterService {
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder addressBuilder = new BooleanBuilder();
+        BooleanBuilder statusBuilder =new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
-        builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+        for (String status : filter.getStatus().split("/")) {
+            statusBuilder.or(poster.status.eq(Status.valueOf(status)));
+        }
+        builder.and(statusBuilder);
 
         // 필터링 조건 추가 (선택)
         // 주소
@@ -219,9 +223,13 @@ public class PosterService {
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder addressBuilder = new BooleanBuilder();
+        BooleanBuilder statusBuilder =new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
-        builder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+        for (String status : filter.getStatus().split("/")) {
+            statusBuilder.or(poster.status.eq(Status.valueOf(status)));
+        }
+        builder.and(statusBuilder);
 
         // 필터링 조건 추가 (선택)
         // 주소
