@@ -133,19 +133,13 @@ public class PosterController {
 
         try {
             Page<PosterDto> pageInfo = posterService.getPosters(findStatus, page, size);
-            List<PosterDto> posters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
             // 게스트용 포스터 전체 조회 메서드 실행
             Page<PosterDto> pageInfo = posterService.getGuestPosters(findStatus, page, size);
-            List<PosterDto> posters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (Exception e) {
@@ -169,19 +163,13 @@ public class PosterController {
         try {
             // 필터링 포스터 조회
             Page<PosterDto> pageInfo = posterService.getPostersWithFilters(page, size, request);
-            List<PosterDto> posters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
             // 게스트용 필터링 포스터 조회
             Page<PosterDto> pageInfo = posterService.getGuestPostersWithFilters(page, size, request);
-            List<PosterDto> posters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(posters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (Exception e) {
@@ -237,10 +225,7 @@ public class PosterController {
             Logging.time();
 
             Page<PosterDto> pageInfo = posterService.getMyPosters(page, size);
-            List<PosterDto> myPosters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(myPosters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
@@ -290,10 +275,7 @@ public class PosterController {
             Logging.time();
 
             Page<PosterDto> pageInfo = posterService.getLikePosters(page, size);
-            List<PosterDto> myLikePosters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(myLikePosters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.LIKE_GET_POSTER_SUCCESS.getCode(), ResponseMessage.LIKE_GET_POSTER_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {
@@ -326,19 +308,13 @@ public class PosterController {
         try {
             // 제목 또는 설명에 키워드가 포함되어 있는 포스터들 조회
             Page<PosterDto> pageInfo = posterService.searchPosters(keyword, page, size);
-            List<PosterDto> searchedPosters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(searchedPosters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
             // 게스트용 검색 메서드 실행
             Page<PosterDto> pageInfo = posterService.searchGuestPosters(keyword, page, size);
-            List<PosterDto> searchedPosters = pageInfo.getContent();
-            int totalPages = pageInfo.getTotalPages();
-
-            GetPostersResponse result = new GetPostersResponse(searchedPosters, totalPages);
+            GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SEARCH_SUCCESS.getCode(), ResponseMessage.POSTER_SEARCH_SUCCESS.getMessage(), result);
         } catch (IllegalArgumentException e) {

@@ -132,8 +132,6 @@ public class TossService {
             log.info(e.getMessage());
             throw new InvalidTossResponseException(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getMessage());
         }
-        log.info("TossPaymentResponse={}", tossPaymentResponse);
-
 
         // Payment 객체에 취소 관련 정보 저장
         Payment canceledPayment = Payment.updateTossCancelInfo(payment, tossPaymentResponse.getLastTransactionKey(), cancelReason);
