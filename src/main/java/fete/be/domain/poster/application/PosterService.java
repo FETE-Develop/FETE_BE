@@ -1,6 +1,9 @@
 package fete.be.domain.poster.application;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -116,7 +120,7 @@ public class PosterService {
 
     public Page<PosterDto> getPosters(Status status, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // Member 정보
         Member member = memberService.findMemberByEmail();
@@ -131,7 +135,7 @@ public class PosterService {
 
     public Page<PosterDto> getGuestPosters(Status status, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         return posterRepository.findByStatus(status, pageable)
                 .map(poster -> {
@@ -143,7 +147,7 @@ public class PosterService {
     // 다중 필터링 포스터 조회
     public Page<PosterDto> getPostersWithFilters(int page, int size, Filter filter) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createDescPageable(page, size);
 
         // Member 정보
         Member member = memberService.findMemberByEmail();
@@ -155,7 +159,7 @@ public class PosterService {
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder addressBuilder = new BooleanBuilder();
-        BooleanBuilder statusBuilder =new BooleanBuilder();
+        BooleanBuilder statusBuilder = new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
         for (String status : filter.getStatus().split("/")) {
@@ -194,12 +198,20 @@ public class PosterService {
             builder.and(event.startDate.goe(filter.getStartDate()).and(event.endDate.loe(filter.getEndDate())));
         }
 
+        // 전체 데이터 개수 조회 쿼리 실행
+        long totalElements = queryFactory.select(poster.count())
+                .from(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .fetchOne();
+
         // 최종 조회 쿼리 실행
         List<Poster> result = queryFactory.selectFrom(poster)
                 .join(poster.event, event)
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .fetch();
 
         // 관심 등록 상태를 반영하여 PosterDto에 담아 반환
@@ -208,13 +220,13 @@ public class PosterService {
                     Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), posterItem.getPosterId()).isPresent();
                     return new PosterDto(posterItem, isLike);
                 })
-                .collect(Collectors.toList()), pageable, result.size());
+                .collect(Collectors.toList()), pageable, totalElements);
     }
 
     // 게스트용 필터링 포스터 조회 메서드
     public Page<PosterDto> getGuestPostersWithFilters(int page, int size, Filter filter) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createDescPageable(page, size);
 
         // 사용할 QClass
         QPoster poster = QPoster.poster;
@@ -223,7 +235,7 @@ public class PosterService {
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder addressBuilder = new BooleanBuilder();
-        BooleanBuilder statusBuilder =new BooleanBuilder();
+        BooleanBuilder statusBuilder = new BooleanBuilder();
 
         // 포스터 상태 필터 적용 (필수)
         for (String status : filter.getStatus().split("/")) {
@@ -257,12 +269,20 @@ public class PosterService {
             builder.and(event.startDate.goe(filter.getStartDate()).and(event.endDate.loe(filter.getEndDate())));
         }
 
+        // 전체 데이터 개수 조회 쿼리 실행
+        long totalElements = queryFactory.select(poster.count())
+                .from(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .fetchOne();
+
         // 최종 조회 쿼리 실행
         List<Poster> result = queryFactory.selectFrom(poster)
                 .join(poster.event, event)
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
                 .fetch();
 
         // PosterDto에 담아 반환
@@ -271,7 +291,7 @@ public class PosterService {
                     Boolean isLike = false;
                     return new PosterDto(posterItem, isLike);
                 })
-                .collect(Collectors.toList()), pageable, result.size());
+                .collect(Collectors.toList()), pageable, totalElements);
     }
 
     public PosterDto getPoster(Long posterId, Status status) {
@@ -327,7 +347,7 @@ public class PosterService {
 
     public Page<PosterDto> getMyPosters(int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
@@ -366,7 +386,7 @@ public class PosterService {
 
     public Page<PosterDto> getLikePosters(int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
@@ -389,7 +409,7 @@ public class PosterService {
 
     public Page<PosterDto> searchPosters(String keyword, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
@@ -404,7 +424,7 @@ public class PosterService {
 
     public Page<PosterDto> searchGuestPosters(String keyword, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // 포스터의 제목 또는 이벤트 설명에 해당 키워드가 포함되어 있는 포스터들만 조회
         return posterRepository.findByKeyword(keyword, pageable)
@@ -430,7 +450,7 @@ public class PosterService {
     // 관리자용 간편 포스터 전체 조회
     public Page<SimplePosterDto> getSimplePosters(Status status, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createPageable(page, size);
+        Pageable pageable = createAscPageable(page, size);
 
         // 조건에 맞는 Poster 가져오기
         return posterRepository.findByStatus(status, pageable)
@@ -472,11 +492,11 @@ public class PosterService {
     }
 
     /**
-     * Pageable 객체 생성
+     * Pageable 객체 생성 (오름차순)
      * - 첫 번째 정렬 기준 : 이벤트의 시작 날짜
      * - 두 번째 정렬 기준 : 이벤트 이름
      */
-    private Pageable createPageable(int page, int size) {
+    private Pageable createAscPageable(int page, int size) {
         Pageable pageable = PageRequest.of(
                 page,
                 size,
@@ -486,5 +506,38 @@ public class PosterService {
                 )
         );
         return pageable;
+    }
+
+    /**
+     * Pageable 객체 생성 (내림차순)
+     * - 첫 번째 정렬 기준 : 이벤트의 시작 날짜
+     * - 두 번째 정렬 기준 : 이벤트 이름
+     */
+    private Pageable createDescPageable(int page, int size) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Order.desc("event.startDate"),  // 첫 번째 정렬 기준: 이벤트 시작 날짜
+                        Sort.Order.asc("event.eventName")  // 두 번째 정렬 기준: 이벤트 이름
+                )
+        );
+        return pageable;
+    }
+
+    /**
+     * Sort 동적 쿼리 연결
+     */
+    private List<OrderSpecifier> getOrderSpecifier(Sort sort) {
+        List<OrderSpecifier> orders = new ArrayList<>();
+
+        // Sort
+        sort.stream().forEach(order -> {
+            Order direction = order.isAscending() ? Order.ASC : Order.DESC;
+            String property = order.getProperty();
+            PathBuilder posterPath = new PathBuilder(Poster.class, "poster");
+            orders.add(new OrderSpecifier(direction, posterPath.get(property)));
+        });
+        return orders;
     }
 }
