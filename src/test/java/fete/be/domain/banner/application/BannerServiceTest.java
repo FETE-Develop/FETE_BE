@@ -1,5 +1,6 @@
 package fete.be.domain.banner.application;
 
+import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.admin.application.dto.request.CreateBannerRequest;
 import fete.be.domain.admin.application.dto.request.ModifyBannerRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
@@ -124,9 +125,12 @@ class BannerServiceTest {
     @DisplayName("배너 전체 조회")
     @Test
     void 성공_배너_전체조회() {
-        // given - 배너 등록
+        // given - 포스터 등록 및 승인 -> 배너 등록
         WritePosterRequest writePosterRequest = generateWriteRequest();
         Long posterId = posterService.writePoster(writePosterRequest);
+        ApprovePostersRequest request = new ApprovePostersRequest(List.of(posterId));
+        posterService.approvePosters(request);
+
         CreateBannerRequest createBannerRequest = new CreateBannerRequest("배너 제목", "배너 내용", "www.image.url", posterId);
         Long bannerId = bannerService.createBanner(createBannerRequest);
 
