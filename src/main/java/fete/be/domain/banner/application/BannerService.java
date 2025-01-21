@@ -9,13 +9,13 @@ import fete.be.domain.banner.persistence.BannerRepository;
 import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.global.util.ResponseMessage;
+import fete.be.global.util.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,7 +74,12 @@ public class BannerService {
     }
 
     public List<BannerDto> getBanners() {
+        // 배너에 연결된 포스터의 상태가 ACTIVE, BANNER인 것들만 조회할 것
+        List<Status> wantedStatuses = List.of(Status.ACTIVE, Status.BANNER);
+
+        // 조건에 맞는 배너 전체 조회
         List<BannerDto> banners = bannerRepository.findAll().stream()
+                .filter(banner -> wantedStatuses.contains(banner.getPoster().getStatus()))
                 .map(banner -> new BannerDto(banner))
                 .collect(Collectors.toList());
 
