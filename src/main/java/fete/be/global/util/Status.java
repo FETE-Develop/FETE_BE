@@ -5,7 +5,8 @@ public enum Status {
     ACTIVE("ACTIVE"),  // 승인
     DELETE("DELETE"),  // 소프트 삭제
     REPORT("REPORT"),  // 신고
-    END("END")  // 종료
+    END("END"),  // 종료
+    BANNER("BANNER")  // 고정 배너
     ;
 
 
