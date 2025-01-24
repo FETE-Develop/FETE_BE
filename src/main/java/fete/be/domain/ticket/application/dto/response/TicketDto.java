@@ -2,6 +2,7 @@ package fete.be.domain.ticket.application.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.EventType;
+import fete.be.domain.payment.persistence.TicketStatus;
 import fete.be.domain.ticket.persistence.Participant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class TicketDto {
     private String cancelReason;  // 취소 사유
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentAt;  // 결제일자
+    private TicketStatus ticketStatus;  // 티켓 상태
 
     public TicketDto(Participant participant) {
         this.participantId = participant.getParticipantId();
@@ -51,5 +53,6 @@ public class TicketDto {
         this.method = participant.getPayment().getMethod();
         this.cancelReason = participant.getPayment().getCancelReason();
         this.paymentAt = participant.getPayment().getPaymentAt();
+        this.ticketStatus = participant.getPayment().getTicketStatus();
     }
 }

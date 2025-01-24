@@ -59,6 +59,9 @@ public class Payment {
     private LocalDateTime paymentAt;  // 결제일자
     @Column(name = "canceled_at")
     private LocalDateTime canceledAt;  // 취소일자
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ticket_status")
+    private TicketStatus ticketStatus;  // 티켓 상태 : 예매 완료, 취소
 
 
     // 생성 메서드
@@ -84,6 +87,7 @@ public class Payment {
     // 결제 완료로 전환
     public static void completePayment(Payment payment) {
         payment.isPaid = true;
+        payment.ticketStatus = TicketStatus.COMPLETE;
         payment.paymentAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
     }
@@ -91,6 +95,7 @@ public class Payment {
     // 결제 취소로 전환
     public static void cancelPayment(Payment payment) {
         payment.isPaid = false;
+        payment.ticketStatus = TicketStatus.CANCEL;
         payment.totalAmount = 0;  // 결제 취소되었기 때문에 결제 금액을 0원으로 변경
         payment.canceledAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
