@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class GetEventTicketsRequest {
     private Long eventId;
     private String paymentCode;
+    private String ticketStatus;
 }

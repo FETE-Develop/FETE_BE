@@ -72,7 +72,7 @@ public class TicketController {
             SimpleEventDto eventDto = ticketService.getEventInfo(eventId);
 
             // 해당 이벤트에서 주문한 티켓 정보들
-            List<SimpleTicketDto> ticketDtos = ticketService.getTickets(paymentCode);
+            List<SimpleTicketDto> ticketDtos = ticketService.getTickets(paymentCode, request.getTicketStatus());
 
             GetEventTicketsResponse result = new GetEventTicketsResponse(eventDto, ticketDtos);
             return new ApiResponse<>(ResponseMessage.TICKET_SUCCESS.getCode(), ResponseMessage.TICKET_SUCCESS.getMessage(), result);

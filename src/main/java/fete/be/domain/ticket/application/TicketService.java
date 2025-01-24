@@ -1,5 +1,7 @@
 package fete.be.domain.ticket.application;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.exception.NotFoundEventException;
 import fete.be.domain.event.persistence.Event;
@@ -7,6 +9,8 @@ import fete.be.domain.event.persistence.EventRepository;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.payment.persistence.Payment;
 import fete.be.domain.payment.persistence.PaymentRepository;
+import fete.be.domain.payment.persistence.QPayment;
+import fete.be.domain.payment.persistence.TicketStatus;
 import fete.be.domain.ticket.application.dto.response.*;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.ticket.exception.QRCodeGenerationException;
@@ -19,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TicketService {
 
+    private final JPAQueryFactory queryFactory;
     private final MemberService memberService;
     private final QRCodeService qrCodeService;
     private final EventRepository eventRepository;
@@ -61,18 +65,53 @@ public class TicketService {
         return new SimpleEventDto(event);
     }
 
-    public List<SimpleTicketDto> getTickets(String paymentCode) {
-        return paymentRepository.findByPaymentCode(paymentCode).stream()
-                .map(payment -> {
+    // 이전 버전
+//    public List<SimpleTicketDto> getTickets(String paymentCode, String ticketStatus) {
+//        return paymentRepository.findByPaymentCode(paymentCode).stream()
+//                .map(payment -> {
+//                    String qrCode = "";
+//                    if (payment.getIsPaid()) {
+//                        try {
+//                            qrCode = qrCodeService.generateQRCodeBase64(payment.getParticipant(), 250, 250);
+//                        } catch (Exception e) {
+//                            throw new QRCodeGenerationException(ResponseMessage.EVENT_QR_FAILURE.getMessage());
+//                        }
+//                    }
+//                    return new SimpleTicketDto(payment, qrCode);
+//                })
+//                .collect(Collectors.toList());
+//    }
+
+    public List<SimpleTicketDto> getTickets(String paymentCode, String ticketStatus) {
+        QPayment payment = QPayment.payment;
+        BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder statusBuilder = new BooleanBuilder();
+
+        // 필수 조건
+        builder.and(payment.paymentCode.eq(paymentCode));
+
+        // 선택 조건
+        if (ticketStatus != null && !ticketStatus.isBlank()) {
+            statusBuilder.or(payment.ticketStatus.eq(TicketStatus.convertTicketStatus(ticketStatus)));
+        }
+        builder.and(statusBuilder);
+
+        // 최종 쿼리 실행
+        List<Payment> payments = queryFactory.selectFrom(payment)
+                .where(builder)
+                .fetch();
+
+        return payments.stream()
+                .map(paymentItem -> {
                     String qrCode = "";
-                    if (payment.getIsPaid()) {
+                    if (paymentItem.getIsPaid()) {
                         try {
-                            qrCode = qrCodeService.generateQRCodeBase64(payment.getParticipant(), 250, 250);
+                            qrCode = qrCodeService.generateQRCodeBase64(paymentItem.getParticipant(), 250, 250);
                         } catch (Exception e) {
                             throw new QRCodeGenerationException(ResponseMessage.EVENT_QR_FAILURE.getMessage());
                         }
                     }
-                    return new SimpleTicketDto(payment, qrCode);
+                    return new SimpleTicketDto(paymentItem, qrCode);
                 })
                 .collect(Collectors.toList());
     }

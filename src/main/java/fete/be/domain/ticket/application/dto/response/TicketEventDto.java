@@ -3,6 +3,7 @@ package fete.be.domain.ticket.application.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.payment.persistence.Payment;
+import fete.be.domain.payment.persistence.TicketStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class TicketEventDto {
     private LocalDateTime paymentAt;  // 결제일자
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime canceledAt;  // 취소일자
-
+    private TicketStatus ticketStatus;  // 티켓 상태
 
     public TicketEventDto(Event event, Payment payment, String paymentCode) {
         this.eventId = event.getEventId();
@@ -45,5 +46,6 @@ public class TicketEventDto {
         this.isPaid = payment.getIsPaid();
         this.paymentAt = payment.getPaymentAt();
         this.canceledAt = payment.getCanceledAt();
+        this.ticketStatus = payment.getTicketStatus();
     }
 }
