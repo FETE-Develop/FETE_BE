@@ -4,8 +4,9 @@ package fete.be.domain.payment.persistence;
 import fete.be.domain.payment.exception.NotFoundTicketStatusException;
 
 public enum TicketStatus {
-    COMPLETE("COMPLETE"),
-    CANCEL("CANCEL"),
+    UNUSED("UNUSED"),  // 사용 전
+    COMPLETE("COMPLETE"),  // 사용 완료
+    CANCEL("CANCEL"),  // 취소/환불
     ;
 
 

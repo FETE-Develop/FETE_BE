@@ -87,7 +87,7 @@ public class Payment {
     // 결제 완료로 전환
     public static void completePayment(Payment payment) {
         payment.isPaid = true;
-        payment.ticketStatus = TicketStatus.COMPLETE;
+        payment.ticketStatus = TicketStatus.UNUSED;
         payment.paymentAt = LocalDateTime.now();
         payment.updatedAt = LocalDateTime.now();
     }
@@ -145,5 +145,11 @@ public class Payment {
         payment.updatedAt = LocalDateTime.now();
 
         return payment;
+    }
+
+    // 사용 완료된 티켓으로 업데이트
+    public static void completeTicket(Payment payment) {
+        payment.ticketStatus = TicketStatus.COMPLETE;
+        payment.updatedAt = LocalDateTime.now();
     }
 }
