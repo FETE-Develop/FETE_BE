@@ -58,9 +58,10 @@ public class Participant {
         return participant;
     }
 
-    // 참여 완료 메서드
+    // 참여 완료 메서드 - 티켓 상태를 사용 완료로 변경
     public static void completeParticipant(Participant participant) {
         participant.isParticipated = true;
+        Payment.completeTicket(participant.getPayment());
     }
 
     // 취소 금액을 수익에 반영하는 메서드
