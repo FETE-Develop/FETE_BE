@@ -21,6 +21,7 @@ import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.domain.poster.exception.ProfileImageCountExceedException;
 import fete.be.domain.poster.exception.ProfileImageCountMismatchException;
+import fete.be.domain.poster.exception.ProfileImageCountNotEnoughException;
 import fete.be.domain.poster.persistence.*;
 import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.Status;
@@ -60,6 +61,11 @@ public class PosterService {
         // 포스터 이미지 개수가 10개를 초과할 경우
         if (request.getPosterImgUrls().length > 10) {
             throw new ProfileImageCountExceedException(ResponseMessage.POSTER_IMAGE_COUNT_EXCEED.getMessage());
+        }
+
+        // 1개 이상의 포스터 이미지를 등록해야 함
+        if (request.getPosterImgUrls().length == 0) {
+            throw new ProfileImageCountNotEnoughException(ResponseMessage.POSTER_IMAGE_COUNT_NOT_ENOUGH.getMessage());
         }
 
         Poster poster = Poster.createPoster(member, request);
