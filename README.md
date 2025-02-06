@@ -7,9 +7,17 @@ FETE
 
 App Store
 ---
-10월 27일 App Store에 출시되었습니다.</br>
+2024년 10월 27일 출시하였습니다.</br>
 현재는 베타 테스트 버전입니다. </br>
 https://apps.apple.com/kr/app/fete/id6720755427
+
+</br>
+
+Google Play Store
+---
+2025년 1월 17일 출시하였습니다.</br>
+현재는 베타 테스트 버전입니다. </br>
+https://play.google.com/store/apps/details?id=com.kr.fete&hl=ko
 
 </br>
 
