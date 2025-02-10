@@ -5,10 +5,7 @@ import fete.be.domain.event.exception.NotFoundMoodException;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.exception.GuestUserException;
 import fete.be.domain.poster.application.PosterService;
-import fete.be.domain.poster.application.dto.request.Filter;
-import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
-import fete.be.domain.poster.application.dto.request.SearchPostersRequest;
-import fete.be.domain.poster.application.dto.request.WritePosterRequest;
+import fete.be.domain.poster.application.dto.request.*;
 import fete.be.domain.poster.application.dto.response.GetPostersResponse;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.exception.ProfileImageCountExceedException;
@@ -217,6 +214,7 @@ public class PosterController {
      */
     @GetMapping("/my-posters")
     public ApiResponse<GetPostersResponse> getMyPosters(
+            @RequestBody MyPosterFilter request,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
@@ -224,7 +222,7 @@ public class PosterController {
             log.info("GetMyPosters request");
             Logging.time();
 
-            Page<PosterDto> pageInfo = posterService.getMyPosters(page, size);
+            Page<PosterDto> pageInfo = posterService.getMyPosters(page, size, request);
             GetPostersResponse result = new GetPostersResponse(pageInfo);
 
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage(), result);
