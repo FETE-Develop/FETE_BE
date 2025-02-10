@@ -64,8 +64,28 @@ public class AdminController {
 
             posterService.approvePosters(request);
             return new ApiResponse<>(ResponseMessage.ADMIN_APPROVE_POSTERS.getCode(), ResponseMessage.ADMIN_APPROVE_POSTERS.getMessage());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundPosterException e) {
             return new ApiResponse<>(ResponseMessage.ADMIN_APPROVE_POSTERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 관리자의 포스터 반려 API
+     *
+     * @param RejectPosterRequest request
+     * @return ApiResponse
+     */
+    @PostMapping("/posters/reject")
+    public ApiResponse rejectPoster(@RequestBody RejectPosterRequest request) {
+        try {
+            log.info("RejectPoster request={}", request);
+            Logging.time();
+
+            posterService.rejectPoster(request);
+            return new ApiResponse<>(ResponseMessage.ADMIN_REJECT_POSTER.getCode(), ResponseMessage.ADMIN_REJECT_POSTER.getMessage());
+        } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.ADMIN_REJECT_POSTER_FAIL.getCode(), e.getMessage());
         }
     }
 

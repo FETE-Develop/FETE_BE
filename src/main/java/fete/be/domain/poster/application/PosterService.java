@@ -5,6 +5,7 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import fete.be.domain.admin.application.dto.request.RejectPosterRequest;
 import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
@@ -349,6 +350,15 @@ public class PosterService {
         for (Poster poster : posters) {
             Poster.approvePoster(poster);  // 관리자 승인 메서드 실행
         }
+    }
+
+    @Transactional
+    public void rejectPoster(RejectPosterRequest request) {
+        Long posterId = request.getPosterId();
+        String reason = request.getReason();
+        Poster poster = findPosterByPosterId(posterId);
+
+        Poster.rejectPoster(poster, reason);  // 관리자 포스터 반려 메서드 실행
     }
 
     public Page<PosterDto> getMyPosters(int page, int size) {
