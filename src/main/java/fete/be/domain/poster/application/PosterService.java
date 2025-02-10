@@ -17,6 +17,7 @@ import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.member.persistence.Role;
 import fete.be.domain.poster.application.dto.request.Filter;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
+import fete.be.domain.poster.application.dto.request.MyPosterFilter;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.domain.poster.application.dto.response.PosterDto;
 import fete.be.domain.poster.exception.NotFoundPosterException;
@@ -361,20 +362,55 @@ public class PosterService {
         Poster.rejectPoster(poster, reason);  // 관리자 포스터 반려 메서드 실행
     }
 
-    public Page<PosterDto> getMyPosters(int page, int size) {
+    public Page<PosterDto> getMyPosters(int page, int size, MyPosterFilter filter) {
         // 페이징 조건 추가
         Pageable pageable = createAscPageable(page, size);
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
 
-        // 조건에 맞는 데이터 조회
-        return posterRepository.findByMemberAndStatusNot(member, Status.DELETE, pageable)
-                .map(poster -> {
-                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), poster.getPosterId()).isPresent();
-                    return new PosterDto(poster, isLike);
-                });
+        // 사용할 QClass
+        QPoster poster = QPoster.poster;
+        QEvent event = QEvent.event;
+
+        // 동적 쿼리
+        BooleanBuilder builder = new BooleanBuilder();
+        BooleanBuilder statusBuilder = new BooleanBuilder();
+
+        // 포스터 상태 필터
+        statusBuilder.and(poster.status.ne(Status.DELETE));
+        if (filter.getStatus() != null && !filter.getStatus().isBlank()) {
+            statusBuilder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+        }
+        builder.and(statusBuilder);
+
+        // 작성자의 글만 조회
+        builder.and(poster.member.eq(member));
+
+        // 전체 데이터 개수 조회 쿼리 실행
+        long totalElements = queryFactory.select(poster.count())
+                .from(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .fetchOne();
+
+        // 최종 쿼리 실행
+        List<Poster> result = queryFactory.selectFrom(poster)
+                .join(poster.event, event)
+                .where(builder)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
+                .fetch();
+
+        return new PageImpl<>(result.stream()
+                .map(posterItem -> {
+                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), posterItem.getPosterId()).isPresent();
+                    return new PosterDto(posterItem, isLike);
+                })
+                .collect(Collectors.toList()), pageable, totalElements);
     }
+
 
     @Transactional
     public void likePoster(Long posterId, Boolean isLike) {

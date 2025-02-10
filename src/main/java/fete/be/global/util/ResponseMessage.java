@@ -95,6 +95,7 @@ public enum ResponseMessage {
     TICKET_ENOUGH_QUANTITY(1210, "티켓의 수량이 충분합니다."),
     TICKET_NOT_ENOUGH_QUANTITY(1212, "티켓의 수량이 부족합니다."),
     TICKET_INVALID_TYPE(1213, "티켓의 종류가 올바르지 않습니다."),
+    TICKET_ALREADY_USED(1214, "이미 사용된 티켓입니다."),
 
     // LIKE
     LIKE_SUCCESS(1300, "관심 등록 API 요청이 성공하였습니다."),
