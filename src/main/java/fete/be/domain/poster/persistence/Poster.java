@@ -61,6 +61,9 @@ public class Poster {
     @Column(name = "status")
     private Status status;  // 포스터 상태
 
+    @Column(name = "reason")
+    private String reason;  // 포스터 반려 이유
+    @Column(name = "like_count")
     private int likeCount;  // 관심 등록 수
 
 
@@ -157,9 +160,18 @@ public class Poster {
         return poster;
     }
 
-    // 관리자 승인 메서드
+    // 관리자 포스터 승인 메서드
     public static void approvePoster(Poster poster) {
         poster.status = Status.ACTIVE;  // WAIT -> ACTIVE로 전환
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        poster.updatedAt = currentTime;
+    }
+
+    // 관리자 포스터 반려 메서드
+    public static void rejectPoster(Poster poster, String reason) {
+        poster.status = Status.REJECT;  // REJECT로 전환
+        poster.reason = reason;
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;

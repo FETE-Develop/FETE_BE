@@ -145,6 +145,8 @@ public enum ResponseMessage {
     IS_NOT_ADMIN(7039, "관리자 권한이 없습니다."),
     ADMIN_MODIFY_SIMPLE_ADDRESS_SUCCESS(7040, "간단 주소 수정이 성공하였습니다."),
     ADMIN_MODIFY_SIMPLE_ADDRESS_FAIL(7041, "간단 주소 수정이 실패하였습니다."),
+    ADMIN_REJECT_POSTER(7042, "관리자의 포스터 반려가 성공하였습니다."),
+    ADMIN_REJECT_POSTER_FAIL(7043, "관리자의 포스터 반려가 실패하였습니다."),
 
     // BANNER
     BANNER_GET_BANNERS(1400, "배너 전체 조회에 성공하였습니다."),
