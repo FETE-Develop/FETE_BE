@@ -212,7 +212,7 @@ public class PosterController {
      * @param int size
      * @return ApiResponse<GetPostersResponse>
      */
-    @GetMapping("/my-posters")
+    @PostMapping("/my-posters")
     public ApiResponse<GetPostersResponse> getMyPosters(
             @RequestBody MyPosterFilter request,
             @RequestParam(name = "page", defaultValue = "0") int page,
