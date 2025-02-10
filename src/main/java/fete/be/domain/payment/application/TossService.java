@@ -4,6 +4,7 @@ import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.dto.request.TossCancelRequest;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.application.dto.response.TossPaymentResponse;
+import fete.be.domain.payment.exception.AlreadyUsedTicketException;
 import fete.be.domain.payment.exception.InvalidCancelReasonException;
 import fete.be.domain.payment.exception.InvalidTossResponseException;
 import fete.be.domain.payment.persistence.Payment;
@@ -192,6 +193,11 @@ public class TossService {
         );
         // Payment 객체 조회
         Payment payment = participant.getPayment();
+
+        // 이미 사용한 티켓이라면 취소 불가
+        if (participant.getIsParticipated()) {
+            throw new AlreadyUsedTicketException(ResponseMessage.TICKET_ALREADY_USED.getMessage());
+        }
 
         // 결제 취소할 금액 확인
         int cancelAmount = payment.getTotalAmount();
