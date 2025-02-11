@@ -1,6 +1,7 @@
 package fete.be.domain.poster.application;
 
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
+import fete.be.domain.admin.application.dto.request.RejectPosterRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
 import fete.be.domain.event.persistence.TicketInfoDto;
@@ -181,6 +182,22 @@ class PosterServiceTest {
 
         // then
         assertThat(approvedPoster.getStatus()).isEqualTo(Status.ACTIVE);
+    }
+
+    @DisplayName("포스터 반려")
+    @Test
+    void 성공_포스터_반려() {
+        // given - 포스터 등록 (WAIT 상태)
+        WritePosterRequest writePosterRequest = generateWriteRequest();
+        Long posterId = posterService.writePoster(writePosterRequest);
+
+        // when - 등록한 포스터 반려 (REJECT로 변경)
+        RejectPosterRequest request = new RejectPosterRequest(posterId, "반려 사유입니다.");
+        posterService.rejectPoster(request);
+        Poster rejectedPoster = posterService.findPosterByPosterId(posterId);
+
+        // then
+        assertThat(rejectedPoster.getStatus()).isEqualTo(Status.REJECT);
     }
 
     @DisplayName("포스터 관심 등록")
