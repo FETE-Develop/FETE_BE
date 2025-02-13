@@ -27,7 +27,7 @@ public class TicketEventDto {
     private LocalDateTime paymentAt;  // 결제일자
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime canceledAt;  // 취소일자
-    private TicketStatus ticketStatus;  // 티켓 상태
+    private String ticketStatus;  // 티켓 상태
 
     public TicketEventDto(Event event, Payment payment, String paymentCode) {
         this.eventId = event.getEventId();

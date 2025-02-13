@@ -30,7 +30,7 @@ public class TicketDto {
     private String cancelReason;  // 취소 사유
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime paymentAt;  // 결제일자
-    private TicketStatus ticketStatus;  // 티켓 상태
+    private String ticketStatus;  // 티켓 상태
 
     public TicketDto(Participant participant) {
         this.participantId = participant.getParticipantId();
