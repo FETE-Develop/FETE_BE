@@ -92,7 +92,7 @@ public class TicketService {
 
         // 선택 조건
         if (ticketStatus != null && !ticketStatus.isBlank()) {
-            statusBuilder.or(payment.ticketStatus.eq(TicketStatus.convertTicketStatus(ticketStatus)));
+            statusBuilder.or(payment.ticketStatus.eq(ticketStatus));
         }
         builder.and(statusBuilder);
 
