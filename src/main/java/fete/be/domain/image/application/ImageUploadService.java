@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,8 +25,6 @@ public class ImageUploadService {
 
     private final AmazonS3 amazonS3;
     private Set<String> uploadedFileNames = new HashSet<>();
-    private Set<Long> uploadedFileSizes = new HashSet<>();
-
     @Value("${aws.s3.bucket-name}")
     private String bucket;
 
@@ -50,7 +49,6 @@ public class ImageUploadService {
         }
 
         uploadedFileNames.clear();
-        uploadedFileSizes.clear();
         return uploadedUrls;
     }
 
@@ -112,16 +110,16 @@ public class ImageUploadService {
      * 업로드할 이미지의 중복 검사
      */
     private boolean isDuplicate(MultipartFile file) {
-        String filename = file.getOriginalFilename();
-        Long fileSize = file.getSize();
-
-        // 중복 파일 검사
-        if (uploadedFileNames.contains(filename) && uploadedFileSizes.contains(fileSize)) {
-            return true;
+        try {
+            // 파일의 해시값
+            String fileHash = DigestUtils.md5DigestAsHex(file.getBytes());
+            if (uploadedFileNames.contains(fileHash)) {
+                return true;
+            }
+            uploadedFileNames.add(fileHash);
+        } catch (IOException e) {
+            log.info(e.getMessage());
         }
-        uploadedFileNames.add(filename);
-        uploadedFileSizes.add(fileSize);
-
         return false;
     }
 
