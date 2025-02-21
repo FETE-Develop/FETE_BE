@@ -1,5 +1,6 @@
 package fete.be.domain.event.application.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -7,6 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class BuyTicketDto {
     private String ticketType;  // 티켓 종류 - 얼리버드 / 현장구매 / 프로모션
     private int ticketPrice;  // 티켓 가격
