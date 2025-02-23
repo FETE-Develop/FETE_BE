@@ -438,7 +438,7 @@ public class PosterService {
 
     public Page<PosterDto> getLikePosters(int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createAscPageable(page, size);
+        Pageable pageable = createDescPageable(page, size);
 
         // Member 찾기
         Member member = memberService.findMemberByEmail();
