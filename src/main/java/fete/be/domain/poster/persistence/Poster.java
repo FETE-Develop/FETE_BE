@@ -125,7 +125,7 @@ public class Poster {
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
 
-        poster.event = Event.updateEvent(poster.getEvent(), request.getEvent());
+        poster.event = Event.updateEvent(poster.getEvent(), request.getEvent(), imageUploadService);
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;

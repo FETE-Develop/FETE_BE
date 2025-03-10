@@ -32,7 +32,11 @@ public class Artist {
 
         artist.name = artistDto.getName();
         artist.infoUrl = artistDto.getInfoUrl();
-        artist.imageUrl = "";
+        if (artistDto.getImageUrl().isBlank()) {
+            artist.imageUrl = "";
+        } else {
+            artist.imageUrl = artistDto.getImageUrl();
+        }
         artist.event = event;
 
         return artist;
@@ -50,7 +54,7 @@ public class Artist {
     // 변경사항 체크 메서드
     public static boolean isSameArtist(Artist origin, List<ArtistDto> compares) {
         for (ArtistDto compare : compares) {
-            if (origin.infoUrl.equals(compare.getInfoUrl()) && origin.name.equals(compare.getName())) {
+            if (origin.infoUrl.equals(compare.getInfoUrl()) && origin.name.equals(compare.getName()) && origin.imageUrl.equals(compare.getImageUrl())) {
                 return true;
             }
         }
