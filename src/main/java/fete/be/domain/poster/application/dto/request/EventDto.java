@@ -3,7 +3,6 @@ package fete.be.domain.poster.application.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
-import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,7 @@
 package fete.be.domain.event.persistence;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import fete.be.domain.image.application.ImageUploadService;
 import fete.be.domain.poster.application.dto.request.EventDto;
 import fete.be.domain.poster.persistence.Poster;
 import fete.be.domain.ticket.persistence.Participant;
@@ -9,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,7 +147,7 @@ public class Event {
     }
 
     // 업데이트 메서드
-    public static Event updateEvent(Event event, EventDto request) {
+    public static Event updateEvent(Event event, EventDto request, ImageUploadService imageUploadService) throws URISyntaxException {
         event.eventName = request.getEventName();
         event.startDate = request.getStartDate();
         event.endDate = request.getEndDate();
@@ -173,7 +175,13 @@ public class Event {
 
         // 라인업 수정이 필요한 경우
         if (isChangedArtists) {
+            // 아티스트 이미지 삭제
+            for (Artist artist : event.artists) {
+                imageUploadService.deleteFile(artist.getImageUrl());
+            }
             event.artists.clear();
+
+            // 전달된 이미지를 새롭게 추가
             for (ArtistDto artistDto : request.getArtists()) {
                 Artist artist = Artist.createArtist(artistDto, event);
                 event.artists.add(artist);

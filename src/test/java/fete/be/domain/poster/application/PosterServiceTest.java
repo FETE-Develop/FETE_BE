@@ -279,8 +279,8 @@ class PosterServiceTest {
 
         // 아티스트 정보 생성
         List<ArtistDto> artists = Arrays.asList(
-                new ArtistDto("이하이", "https://info.url", ""),
-                new ArtistDto("악동뮤지션", "https://info.url", "")
+                new ArtistDto("BTS", "https://info.url", ""),
+                new ArtistDto("아이유", "https://info.url", "")
         );
 
         // 계좌 정보 생성
@@ -412,8 +412,8 @@ class PosterServiceTest {
 
         // 아티스트 정보 생성
         List<ArtistDto> artists = Arrays.asList(
-                new ArtistDto("이하이", "https://info.url", ""),
-                new ArtistDto("악동뮤지션", "https://info.url", "")
+                new ArtistDto("BTS", "https://info.url", ""),
+                new ArtistDto("아이유", "https://info.url", "")
         );
 
         // 계좌 정보 생성
