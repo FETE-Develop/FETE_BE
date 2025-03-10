@@ -46,4 +46,14 @@ public class Artist {
             artistNumber += 1;
         }
     }
+
+    // 변경사항 체크 메서드
+    public static boolean isSameArtist(Artist origin, List<ArtistDto> compares) {
+        for (ArtistDto compare : compares) {
+            if (origin.infoUrl.equals(compare.getInfoUrl()) && origin.name.equals(compare.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
