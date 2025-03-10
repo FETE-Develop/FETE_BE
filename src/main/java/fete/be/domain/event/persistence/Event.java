@@ -161,11 +161,23 @@ public class Event {
         event.genres = Genre.checkInvalidGenres(request.getGenres());
         event.homepageUrl = request.getHomepageUrl();
 
-        // 라인업 생성
-        event.artists.clear();
-        for (ArtistDto artistDto : request.getArtists()) {
-            Artist artist = Artist.createArtist(artistDto, event);
-            event.artists.add(artist);
+        // 라인업 정보 변경 여부 확인
+        boolean isChangedArtists = false;
+        List<ArtistDto> requestArtists = request.getArtists();
+        for (Artist artist : event.artists) {
+            if(!Artist.isSameArtist(artist, requestArtists)) {
+                isChangedArtists = true;
+                break;
+            }
+        }
+
+        // 라인업 수정이 필요한 경우
+        if (isChangedArtists) {
+            event.artists.clear();
+            for (ArtistDto artistDto : request.getArtists()) {
+                Artist artist = Artist.createArtist(artistDto, event);
+                event.artists.add(artist);
+            }
         }
 
         // 계좌 정보
