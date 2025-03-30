@@ -43,7 +43,6 @@ public class QRCodeService {
     public String generateQRCodeBase64(Participant obj, int width, int height) throws Exception {
         // Participant 객체가 엔티티이기 때문에 DTO로 만들어서 QR 코드 생성
         ParticipantDto participantDto = new ParticipantDto(obj.getParticipantId(), obj.getMember().getMemberId(), obj.getEvent().getEventId(), obj.getPayment().getPaymentId());
-        log.info("QR Generate info={}", participantDto.toString());
 
         // 보낼 객체를 json 문자열로 변환
         String jsonString = objectMapper.writeValueAsString(participantDto);
@@ -122,7 +121,6 @@ public class QRCodeService {
         Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
                 () -> new IncorrectQRCodeException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
 
-        log.info("INVALID_QR 1");
 
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
@@ -139,9 +137,7 @@ public class QRCodeService {
         }
 
         // QR 데이터와 원본 데이터 비교
-        log.info("isValid check={}", isValid(participantDto, originalParticipant));
         if (!isValid(participantDto, originalParticipant)) {
-            log.info("INVALID_QR 2");
             throw new IncorrectQRCodeException(ResponseMessage.EVENT_INVALID_QR.getMessage());
         }
 
