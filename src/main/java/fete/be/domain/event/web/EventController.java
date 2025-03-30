@@ -85,7 +85,6 @@ public class EventController {
             @RequestBody ParticipantDto request
     ) {
         log.info("VerifyQRCode request: posterId={}", posterId);
-        log.info("VerifyQRCode request: ParticipantDto={}", request.toString());
         Logging.time();
 
         try {
