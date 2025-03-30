@@ -85,6 +85,7 @@ public class EventController {
             @RequestBody ParticipantDto request
     ) {
         log.info("VerifyQRCode request: posterId={}", posterId);
+        log.info("VerifyQRCode request: ParticipantDto={}", request.toString());
         Logging.time();
 
         try {
@@ -93,12 +94,16 @@ public class EventController {
 
             return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
         } catch (NotFoundPosterException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+            log.info("Error: {}", e.getMessage());
+            return new ApiResponse<>(ResponseMessage.POSTER_NO_EXIST.getCode(), e.getMessage());
         } catch (AlreadyUsedQRCodeException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+            log.info("Error: {}", e.getMessage());
+            return new ApiResponse<>(ResponseMessage.EVENT_QR_ALREADY_USED.getCode(), e.getMessage());
         } catch (InvalidEventPlaceException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+            log.info("Error: {}", e.getMessage());
+            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_PLACE.getCode(), e.getMessage());
         } catch (IncorrectQRCodeException e) {
+            log.info("Error: {}", e.getMessage());
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
         }
     }
