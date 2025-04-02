@@ -23,4 +23,13 @@ public class UUIDGenerator {
         }
         return sb.toString();
     }
+
+    // n자리 길이의 랜덤 숫자 문자열 생성
+    public static String generateNumericString(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(RANDOM.nextInt(10));  // 0부터 9까지의 숫자 랜덤 선택
+        }
+        return sb.toString();
+    }
 }
