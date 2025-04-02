@@ -49,6 +49,9 @@ public class PosterDto {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private AccountDto account;  // 결제 정보
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String managerCode;  // 고유 식별 번호
+
 
     public PosterDto(Poster poster, Boolean isLike) {
         this.posterId = poster.getPosterId();
@@ -95,7 +98,8 @@ public class PosterDto {
         this.status = poster.getStatus();
     }
 
-    public PosterDto(Poster poster, Boolean isLike, AccountDto account) {
+    // 이벤트 등록자 전용 생성자
+    public PosterDto(Poster poster, Boolean isLike, AccountDto account, String managerCode) {
         this.posterId = poster.getPosterId();
 
         this.posterImages = poster.getPosterImages().stream()
@@ -140,5 +144,6 @@ public class PosterDto {
         this.status = poster.getStatus();
 
         this.account = account;
+        this.managerCode = managerCode;
     }
 }
