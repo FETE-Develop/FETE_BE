@@ -6,6 +6,8 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import fete.be.domain.event.application.dto.request.ParticipantDto;
+import fete.be.domain.event.application.dto.request.VerifyQRCodeRequest;
+import fete.be.domain.event.exception.AccessDeniedException;
 import fete.be.domain.event.exception.AlreadyUsedQRCodeException;
 import fete.be.domain.event.exception.IncorrectQRCodeException;
 import fete.be.domain.event.exception.InvalidEventPlaceException;
@@ -116,14 +118,26 @@ public class QRCodeService {
      * }
      */
     @Transactional
-    public Long verifyQRCode(Long posterId, ParticipantDto participantDto) {
+    public Long verifyQRCode(Long posterId, VerifyQRCodeRequest request) {
+        // 프론트에서 해석한 QR 정보
+        ParticipantDto participantDto = request.getParticipantDto();
+
         // DB에서 원본 데이터를 조회
         Participant originalParticipant = participantRepository.findById(participantDto.getParticipantId()).orElseThrow(
                 () -> new IncorrectQRCodeException(ResponseMessage.EVENT_INVALID_QR.getMessage()));
 
-
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
+
+        // 담당자 검사 - 메인 담당자가 아니라면, 포스터의 고유 식별코드를 확인해서 임시 담당자인지 검사
+        Member manager = poster.getMember();
+        Member currentMember = memberService.findMemberByEmail();
+        String managerCode = poster.getManagerCode();
+        if (!manager.equals(currentMember)) {  // 메인 담당자가 아니라면
+            if (!managerCode.equals(request.getManagerCode())) {  // 임시 담당자도 아니라면
+                throw new AccessDeniedException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
+            }
+        }
 
         // 검증 로직
         // 해당 QR 코드가 사용된 적 있는지 확인
