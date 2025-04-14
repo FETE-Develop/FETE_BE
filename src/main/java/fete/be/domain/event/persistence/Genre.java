@@ -8,15 +8,31 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Genre {
-    EDM("EDM"),
-    HOUSE("HOUSE"),
-    TECHNO("TECHNO"),
-    D_AND_B("D&B"),
-    DISCO("DISCO"),
-    JAZZ("JAZZ"),
-    TRANCE("TRANCE"),
+    ACID("ACID"),
     AFROBEAT("AFROBEAT"),
+    AMBIENT("AMBIENT"),
+    BALEARIC("BALEARIC"),
+    BASS("BASS"),
+    DISCO("DISCO"),
+    DOWNTEMPO("DOWNTEMPO"),
+    DRILL("DRILL"),
+    D_AND_B("D&B"),
+    DUB("DUB"),
+    EDM("EDM"),
+    FUNK("FUNK"),
+    GARAGE("GARAGE"),
+    GRIME("GRIME"),
+    HARDCORE("HARDCORE"),
+    HIP_HOP("HIP-HOP"),
+    HOUSE("HOUSE"),
+    INDUSTRIAL("INDUSTRIAL"),
+    ITALO_DISCO("ITALO-DISCO"),
+    JAZZ("JAZZ"),
+    JUNGLE("JUNGLE"),
     POP("POP"),
+    R_AND_B("R&B"),
+    TECHNO("TECHNO"),
+    TRANCE("TRANCE"),
     DUBSTEP("DUBSTEP");
 
     private String genre;
