@@ -104,6 +104,9 @@ public class EventController {
         } catch (IncorrectQRCodeException e) {
             log.info("Error: {}", e.getMessage());
             return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
+        } catch (AccessDeniedException e) {
+            log.info("Error: {}", e.getMessage());
+            return new ApiResponse<>(ResponseMessage.EVENT_INCORRECT_MANAGER.getCode(), e.getMessage());
         }
     }
 

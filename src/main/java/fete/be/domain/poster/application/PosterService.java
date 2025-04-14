@@ -318,7 +318,8 @@ public class PosterService {
         AccountDto account;
         if (member.equals(poster.getMember())) {
             account = new AccountDto(poster.getEvent());
-            return new PosterDto(poster, isLike, account);
+            String managerCode = poster.getManagerCode();
+            return new PosterDto(poster, isLike, account, managerCode);
         }
 
         // 찾은 Poster를 PosterDto에 담아 반환

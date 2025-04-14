@@ -8,6 +8,7 @@ import fete.be.domain.member.persistence.Member;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
 import fete.be.domain.poster.application.dto.request.WritePosterRequest;
 import fete.be.global.util.Status;
+import fete.be.global.util.UUIDGenerator;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class Poster {
     private String manager;  // 담당자 이름
     @Column(name = "manager_contact", nullable = false, length = 20)
     private String managerContact;  // 담당자 연락처
+    @Column(name = "manager_code")
+    private String managerCode;  // 고유 식별 코드
 
     @OneToOne(mappedBy = "poster", cascade = CascadeType.ALL)
     private Event event;  // 등록할 이벤트
@@ -66,7 +69,6 @@ public class Poster {
     @Column(name = "like_count")
     private int likeCount;  // 관심 등록 수
 
-
     // 생성 메서드
     public static Poster createPoster(Member member, WritePosterRequest request) {
         Poster poster = new Poster();
@@ -81,6 +83,7 @@ public class Poster {
         poster.institution = request.getInstitution();
         poster.manager = request.getManager();
         poster.managerContact = request.getManagerContact();
+        poster.managerCode = UUIDGenerator.generateNumericString(6);
 
         LocalDateTime currentTime = LocalDateTime.now();
         poster.createdAt = currentTime;
