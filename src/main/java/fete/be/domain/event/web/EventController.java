@@ -7,7 +7,7 @@ import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
-import fete.be.domain.event.application.dto.request.VerifyQRCodeRequest;
+import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
 import fete.be.domain.event.exception.*;
 import fete.be.domain.payment.application.PaymentService;
@@ -82,7 +82,7 @@ public class EventController {
     @PostMapping("/verify/{posterId}")
     public ApiResponse verifyQRCode(
             @PathVariable("posterId") Long posterId,
-            @RequestBody VerifyQRCodeRequest request
+            @RequestBody ParticipantDto request
     ) {
         log.info("VerifyQRCode request: posterId={}", posterId);
         Logging.time();
