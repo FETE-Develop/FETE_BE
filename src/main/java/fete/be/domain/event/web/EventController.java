@@ -9,9 +9,11 @@ import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
 import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
+import fete.be.domain.event.application.dto.response.GetManagerCodeResponse;
 import fete.be.domain.event.exception.*;
 import fete.be.domain.payment.application.PaymentService;
 import fete.be.domain.payment.exception.InvalidTossResponseException;
+import fete.be.domain.poster.application.PosterService;
 import fete.be.domain.poster.exception.NotFoundPosterException;
 import fete.be.global.util.ApiResponse;
 import fete.be.global.util.Logging;
@@ -31,6 +33,7 @@ public class EventController {
     private final EventService eventService;
     private final QRCodeService qrCodeService;
     private final PaymentService paymentService;
+    private final PosterService posterService;
 
 
     /**
@@ -146,29 +149,13 @@ public class EventController {
         }
     }
 
-//
-//    @PostMapping("/verify")
-//    public ApiResponse verifyQRCode(
-//            @RequestPart("posterId") Long posterId,
-//            @RequestPart MultipartFile file
-//    ) {
-//        try {
-//
-//            // 유저의 QR 코드 검증, 이벤트 장소 검증
-//            Long participantId = qrCodeService.verifyQRCode(file, posterId);
-//
-//            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
-//        } catch (IllegalArgumentException e) {
-//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
-//        } catch (NotFoundException e) {
-//            throw new RuntimeException(e);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
 
     /**
      * 구매하려는 티켓의 수량이 충분한지 확인하는 API
+     *
+     * @param Long posterId
+     * @param CheckTicketsQuantityRequest checkTicketsQuantityRequest
+     * @return
      */
     @PostMapping("/{posterId}/tickets/check")
     public ApiResponse checkTicketsQuantity(
@@ -196,30 +183,24 @@ public class EventController {
 
 
     /**
-     * 이벤트 참여자의 QR 코드 검증 API
-     * -> 유저의 QR 코드 검증, 이벤트 장소 검증
+     * 포스터 고유식별코드 조회 API
      *
-     * @param MultipartFile file
-     * @param Long          posterId
-     * @return ApiResponse
+     * @param Long posterId
+     * @return ApiResponse<GetManagerCodeResponse>
      */
-//    @PostMapping("/verify")
-//    public ApiResponse verifyQRCode(
-//            @RequestPart("file") MultipartFile file,
-//            @RequestPart("posterId") Long posterId) {
-//        try {
-//            log.info("VerifyQRCode request: {}", posterId);
-//            Logging.time();
-//
-//            // 유저의 QR 코드 검증, 이벤트 장소 검증
-//            Long participantId = qrCodeService.verifyQRCode(file, posterId);
-//            return new ApiResponse<>(ResponseMessage.EVENT_VALID_QR.getCode(), ResponseMessage.EVENT_VALID_QR.getMessage());
-//        } catch (IOException e) {
-//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
-//        } catch (NotFoundException e) {
-//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_FILE.getCode(), ResponseMessage.EVENT_INVALID_FILE.getMessage());
-//        } catch (IllegalArgumentException e) {
-//            return new ApiResponse<>(ResponseMessage.EVENT_INVALID_QR.getCode(), e.getMessage());
-//        }
-//    }
+    @GetMapping("/{posterId}/manager-code")
+    public ApiResponse<GetManagerCodeResponse> getManagerCode(@PathVariable("posterId") Long posterId) {
+        log.info("GetManagerCode request: {}", posterId);
+        Logging.time();
+
+        try {
+            // 해당 포스터 고유식별코드 조회
+            String managerCode = posterService.getManagerCode(posterId);
+
+            GetManagerCodeResponse result = new GetManagerCodeResponse(managerCode);
+            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_SUCCESS.getCode(), ResponseMessage.TEMP_MANAGER_SUCCESS.getMessage(), result);
+        } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_FAILURE.getCode(), e.getMessage());
+        }
+    }
 }

@@ -544,6 +544,12 @@ public class PosterService {
         event.updateSimpleAddress(simpleAddress);
     }
 
+    // 포스터 고유 식별 코드 조회하는 메서드
+    public String getManagerCode(Long posterId) {
+        Poster poster = findPosterByPosterId(posterId);
+        return poster.getManagerCode();
+    }
+
     /**
      * Pageable 객체 생성 (오름차순)
      * - 첫 번째 정렬 기준 : 이벤트의 시작 날짜
