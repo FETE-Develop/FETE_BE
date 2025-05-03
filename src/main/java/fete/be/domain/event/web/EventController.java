@@ -198,9 +198,11 @@ public class EventController {
             String managerCode = posterService.getManagerCode(posterId);
 
             GetManagerCodeResponse result = new GetManagerCodeResponse(managerCode);
-            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_SUCCESS.getCode(), ResponseMessage.TEMP_MANAGER_SUCCESS.getMessage(), result);
+            return new ApiResponse<>(ResponseMessage.POSTER_CODE_SUCCESS.getCode(), ResponseMessage.POSTER_CODE_SUCCESS.getMessage(), result);
         } catch (NotFoundPosterException e) {
-            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_FAILURE.getCode(), e.getMessage());
+            return new ApiResponse<>(ResponseMessage.POSTER_CODE_FAILURE.getCode(), e.getMessage());
+        } catch (AccessDeniedException e) {
+            return new ApiResponse<>(ResponseMessage.POSTER_CODE_FAILURE.getCode(), e.getMessage());
         }
     }
 }

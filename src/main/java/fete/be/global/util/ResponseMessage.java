@@ -80,8 +80,10 @@ public enum ResponseMessage {
     EVENT_INVALID_GENRE_LENGTH(1110, "장르 선택은 최대 3개까지 가능합니다."),
     EVENT_ALREADY_PAYMENT_STATE(1111, "이미 결제된 상태입니다."),
     INVALID_TOSS_PAYMENT_API_RESPONSE(1112, "토스페이먼츠 API에 장애가 발생하였습니다."),
-    TEMP_MANAGER_SUCCESS(1113, "임시 자격 발급에 성공하였습니다."),
-    TEMP_MANAGER_FAILURE(1114, "임시 자격 발급에 실패하였습니다."),
+    POSTER_CODE_SUCCESS(1113, "고유식별코드 전송에 성공하였습니다."),
+    POSTER_CODE_FAILURE(1114, "고유식별코드 전송에 실패하였습니다."),
+    TEMP_MANAGER_SUCCESS(1115, "임시 자격 발급에 성공하였습니다."),
+    TEMP_MANAGER_FAILURE(1116, "임시 자격 발급에 실패하였습니다."),
 
     // TICKET
     TICKET_SUCCESS(1200, "티켓 조회에 성공하였습니다."),

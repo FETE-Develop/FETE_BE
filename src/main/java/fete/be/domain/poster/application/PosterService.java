@@ -412,6 +412,55 @@ public class PosterService {
                 .collect(Collectors.toList()), pageable, totalElements);
     }
 
+//    public Page<PosterDto> getMyPosters(int page, int size, MyPosterFilter filter) {
+//        // 페이징 조건 추가
+//        Pageable pageable = createAscPageable(page, size);
+//
+//        // Member 찾기
+//        Member member = memberService.findMemberByEmail();
+//
+//        // 사용할 QClass
+//        QPoster poster = QPoster.poster;
+//        QEvent event = QEvent.event;
+//
+//        // 동적 쿼리
+//        BooleanBuilder builder = new BooleanBuilder();
+//        BooleanBuilder statusBuilder = new BooleanBuilder();
+//
+//        // 포스터 상태 필터
+//        statusBuilder.and(poster.status.ne(Status.DELETE));
+//        if (filter.getStatus() != null && !filter.getStatus().isBlank()) {
+//            statusBuilder.and(poster.status.eq(Status.valueOf(filter.getStatus())));
+//        }
+//        builder.and(statusBuilder);
+//
+//        // 작성자의 글만 조회
+//        builder.and(poster.member.eq(member));
+//
+//        // 전체 데이터 개수 조회 쿼리 실행
+//        long totalElements = queryFactory.select(poster.count())
+//                .from(poster)
+//                .join(poster.event, event)
+//                .where(builder)
+//                .fetchOne();
+//
+//        // 최종 쿼리 실행
+//        List<Poster> result = queryFactory.selectFrom(poster)
+//                .join(poster.event, event)
+//                .where(builder)
+//                .offset(pageable.getOffset())
+//                .limit(pageable.getPageSize())
+//                .orderBy(getOrderSpecifier(pageable.getSort()).stream().toArray(OrderSpecifier[]::new))
+//                .fetch();
+//
+//        return new PageImpl<>(result.stream()
+//                .map(posterItem -> {
+//                    Boolean isLike = posterLikeRepository.findByMemberIdAndPosterId(member.getMemberId(), posterItem.getPosterId()).isPresent();
+//                    return new PosterDto(posterItem, isLike);
+//                })
+//                .collect(Collectors.toList()), pageable, totalElements);
+//    }
+
 
     @Transactional
     public void likePoster(Long posterId, Boolean isLike) {
@@ -546,7 +595,12 @@ public class PosterService {
 
     // 포스터 고유 식별 코드 조회하는 메서드
     public String getManagerCode(Long posterId) {
+        Member member = memberService.findMemberByEmail();
         Poster poster = findPosterByPosterId(posterId);
+        if (!poster.getMember().equals(member)) {
+            throw new AccessDeniedException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
+        }
+
         return poster.getManagerCode();
     }
 
