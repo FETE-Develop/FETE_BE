@@ -215,7 +215,7 @@ public class EventController {
      * @param GrantTempManagerRequest grantTempManagerRequest
      * @return
      */
-    @PostMapping("/{posterId}/temp-manager")
+    @PostMapping("/temp-manager")
     public ApiResponse grantTempManager(@RequestBody GrantTempManagerRequest grantTempManagerRequest) {
         log.info("GrantTempManager API");
         Logging.time();
