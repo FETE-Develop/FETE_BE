@@ -39,6 +39,7 @@ public class EventService {
     private final PosterService posterService;
     private final QRCodeService qrCodeService;
     private final TossService tossService;
+
     private final ParticipantRepository participantRepository;
     private final PaymentRepository paymentRepository;
 
@@ -238,6 +239,22 @@ public class EventService {
         for (BuyTicketDto requestTicket : requestTickets) {
             canBuy(requestTicket, tickets);
         }
+    }
+
+    /**
+     * 임시 담당자 권한 부여하는 메서드
+     */
+    @Transactional
+    public void grantTempManager(String managerCode) {
+        // 포스터에서 managerCode로 포스터 조회
+        Poster poster = posterService.findPosterByManagerCode(managerCode);
+
+        // 현재 유저 조회
+        Member member = memberService.findMemberByEmail();
+
+        // 조회한 포스터 담당자에 현재 유저 추가 & 멤버와 해당 포스터 연결
+        poster.addManager(member);
+        member.setManagedPoster(poster);
     }
 
     private void canBuy(BuyTicketDto requestTicket, List<Ticket> tickets) {

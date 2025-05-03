@@ -79,6 +79,10 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Poster> posters = new ArrayList<>();  // 유저가 등록한 프스터 리스트
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poster_id")
+    private Poster managedPoster;  // 관리하고 있는 포스터 (현재는 1개만 가능)
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
@@ -184,6 +188,17 @@ public class Member {
     // 비밀번호 설정
     public static void setPassword(Member member, String newPassword) {
         member.password = newPassword;
+        member.updatedAt = LocalDateTime.now();
+    }
+
+    // 임시로 관리하고 있는 포스터 지정 메서드
+    public void setManagedPoster(Poster poster) {
+        this.managedPoster = poster;
+    }
+
+    // 관리하고 있는 포스터 초기화 메서드
+    public static void initManagedPoster(Member member) {
+        member.managedPoster = null;
         member.updatedAt = LocalDateTime.now();
     }
 }

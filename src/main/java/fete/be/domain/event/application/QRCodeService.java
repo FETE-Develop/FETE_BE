@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -126,15 +127,13 @@ public class QRCodeService {
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
 
-//        // 담당자 검사 - 메인 담당자가 아니라면, 포스터의 고유 식별코드를 확인해서 임시 담당자인지 검사
-//        Member manager = poster.getMember();
-//        Member currentMember = memberService.findMemberByEmail();
-//        String managerCode = poster.getManagerCode();
-//        if (!manager.equals(currentMember)) {  // 메인 담당자가 아니라면
-//            if (!managerCode.equals(request.getManagerCode())) {  // 임시 담당자도 아니라면
-//                throw new AccessDeniedException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
-//            }
-//        }
+        // 담당자 검사 - 메인 담당자, 임시 담당자 포함되는지 검사
+        Member mainManager = poster.getMember();
+        List<Member> managers = poster.getManagers();
+        Member member = memberService.findMemberByEmail();
+        if (!managers.contains(member) && !mainManager.equals(member)) {  // 임시 담당자 목록 또는 등록 담당자가 아닐 경우
+            throw new AccessDeniedException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
+        }
 
         // 검증 로직
         // 해당 QR 코드가 사용된 적 있는지 확인
@@ -263,29 +262,4 @@ public class QRCodeService {
 
         return bufferedImage;
     }
-//
-//    public static void main(String[] args) throws IOException, NotFoundException {
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//
-//        String base64Image = "iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQAAAACgl2eQAAABv0lEQVR4Xu2Y0W3DMAxECXgAj+TVNZIHEKDeOyapExTtbw8wkRiW9PxxII90Uuv3GPW58xE30HEDHTfQYWCUYh+bbk/dHdt5TLb6LAbQd+6Lax2161pesh8EeGe0xiWNYvYh4YmAcqQF+yfLUIBiW2s7KxRYLrlNpK6nq+6nmvznAFbfdXr5sNVnKcAjLHCQrEvkAJIpyw/dFU2MYlPiriWXAFBsMgsDhRtNk/70wykAJWenyC8I3LD/+qjJfw+QI/owA4X1pKG16iAAXS/mmbI4wPFknKkBnAYg8zFQbJxnvUUBGh8HCVLWek8+Kh6JAiQQsyyXXGcKpW+tOACQJjvFDrL3p1+9ooCBa7zvehukSYOeDCYBThAy2Sdr9W7/DEACy6+IYgrv083spiRgkiZqjNOnca4llwB0gWEW9QED6I0Dutjch9e08TeWWQCKKDOy5mu3gjCggxyRL48VTr6NEwEgqtsv87EAyFc/lgMshju9q0/LmapLf4gAbBa61vRvwI759iaWAjzEXlrBh8wMYPZAdBOwakM5wELgKP9DgkD6wHGVGQFQYU7W6/2krDoK+C1uoOMGOm6g42/gC2ncmRbHXBdsAAAAAElFTkSuQmCC";
-//
-//        log.info("base64Image={}", base64Image);
-//
-//        // Base64 디코딩하여 BufferedImage로 변환
-//        BufferedImage bufferedImage = decodeQRCodeImage(base64Image);
-//
-//        // QR 코드 이미지에서 QR 코드 텍스트 추출
-//        LuminanceSource source = new BufferedImageLuminanceSource(bufferedImage);
-//        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-//
-//        Result result = new MultiFormatReader().decode(bitmap);
-//        String qrCodeText = result.getText();
-//
-//        log.info("qrCodeText={}", qrCodeText);
-//
-//        // 역직렬화
-//        ParticipantDto participantDto = objectMapper.readValue(qrCodeText, ParticipantDto.class);
-//        System.out.println("participantDto = " + participantDto);
-//    }
 }
