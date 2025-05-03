@@ -16,6 +16,8 @@ import java.util.Optional;
 public interface PosterRepository extends JpaRepository<Poster, Long> {
     Page<Poster> findByStatus(Status status, Pageable pageable);
 
+    Optional<Poster> findByManagerCode(String managerCode);
+
     Page<Poster> findByMemberAndStatusNot(Member member, Status status, Pageable pageable);
 
     Page<Poster> findByPosterIdIn(List<Long> posterIds, Pageable pageable);

@@ -4,16 +4,19 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import fete.be.domain.admin.application.dto.request.RejectPosterRequest;
 import fete.be.domain.admin.application.dto.request.SetArtistImageUrlsRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.admin.application.dto.response.SimplePosterDto;
+import fete.be.domain.event.exception.AccessDeniedException;
 import fete.be.domain.event.persistence.*;
 import fete.be.domain.image.application.ImageUploadService;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.persistence.Member;
 import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
+import fete.be.domain.member.persistence.QMember;
 import fete.be.domain.member.persistence.Role;
 import fete.be.domain.poster.application.dto.request.Filter;
 import fete.be.domain.poster.application.dto.request.ModifyPosterRequest;
@@ -378,10 +381,12 @@ public class PosterService {
         // 사용할 QClass
         QPoster poster = QPoster.poster;
         QEvent event = QEvent.event;
+        QMember managerMember = QMember.member;
 
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder statusBuilder = new BooleanBuilder();
+        BooleanBuilder managerBuilder = new BooleanBuilder();
 
         // 포스터 상태 필터
         statusBuilder.and(poster.status.ne(Status.DELETE));
@@ -390,8 +395,15 @@ public class PosterService {
         }
         builder.and(statusBuilder);
 
-        // 작성자의 글만 조회
-        builder.and(poster.member.eq(member));
+        // 등록자 또는 임시 담당자 필터
+        managerBuilder.or(poster.member.eq(member));
+        managerBuilder.or(JPAExpressions
+                .selectOne()
+                .from(managerMember)
+                .where(managerMember.eq(member)
+                        .and(managerMember.managedPoster.eq(poster)))
+                .exists());
+        builder.and(managerBuilder);
 
         // 전체 데이터 개수 조회 쿼리 실행
         long totalElements = queryFactory.select(poster.count())

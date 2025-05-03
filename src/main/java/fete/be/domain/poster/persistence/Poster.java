@@ -39,6 +39,8 @@ public class Poster {
     private String institution;  // 주최 팀 or 주최자 명
     @Column(name = "manager", nullable = false, length = 20)
     private String manager;  // 담당자 이름
+    @OneToMany(mappedBy = "managedPoster", cascade = CascadeType.PERSIST)
+    private List<Member> managers = new ArrayList<>();  // 임시 담당자 리스트
     @Column(name = "manager_contact", nullable = false, length = 20)
     private String managerContact;  // 담당자 연락처
     @Column(name = "manager_code")
@@ -150,6 +152,11 @@ public class Poster {
         // DB에서 이미지 삭제
         poster.posterImages.clear();
 
+        // 연관된 담당자들의 managedPoster 연결 해제
+        for (Member manager : poster.getManagers()) {
+            Member.initManagedPoster(manager);
+        }
+
         LocalDateTime currentTime = LocalDateTime.now();
         poster.updatedAt = currentTime;
 
@@ -203,5 +210,10 @@ public class Poster {
     // 배너 설정 메서드
     public void setBanner(Banner banner) {
         this.banner = banner;
+    }
+
+    // 임시 담당자 추가
+    public void addManager(Member manager) {
+        this.getManagers().add(manager);
     }
 }
