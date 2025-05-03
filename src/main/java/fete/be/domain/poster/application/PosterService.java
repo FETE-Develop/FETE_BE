@@ -86,6 +86,11 @@ public class PosterService {
                 () -> new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage()));
     }
 
+    public Poster findPosterByManagerCode(String managerCode) {
+        return posterRepository.findByManagerCode(managerCode).orElseThrow(
+                () -> new NotFoundPosterException(ResponseMessage.POSTER_NO_EXIST.getMessage()));
+    }
+
     @Transactional
     public Long updatePoster(Long posterId, ModifyPosterRequest request) throws URISyntaxException {
         // 현재 API 요청을 보낸 Member 찾기

@@ -7,6 +7,7 @@ import fete.be.domain.event.application.EventService;
 import fete.be.domain.event.application.QRCodeService;
 import fete.be.domain.event.application.dto.request.BuyTicketRequest;
 import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
+import fete.be.domain.event.application.dto.request.GrantTempManagerRequest;
 import fete.be.domain.event.application.dto.request.ParticipantDto;
 import fete.be.domain.event.application.dto.response.BuyTicketResponse;
 import fete.be.domain.event.application.dto.response.GetManagerCodeResponse;
@@ -203,6 +204,30 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.POSTER_CODE_FAILURE.getCode(), e.getMessage());
         } catch (AccessDeniedException e) {
             return new ApiResponse<>(ResponseMessage.POSTER_CODE_FAILURE.getCode(), e.getMessage());
+        }
+    }
+
+
+    /**
+     * 임시 담당자 권한 부여 API
+     * - 포스터 고유식별코드를 입력하여 해당 유저에게 임시 담당자 권한 부여
+     *
+     * @param GrantTempManagerRequest grantTempManagerRequest
+     * @return
+     */
+    @PostMapping("/{posterId}/temp-manager")
+    public ApiResponse grantTempManager(@RequestBody GrantTempManagerRequest grantTempManagerRequest) {
+        log.info("GrantTempManager API");
+        Logging.time();
+
+        try {
+            // 코드를 입력하여 임시 담당자 권한 부여
+            String managerCode = grantTempManagerRequest.getManagerCode();
+            eventService.grantTempManager(managerCode);
+
+            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_SUCCESS.getCode(), ResponseMessage.TEMP_MANAGER_SUCCESS.getMessage());
+        } catch (NotFoundPosterException e) {
+            return new ApiResponse<>(ResponseMessage.TEMP_MANAGER_FAILURE.getCode(), e.getMessage());
         }
     }
 }
