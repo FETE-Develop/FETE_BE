@@ -3,6 +3,7 @@ package fete.be.domain.member.persistence;
 import fete.be.domain.member.application.dto.request.ModifyRequestDto;
 import fete.be.domain.member.application.dto.request.OAuthSignupRequest;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
+import fete.be.domain.poster.persistence.PosterManager;
 import fete.be.global.util.Status;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.payment.persistence.Payment;
@@ -79,9 +80,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Poster> posters = new ArrayList<>();  // 유저가 등록한 프스터 리스트
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "poster_id")
-    private Poster managedPoster;  // 관리하고 있는 포스터 (현재는 1개만 가능)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PosterManager> posterManagers = new ArrayList<>();  // 관리하고 있는 포스터들
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -191,14 +191,15 @@ public class Member {
         member.updatedAt = LocalDateTime.now();
     }
 
-    // 임시로 관리하고 있는 포스터 지정 메서드
-    public void setManagedPoster(Poster poster) {
-        this.managedPoster = poster;
+    // 임시로 관리하고 있는 포스터 매니저 리스트에 추가
+    public void addPosterManager(PosterManager posterManager) {
+        this.posterManagers.add(posterManager);
+        this.updatedAt = LocalDateTime.now();
     }
 
     // 관리하고 있는 포스터 초기화 메서드
-    public static void initManagedPoster(Member member) {
-        member.managedPoster = null;
+    public static void deletePosterManager(Member member, PosterManager posterManager) {
+        member.posterManagers.remove(posterManager);
         member.updatedAt = LocalDateTime.now();
     }
 }
