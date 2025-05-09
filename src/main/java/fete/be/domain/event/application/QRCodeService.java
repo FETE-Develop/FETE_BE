@@ -11,6 +11,7 @@ import fete.be.domain.event.exception.AccessDeniedException;
 import fete.be.domain.event.exception.AlreadyUsedQRCodeException;
 import fete.be.domain.event.exception.IncorrectQRCodeException;
 import fete.be.domain.event.exception.InvalidEventPlaceException;
+import fete.be.domain.poster.persistence.PosterManager;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
@@ -127,11 +128,23 @@ public class QRCodeService {
         // posterId로 포스터 찾기
         Poster poster = posterService.findPosterByPosterId(posterId);
 
+        // 현재 요청 유저
+        Member member = memberService.findMemberByEmail();
+
         // 담당자 검사 - 메인 담당자, 임시 담당자 포함되는지 검사
         Member mainManager = poster.getMember();
-        List<Member> managers = poster.getManagers();
-        Member member = memberService.findMemberByEmail();
-        if (!managers.contains(member) && !mainManager.equals(member)) {  // 임시 담당자 목록 또는 등록 담당자가 아닐 경우
+        List<PosterManager> posterManagers = poster.getPosterManagers();
+
+        // 임시 담당자인지 검사
+        boolean isTempManager = false;
+        for(PosterManager posterManager : posterManagers) {
+            if (posterManager.getMember().equals(member)) {
+                isTempManager = true;
+                break;
+            }
+        }
+
+        if (!isTempManager && !mainManager.equals(member)) {  // 임시 담당자 목록 또는 등록 담당자가 아닐 경우
             throw new AccessDeniedException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
         }
 

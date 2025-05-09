@@ -381,7 +381,7 @@ public class PosterService {
         // 사용할 QClass
         QPoster poster = QPoster.poster;
         QEvent event = QEvent.event;
-        QMember managerMember = QMember.member;
+        QPosterManager posterManager = QPosterManager.posterManager;
 
         // 동적 쿼리
         BooleanBuilder builder = new BooleanBuilder();
@@ -399,9 +399,9 @@ public class PosterService {
         managerBuilder.or(poster.member.eq(member));
         managerBuilder.or(JPAExpressions
                 .selectOne()
-                .from(managerMember)
-                .where(managerMember.eq(member)
-                        .and(managerMember.managedPoster.eq(poster)))
+                .from(posterManager)
+                .where(posterManager.member.eq(member)
+                        .and(posterManager.poster.eq(poster)))
                 .exists());
         builder.and(managerBuilder);
 
