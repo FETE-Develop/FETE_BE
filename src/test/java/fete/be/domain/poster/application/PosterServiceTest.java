@@ -4,6 +4,7 @@ import fete.be.domain.admin.application.dto.request.ApprovePostersRequest;
 import fete.be.domain.admin.application.dto.request.RejectPosterRequest;
 import fete.be.domain.admin.application.dto.response.AccountDto;
 import fete.be.domain.event.persistence.ArtistDto;
+import fete.be.domain.event.persistence.Genre;
 import fete.be.domain.event.persistence.TicketInfoDto;
 import fete.be.domain.member.application.MemberService;
 import fete.be.domain.member.application.dto.request.SignupRequestDto;
@@ -164,6 +165,7 @@ class PosterServiceTest {
                 // then
                 assertThat(poster.getPosterId()).isEqualTo(posterId);
                 assertThat(poster.getStatus()).isEqualTo(wantedStatus);
+                assertThat(poster.getGenres()).contains(Genre.D_AND_B.getKoreanValue());
             }
         }
     }
@@ -302,7 +304,7 @@ class PosterServiceTest {
                 tickets,
                 "이벤트 관련 추가 설명입니다",
                 "몽환적인,잔잔한",
-                "POP,DISCO",
+                "POP,DISCO,D&B",
                 "http://www.instargram.kr",
                 artists,
                 account
