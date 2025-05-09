@@ -9,6 +9,7 @@ import fete.be.domain.event.persistence.Ticket;
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.persistence.PaymentRepository;
+import fete.be.domain.poster.persistence.PosterManager;
 import fete.be.domain.ticket.persistence.Participant;
 import fete.be.domain.ticket.persistence.ParticipantRepository;
 import fete.be.domain.member.application.MemberService;
@@ -253,8 +254,9 @@ public class EventService {
         Member member = memberService.findMemberByEmail();
 
         // 조회한 포스터 담당자에 현재 유저 추가 & 멤버와 해당 포스터 연결
-        poster.addManager(member);
-        member.setManagedPoster(poster);
+        PosterManager posterManager = PosterManager.createPosterManager(member, poster);
+        poster.addPosterManager(posterManager);
+        member.addPosterManager(posterManager);
     }
 
     private void canBuy(BuyTicketDto requestTicket, List<Ticket> tickets) {
