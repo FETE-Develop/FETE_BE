@@ -194,16 +194,20 @@ public class PosterService {
 
         // 무드
         if (filter.getMoods() != null) {
+            BooleanBuilder moodBuilder = new BooleanBuilder();
             for (String mood : filter.getMoods().split(",")) {
-                builder.and(poster.event.moods.contains(mood.trim()));
+                moodBuilder.or(poster.event.moods.contains(mood.trim()));
             }
+            builder.and(moodBuilder);
         }
 
         // 장르
         if (filter.getGenres() != null) {
+            BooleanBuilder genreBuilder = new BooleanBuilder();
             for (String genre : filter.getGenres().split(",")) {
-                builder.and(poster.event.genres.contains(genre.trim()));
+                genreBuilder.or(poster.event.genres.contains(genre.trim()));
             }
+            builder.and(genreBuilder);
         }
 
         // 최소, 최대 가격
@@ -268,16 +272,24 @@ public class PosterService {
         }
         builder.and(addressBuilder);
 
+        // 무드
         if (filter.getMoods() != null) {
+            BooleanBuilder moodBuilder = new BooleanBuilder();
             for (String mood : filter.getMoods().split(",")) {
-                builder.and(poster.event.moods.contains(mood.trim()));
+                moodBuilder.or(poster.event.moods.contains(mood.trim()));
             }
+            builder.and(moodBuilder);
         }
+
+        // 장르
         if (filter.getGenres() != null) {
+            BooleanBuilder genreBuilder = new BooleanBuilder();
             for (String genre : filter.getGenres().split(",")) {
-                builder.and(poster.event.genres.contains(genre.trim()));
+                genreBuilder.or(poster.event.genres.contains(genre.trim()));
             }
+            builder.and(genreBuilder);
         }
+
         if (filter.getMinPrice() != null && filter.getMaxPrice() != null) {
             builder.and(poster.event.tickets.any().ticketPrice.between(filter.getMinPrice(), filter.getMaxPrice()));
         }
