@@ -95,6 +95,9 @@ public class ImageUploadService {
      * 이미지 1장 삭제
      */
     public void deleteFile(String fileUrl) throws URISyntaxException {
+        if (fileUrl == null || fileUrl.isBlank()) {
+            return;
+        }
         URI uri = new URI(fileUrl);
         String key = uri.getPath().substring(1);
 
