@@ -289,11 +289,21 @@ public class EventService {
 
     public void checkEventManager(Long posterId) {
         Member member = memberService.findMemberByEmail();
-
         Poster poster = posterService.findPosterByPosterId(posterId);
-        Member manager = poster.getMember();
 
-        if (!member.equals(manager)) {
+        Member mainManager = poster.getMember();
+        List<PosterManager> posterManagers = poster.getPosterManagers();
+
+        // 임시 담당자인지 검사
+        boolean isTempManager = false;
+        for(PosterManager posterManager : posterManagers) {
+            if (posterManager.getMember().equals(member)) {
+                isTempManager = true;
+                break;
+            }
+        }
+
+        if (!isTempManager && !mainManager.equals(member)) {  // 임시 담당자 목록 또는 등록 담당자가 아닐 경우
             throw new IncorrectEventManagerException(ResponseMessage.EVENT_INCORRECT_MANAGER.getMessage());
         }
     }
