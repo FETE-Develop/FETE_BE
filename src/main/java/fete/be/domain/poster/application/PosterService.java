@@ -136,7 +136,7 @@ public class PosterService {
 
     public Page<PosterDto> getPosters(Status status, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createAscPageable(page, size);
+        Pageable pageable = createDescPageable(page, size);
 
         // Member 정보
         Member member = memberService.findMemberByEmail();
@@ -151,7 +151,7 @@ public class PosterService {
 
     public Page<PosterDto> getGuestPosters(Status status, int page, int size) {
         // 페이징 조건 추가
-        Pageable pageable = createAscPageable(page, size);
+        Pageable pageable = createDescPageable(page, size);
 
         return posterRepository.findByStatus(status, pageable)
                 .map(poster -> {
