@@ -83,12 +83,16 @@ public class TicketService {
 //    }
 
     public List<SimpleTicketDto> getTickets(String paymentCode, String ticketStatus) {
+        // 현재 유저
+        Member member = memberService.findMemberByEmail();
+
         QPayment payment = QPayment.payment;
         BooleanBuilder builder = new BooleanBuilder();
         BooleanBuilder statusBuilder = new BooleanBuilder();
 
         // 필수 조건
         builder.and(payment.paymentCode.eq(paymentCode));
+        builder.and(payment.member.eq(member));
 
         // 선택 조건
         if (ticketStatus != null && !ticketStatus.isBlank()) {
