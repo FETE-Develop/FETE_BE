@@ -29,7 +29,7 @@ public class TicketEventDto {
     private LocalDateTime canceledAt;  // 취소일자
     private String ticketStatus;  // 티켓 상태
 
-    public TicketEventDto(Event event, Payment payment, String paymentCode) {
+    public TicketEventDto(Event event, Payment payment, String paymentCode, String ticketStatus) {
         this.eventId = event.getEventId();
         this.eventName = event.getEventName();
 
@@ -46,6 +46,6 @@ public class TicketEventDto {
         this.isPaid = payment.getIsPaid();
         this.paymentAt = payment.getPaymentAt();
         this.canceledAt = payment.getCanceledAt();
-        this.ticketStatus = payment.getTicketStatus();
+        this.ticketStatus = ticketStatus;
     }
 }
