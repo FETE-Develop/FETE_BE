@@ -51,10 +51,63 @@ public class TicketService {
                     Event event = participants.get(0).getEvent();
                     Payment payment = participants.get(0).getPayment();
 
-                    return new TicketEventDto(event, payment, entry.getKey());
+                    // 동시 구매한 티켓들 상태 확인
+                    boolean isAllCanceled = false;
+                    boolean isAllComplete = false;
+                    String ticketStatus = "";
+
+                    for(Participant participant : participants) {
+                        Payment currentPayment = participant.getPayment();
+                        String currentTicketStatus = currentPayment.getTicketStatus();
+
+                        // 하나라도 미사용이 있다면 UNUSED 전달
+                        if (currentTicketStatus.equals(TicketStatus.UNUSED.getTicketStatus())) {
+                            ticketStatus = TicketStatus.UNUSED.getTicketStatus();
+                            break;
+                        }
+
+                        if (currentTicketStatus.equals(TicketStatus.COMPLETE.getTicketStatus())) {
+                            isAllComplete = true;
+                        }
+
+                        if (currentTicketStatus.equals(TicketStatus.CANCEL.getTicketStatus())) {
+                            isAllCanceled = true;
+                        }
+                    }
+
+                    if (ticketStatus.isBlank()) {
+                        if (isAllCanceled) {
+                            ticketStatus = TicketStatus.CANCEL.getTicketStatus();
+                        }
+
+                        if (isAllComplete) {
+                            ticketStatus = TicketStatus.COMPLETE.getTicketStatus();
+                        }
+                    }
+
+                    return new TicketEventDto(event, payment, entry.getKey(), ticketStatus);
                 })
                 .collect(Collectors.toList());
     }
+
+    // Old 버전
+//    public List<TicketEventDto> getEvents() {
+//        Member member = memberService.findMemberByEmail();
+//
+//        return participantRepository.findByMember(member).stream()
+//                .collect(Collectors.groupingBy(participant -> participant.getPayment().getPaymentCode()))
+//                .entrySet()
+//                .stream()
+//                .map(entry -> {
+//                    List<Participant> participants = entry.getValue();
+//
+//                    Event event = participants.get(0).getEvent();
+//                    Payment payment = participants.get(0).getPayment();
+//
+//                    return new TicketEventDto(event, payment, entry.getKey());
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     public SimpleEventDto getEventInfo(Long eventId) {
         // 이벤트 조회
