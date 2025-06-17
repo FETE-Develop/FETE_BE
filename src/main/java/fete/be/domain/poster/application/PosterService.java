@@ -125,7 +125,7 @@ public class PosterService {
         Poster poster = findPosterByPosterId(posterId);
 
         // 삭제를 요청한 사용자가 해당 포스터의 작성자가 아닌 경우
-        if (!poster.getMember().equals(member)) {
+        if (!poster.getMember().equals(member) && !member.getRole().equals(Role.ADMIN)) {
             throw new IllegalArgumentException(ResponseMessage.POSTER_INVALID_USER.getMessage());
         }
 
