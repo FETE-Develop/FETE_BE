@@ -32,9 +32,6 @@ public class ImageUploadController {
      */
     @PostMapping("/upload")
     public ApiResponse<UploadFilesResponse> uploadImages(@RequestParam("file") List<MultipartFile> files) {
-        log.info("UploadImages API");
-        Logging.time();
-
         try {
             // 이미지들을 S3에 업로드
             List<String> imageUrls = imageUploadService.uploadFiles(files);
@@ -63,9 +60,7 @@ public class ImageUploadController {
      */
     @PostMapping("/delete")
     public ApiResponse deleteImages(@RequestBody DeleteImagesRequest request) {
-        log.info("DeleteImages API");
-        Logging.time();
-
+        // 삭제할 이미지 URL 리스트 추출
         List<String> fileUrls = request.getFileUrls();
 
         try {

@@ -30,10 +30,8 @@ public class PopupController {
      */
     @GetMapping
     public ApiResponse<GetPopupsResponse> getPopups() {
-        log.info("GetPopups API");
-        Logging.time();
-
         try {
+            // 팝업 전체 조회
             List<PopupDto> popups = popupService.getPopups();
             GetPopupsResponse result = new GetPopupsResponse(popups);
 
@@ -58,9 +56,6 @@ public class PopupController {
      */
     @PostMapping("/dismiss/{popupId}")
     public ApiResponse dismissPopup(@PathVariable("popupId") Long popupId) {
-        log.info("DismissPopup API");
-        Logging.time();
-
         try {
             // 팝업 그만보기 실행
             popupService.dismissPopup(popupId);

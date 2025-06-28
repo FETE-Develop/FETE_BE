@@ -32,9 +32,6 @@ public class CategoryController {
      */
     @GetMapping
     public ApiResponse<GetCategoriesResponse> getCategories() {
-        log.info("GetCategories API");
-        Logging.time();
-
         try {
             // 카테고리 전체 조회 (페이징 없이)
             List<CategoryDto> categories = categoryService.getCategories();
@@ -59,9 +56,6 @@ public class CategoryController {
      */
     @GetMapping("/end")
     public ApiResponse<EndedCategoryResponse> getEndedCategory() {
-        log.info("GetEndedCategory");
-        Logging.time();
-
         try {
             // 종료된 이벤트 카테고리 조회 (페이징 X)
             EndedCategoryResponse result = categoryService.getEndedCategory();

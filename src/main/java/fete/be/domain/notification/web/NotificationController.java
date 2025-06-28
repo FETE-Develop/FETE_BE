@@ -29,9 +29,6 @@ public class NotificationController {
      */
     @PostMapping
     public ApiResponse storeToken(@RequestBody StoreTokenRequest request) {
-        log.info("StoreToken request");
-        Logging.time();
-
         // FCM 토큰 추출
         String fcmToken = request.getToken();
 

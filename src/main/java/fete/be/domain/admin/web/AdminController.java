@@ -59,9 +59,7 @@ public class AdminController {
     @PostMapping("/posters/approve")
     public ApiResponse approvePosters(@RequestBody ApprovePostersRequest request) {
         try {
-            log.info("ApprovePosters request={}", request);
-            Logging.time();
-
+            // 포스터 승인
             posterService.approvePosters(request);
             return new ApiResponse<>(ResponseMessage.ADMIN_APPROVE_POSTERS.getCode(), ResponseMessage.ADMIN_APPROVE_POSTERS.getMessage());
         } catch (NotFoundPosterException e) {
@@ -79,9 +77,7 @@ public class AdminController {
     @PostMapping("/posters/reject")
     public ApiResponse rejectPoster(@RequestBody RejectPosterRequest request) {
         try {
-            log.info("RejectPoster request={}", request);
-            Logging.time();
-
+            // 포스터 반려
             posterService.rejectPoster(request);
             return new ApiResponse<>(ResponseMessage.ADMIN_REJECT_POSTER.getCode(), ResponseMessage.ADMIN_REJECT_POSTER.getMessage());
         } catch (NotFoundPosterException e) {
@@ -105,9 +101,6 @@ public class AdminController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         try {
-            log.info("GetSimplePosters API");
-            Logging.time();
-
             // status를 Status enum 타입으로 변환
             Status findStatus = Status.valueOf(status);
             List<SimplePosterDto> simplePosters = posterService.getSimplePosters(findStatus, page, size).getContent();
@@ -134,9 +127,6 @@ public class AdminController {
             @RequestBody SetArtistImageUrlsRequest request
     ) {
         try {
-            log.info("SetArtistImageUrls API: posterId={}, request={}", posterId, request);
-            Logging.time();
-
             // 아티스트 프로필 이미지 등록
             posterService.setArtistImageUrls(posterId, request);
             return new ApiResponse<>(ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS.getCode(), ResponseMessage.ADMIN_REGISTER_ARTIST_PROFILE_SUCCESS.getMessage());
@@ -160,8 +150,7 @@ public class AdminController {
             @PathVariable("posterId") Long posterId,
             @RequestBody ModifySimpleAddressRequest request
     ) {
-        log.info("ModifySimpleAddress API: posterId={}, request={}", posterId, request);
-        Logging.time();
+        // 간단 주소 추출
         String simpleAddress = request.getSimpleAddress();
 
         try {
@@ -188,9 +177,7 @@ public class AdminController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         try {
-            log.info("GetMembers API");
-            Logging.time();
-
+            // 유저 정보 리스트 조회
             List<MemberDto> members = memberService.getMembers(page, size).getContent();
             GetMembersResponse result = new GetMembersResponse(members);
 
@@ -210,9 +197,6 @@ public class AdminController {
     @PostMapping("/members/deactivate/{memberId}")
     public ApiResponse deactivateMember(@PathVariable("memberId") Long memberId) {
         try {
-            log.info("DeactivateMember API");
-            Logging.time();
-
             // 해당 유저 탈퇴 후, 휴대전화 번호를 차단 DB에 추가
             Long blockedMemberId = memberService.deactivateMember(memberId);
 
@@ -238,9 +222,7 @@ public class AdminController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         try {
-            log.info("GetPayments API: posterId={}", posterId);
-            Logging.time();
-
+            // 이벤트 결제 정보 조회
             List<PaymentDto> payments = paymentService.getPayments(posterId, page, size);
             int totalProfit = paymentService.getTotalProfit(posterId);
             AccountDto account = paymentService.getAccount(posterId);
@@ -263,9 +245,6 @@ public class AdminController {
     @PostMapping("/banners")
     public ApiResponse createBanner(@RequestBody CreateBannerRequest request) {
         try {
-            log.info("CreateBanner API: request={}", request);
-            Logging.time();
-
             // 배너 생성
             Long savedBannerId = bannerService.createBanner(request);
 
@@ -291,9 +270,6 @@ public class AdminController {
             @RequestBody ModifyBannerRequest request
     ) {
         try {
-            log.info("ModifyBanner API: request={}", request);
-            Logging.time();
-
             // 배너 수정
             Long modifiedBanner = bannerService.modifyBanner(bannerId, request);
 
@@ -313,9 +289,6 @@ public class AdminController {
     @DeleteMapping("/banners/{bannerId}")
     public ApiResponse deleteBanner(@PathVariable("bannerId") Long bannerId) {
         try {
-            log.info("DeleteBanner API: bannerId={}", bannerId);
-            Logging.time();
-
             // 배너 삭제
             bannerService.deleteBanner(bannerId);
 
@@ -335,9 +308,6 @@ public class AdminController {
     @PostMapping("/popups")
     public ApiResponse createPopup(@RequestBody CreatePopupRequest request) {
         try {
-            log.info("CreatePopup API: request={}", request);
-            Logging.time();
-
             // 팝업 생성
             Long savedPopupId = popupService.createPopup(request);
 
@@ -361,9 +331,6 @@ public class AdminController {
             @RequestBody ModifyPopupRequest request
     ) {
         try {
-            log.info("ModifyPopup API: popupId={}, request={}", popupId, request);
-            Logging.time();
-
             // 팝업 수정
             Long modifiedPopupId = popupService.modifyPopup(popupId, request);
 
@@ -384,9 +351,6 @@ public class AdminController {
     @DeleteMapping("/popups/{popupId}")
     public ApiResponse deletePopup(@PathVariable("popupId") Long popupId) {
         try {
-            log.info("DeletePopup API: popupId={}", popupId);
-            Logging.time();
-
             // 팝업 삭제
             popupService.deletePopup(popupId);
 
@@ -406,9 +370,6 @@ public class AdminController {
     @PostMapping("/categories")
     public ApiResponse createCategory(@RequestBody CreateCategoryRequest request) {
         try {
-            log.info("CreateCategory API: request={}", request);
-            Logging.time();
-
             // 카테고리 생성
             Long savedCategoryId = categoryService.createCategory(request);
 
@@ -432,9 +393,6 @@ public class AdminController {
             @RequestBody ModifyCategoryRequest request
     ) {
         try {
-            log.info("ModifyCategory API: categoryId={}, request={}", categoryId, request);
-            Logging.time();
-
             // 카테고리 수정
             Long modifiedCategoryId = categoryService.modifyCategory(categoryId, request);
 
@@ -454,9 +412,6 @@ public class AdminController {
     @DeleteMapping("/categories/{categoryId}")
     public ApiResponse deleteCategory(@PathVariable("categoryId") Long categoryId) {
         try {
-            log.info("DeleteCategory API: categoryId={}", categoryId);
-            Logging.time();
-
             // 카테고리 삭제
             categoryService.deleteCategory(categoryId);
 
@@ -473,9 +428,6 @@ public class AdminController {
     @PostMapping("/notifications")
     public ApiResponse sendAllMember(@RequestBody PushMessageRequest request) {
         try {
-            log.info("SendAllMember API: request={}", request);
-            Logging.time();
-
             // 알림 설정한 전체 유저에게 푸시 알림 전송
             BatchResponse response = notificationService.sendAll(request);
 
@@ -496,9 +448,6 @@ public class AdminController {
      */
     @PostMapping("/notices")
     public ApiResponse createNotice(@RequestBody CreateNoticeRequest request) {
-        log.info("CreateNotice API: request={}", request);
-        Logging.time();
-
         try {
             // 공지사항 등록
             noticeService.createNotice(request);
@@ -521,9 +470,6 @@ public class AdminController {
             @PathVariable("noticeId") Long noticeId,
             @RequestBody ModifyNoticeRequest request
     ) {
-        log.info("ModifyNotice API: noticeId={}, request={}", noticeId, request);
-        Logging.time();
-
         try {
             // 공지사항 수정
             noticeService.modifyNotice(noticeId, request);
@@ -542,9 +488,6 @@ public class AdminController {
      */
     @DeleteMapping("/notices/{noticeId}")
     public ApiResponse deleteNotice(@PathVariable("noticeId") Long noticeId) {
-        log.info("DeleteNotice API: noticeId={}", noticeId);
-        Logging.time();
-
         try {
             // 공지사항 삭제
             noticeService.deleteNotice(noticeId);
@@ -564,9 +507,6 @@ public class AdminController {
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> adminLogin(@RequestBody LoginRequestDto request) {
-        log.info("AdminLogin request: {}", request);
-        Logging.time();
-
         try {
             // 로그인 검증 이후, 토큰 발급
             JwtToken token = memberService.adminLogin(request.getEmail(), request.getPassword());

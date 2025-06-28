@@ -33,9 +33,6 @@ public class EmailController {
     @PostMapping
     public ApiResponse sendEmail(@RequestBody SendEmailRequest request) {
         try {
-            log.info("SendEmail API: request={}", request);
-            Logging.time();
-
             // 이메일 전송
             emailService.sendEmail(request);
             return new ApiResponse<>(ResponseMessage.EMAIL_SEND_SUCCESS.getCode(), ResponseMessage.EMAIL_SEND_SUCCESS.getMessage());
@@ -56,9 +53,6 @@ public class EmailController {
     @PostMapping("/verify")
     public ApiResponse verifyEmail(@RequestBody VerifyEmailRequest request) {
         try {
-            log.info("VerifyEmail API: request={}", request);
-            Logging.time();
-
             // 이메일 검사
             emailService.verifyEmail(request);
 
