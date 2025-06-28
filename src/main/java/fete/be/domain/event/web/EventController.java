@@ -48,9 +48,6 @@ public class EventController {
             @PathVariable("posterId") Long posterId,
             @RequestBody BuyTicketRequest buyTicketRequest) {
         try {
-            log.info("BuyTicket request: {}", posterId);
-            Logging.time();
-
             // 해당 posterId로 이벤트 신청 후, QR 코드 발급하기
             List<String> qrCodes = eventService.buyTicket(posterId, buyTicketRequest);
             BuyTicketResponse result = new BuyTicketResponse(qrCodes);
@@ -88,9 +85,6 @@ public class EventController {
             @PathVariable("posterId") Long posterId,
             @RequestBody ParticipantDto request
     ) {
-        log.info("VerifyQRCode request: posterId={}", posterId);
-        Logging.time();
-
         try {
             // 유저의 QR 코드 검증, 이벤트 장소 검증
             Long participantId = qrCodeService.verifyQRCode(posterId, request);
@@ -129,13 +123,11 @@ public class EventController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetPayments API: posterId={}", posterId);
-        Logging.time();
-
         try {
             // 이벤트 담당자 검증
             eventService.checkEventManager(posterId);
 
+            // 본인이 담당하고 있는 결제 정보 조회
             List<PaymentDto> payments = paymentService.getPayments(posterId, page, size);
             int totalProfit = paymentService.getTotalProfit(posterId);
             AccountDto account = paymentService.getAccount(posterId);
@@ -163,9 +155,6 @@ public class EventController {
             @PathVariable("posterId") Long posterId,
             @RequestBody CheckTicketsQuantityRequest checkTicketsQuantityRequest
     ) {
-        log.info("CheckTicketsQuantity request: {}", checkTicketsQuantityRequest);
-        Logging.time();
-
         try {
             // 티켓 수량 검사
             eventService.checkTicketsQuantity(posterId, checkTicketsQuantityRequest);
@@ -191,9 +180,6 @@ public class EventController {
      */
     @GetMapping("/{posterId}/manager-code")
     public ApiResponse<GetManagerCodeResponse> getManagerCode(@PathVariable("posterId") Long posterId) {
-        log.info("GetManagerCode request: {}", posterId);
-        Logging.time();
-
         try {
             // 해당 포스터 고유식별코드 조회
             String managerCode = posterService.getManagerCode(posterId);
@@ -217,9 +203,6 @@ public class EventController {
      */
     @PostMapping("/temp-manager")
     public ApiResponse grantTempManager(@RequestBody GrantTempManagerRequest grantTempManagerRequest) {
-        log.info("GrantTempManager API");
-        Logging.time();
-
         try {
             // 코드를 입력하여 임시 담당자 권한 부여
             String managerCode = grantTempManagerRequest.getManagerCode();

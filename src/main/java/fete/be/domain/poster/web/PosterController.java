@@ -39,9 +39,6 @@ public class PosterController {
      */
     @PostMapping
     public ApiResponse writePoster(@RequestBody WritePosterRequest request) {
-        log.info("WritePoster request={}", request);
-        Logging.time();
-
         try {
             // 포스터 등록 실행
             Long savedPosterId = posterService.writePoster(request);
@@ -69,9 +66,6 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestBody ModifyPosterRequest request
     ) {
-        log.info("ModifyPoster request: posterId={}, request={}", posterId, request);
-        Logging.time();
-
         try {
             // posterId로 포스터를 찾아 수정사항 업데이트
             Long updatePosterId = posterService.updatePoster(posterId, request);
@@ -94,9 +88,6 @@ public class PosterController {
     @DeleteMapping("/{posterId}")
     public ApiResponse deletePoster(@PathVariable("posterId") Long posterId) {
         try {
-            log.info("DeletePoster request: posterId={}", posterId);
-            Logging.time();
-
             // posterId로 포스터를 찾아 삭제 (소프트 삭제 방식)
             posterService.deletePoster(posterId);
             return new ApiResponse<>(ResponseMessage.POSTER_SUCCESS.getCode(), ResponseMessage.POSTER_SUCCESS.getMessage());
@@ -122,13 +113,11 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetPosters request: status={}", status);
-        Logging.time();
-
         // status를 Status enum 타입으로 변환
         Status findStatus = Status.valueOf(status);
 
         try {
+            // 포스터 전체 조회 (페이징 O)
             Page<PosterDto> pageInfo = posterService.getPosters(findStatus, page, size);
             GetPostersResponse result = new GetPostersResponse(pageInfo);
 
@@ -154,9 +143,6 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetPostersWithFilters request");
-        Logging.time();
-
         try {
             // 필터링 포스터 조회
             Page<PosterDto> pageInfo = posterService.getPostersWithFilters(page, size, request);
@@ -186,9 +172,6 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestParam(name = "status", defaultValue = "ACTIVE") String status
     ) {
-        log.info("GetPoster request: posterId={}, status={}", posterId, status);
-        Logging.time();
-
         // status를 Status enum 타입으로 변환
         Status findStatus = Status.valueOf(status);
 
@@ -219,9 +202,7 @@ public class PosterController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         try {
-            log.info("GetMyPosters request");
-            Logging.time();
-
+            // 본인이 등록한 포스터 조회
             Page<PosterDto> pageInfo = posterService.getMyPosters(page, size, request);
             GetPostersResponse result = new GetPostersResponse(pageInfo);
 
@@ -244,9 +225,7 @@ public class PosterController {
             @PathVariable("posterId") Long posterId,
             @RequestParam("isLike") Boolean isLike) {
         try {
-            log.info("LikePoster request: posterId={}, isLike={}", posterId, isLike);
-            Logging.time();
-
+            // 포스터 관심 등록
             posterService.likePoster(posterId, isLike);
 
             return new ApiResponse<>(ResponseMessage.LIKE_SUCCESS.getCode(), ResponseMessage.LIKE_SUCCESS.getMessage());
@@ -269,9 +248,7 @@ public class PosterController {
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         try {
-            log.info("GetLikePosters request");
-            Logging.time();
-
+            // 관심 등록한 포스터 조회
             Page<PosterDto> pageInfo = posterService.getLikePosters(page, size);
             GetPostersResponse result = new GetPostersResponse(pageInfo);
 
@@ -297,10 +274,7 @@ public class PosterController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("SearchPosters request: request={}", request);
-        Logging.time();
-
-        // 키워드 추출
+        // 검색 키워드 추출
         String keyword = request.getKeyword();
 
         try {

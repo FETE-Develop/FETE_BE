@@ -31,9 +31,6 @@ public class BannerController {
     @GetMapping
     public ApiResponse<GetBannersResponse> getBanners() {
         try {
-            log.info("GetBanners API");
-            Logging.time();
-
             // 배너 전체 조회 (페이징 없이)
             List<BannerDto> banners = bannerService.getBanners();
             GetBannersResponse result = new GetBannersResponse(banners);

@@ -34,9 +34,6 @@ public class NoticeController {
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        log.info("GetNotices API");
-        Logging.time();
-
         try {
             // 공지사항 전체 목록 조회
             List<SimpleNotice> simpleNotices = noticeService.getNotices(page, size).getContent();
@@ -57,9 +54,6 @@ public class NoticeController {
      */
     @GetMapping("/{noticeId}")
     public ApiResponse<GetNoticeResponse> getNotice(@PathVariable("noticeId") Long noticeId) {
-        log.info("GetNotice API");
-        Logging.time();
-
         try {
             // 공지사항 단건 조회
             GetNoticeResponse result = noticeService.getNotice(noticeId);

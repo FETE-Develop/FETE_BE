@@ -47,9 +47,7 @@ public class MemberController {
     @PostMapping("/signup")
     public ApiResponse signup(@RequestBody SignupRequestDto request) {
         try {
-            log.info("Signup request: {}", request);
-            Logging.time();
-
+            // 회원가입 실행
             memberService.signUp(request);
             return new ApiResponse<>(ResponseMessage.SIGNUP_SUCCESS.getCode(), ResponseMessage.SIGNUP_SUCCESS.getMessage());
         } catch (DuplicateEmailException e) {
@@ -70,9 +68,6 @@ public class MemberController {
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
-        log.info("Login request: {}", request);
-        Logging.time();
-
         // 로그인 검증 이후, 토큰 발급
         JwtToken token = memberService.login(request.getEmail(), request.getPassword());
 
@@ -97,9 +92,6 @@ public class MemberController {
      */
     @PostMapping("/kakao/signup")
     public ApiResponse<SocialLoginResponse> kakaoSignUp(@RequestBody KakaoSignUpRequest request) {
-        log.info("KakaoSignUp request: {}", request);
-        Logging.time();
-
         // Body에서 accessToken 추출
         String accessToken = request.getAccessToken();
 
@@ -147,9 +139,6 @@ public class MemberController {
      */
     @PostMapping("/kakao/login")
     public ApiResponse<SocialLoginResponse> kakaoLogin(@RequestBody KakaoLoginRequest request) {
-        log.info("KakaoLogin request: {}", request);
-        Logging.time();
-
         // Body에서 accessToken 추출
         String accessToken = request.getAccessToken();
 
@@ -183,9 +172,6 @@ public class MemberController {
      */
     @PostMapping("/apple/signup")
     public ApiResponse<SocialLoginResponse> appleSignUp(@RequestBody AppleSignUpRequest request) {
-        log.info("AppleSignUp request: {}", request);
-        Logging.time();
-
         // 애플의 idToken 추출
         String idToken = request.getIdToken();
 
@@ -233,9 +219,6 @@ public class MemberController {
      */
     @PostMapping("/apple/login")
     public ApiResponse<SocialLoginResponse> appleLogin(@RequestBody AppleLoginRequest request) {
-        log.info("AppleLogin request: {}", request);
-        Logging.time();
-
         // 애플의 idToken 추출
         String idToken = request.getIdToken();
 
@@ -267,9 +250,7 @@ public class MemberController {
     @PostMapping("/admin")
     public ApiResponse grantAdmin(@RequestBody GrantAdminRequestDto request) {
         try {
-            log.info("GrantAdmin request: {}", request);
-            Logging.time();
-
+            // admin 권한 승인
             Long grantedMemberId = memberService.grantAdmin(request);
             return new ApiResponse<>(ResponseMessage.MEMBER_ADMIN_OK.getCode(), ResponseMessage.MEMBER_ADMIN_OK.getMessage());
         } catch (GuestUserException e) {
@@ -287,9 +268,7 @@ public class MemberController {
     @PostMapping("/modify")
     public ApiResponse modify(@RequestBody ModifyRequestDto request) {
         try {
-            log.info("Modify request: {}", request);
-            Logging.time();
-
+            // 회원 정보 수정
             Long modifiedMemberId = memberService.modify(request);
             return new ApiResponse<>(ResponseMessage.MEMBER_MODIFY_SUCCESS.getCode(), ResponseMessage.MEMBER_MODIFY_SUCCESS.getMessage());
         } catch (GuestUserException e) {
@@ -303,10 +282,8 @@ public class MemberController {
      */
     @GetMapping("/my-profile")
     public ApiResponse<GetMyProfileResponse> getMyProfile() {
-        log.info("GetMyProfile API");
-        Logging.time();
-
         try {
+            // 프로필 조회
             GetMyProfileResponse result = memberService.getMyProfile();
             return new ApiResponse<>(ResponseMessage.MEMBER_GET_PROFILE_SUCCESS.getCode(), ResponseMessage.MEMBER_GET_PROFILE_SUCCESS.getMessage(), result);
         } catch (GuestUserException e) {
@@ -320,9 +297,6 @@ public class MemberController {
      */
     @PostMapping("/deactivate")
     public ApiResponse deactivateMember() {
-        log.info("DeactivateMember API");
-        Logging.time();
-
         try {
             // 회원 삭제
             memberService.deactivateMember();
@@ -338,9 +312,6 @@ public class MemberController {
      */
     @PostMapping("/find-id")
     public ApiResponse<FindIdResponse> findId(@RequestBody FindIdRequest request) {
-        log.info("FindId API");
-        Logging.time();
-
         // 휴대전화 번호 추출
         String phoneNumber = request.getPhoneNumber();
 
@@ -360,9 +331,6 @@ public class MemberController {
      */
     @PostMapping("/find-password")
     public ApiResponse<FindPasswordResponse> findPassword(@RequestBody FindPasswordRequest request) {
-        log.info("FindPassword API");
-        Logging.time();
-
         // 이메일 추출
         String email = request.getEmail();
 
@@ -382,9 +350,6 @@ public class MemberController {
      */
     @PostMapping("/modify-password")
     public ApiResponse modifyPassword(@Valid @RequestBody ModifyPasswordRequest request) {
-        log.info("ModifyPassword API");
-        Logging.time();
-
         // 변경할 비밀번호 추출
         String password = request.getPassword();
 
@@ -407,12 +372,10 @@ public class MemberController {
      */
     @PostMapping("/check-token")
     public ApiResponse<Boolean> checkJwtToken(@RequestBody CheckJwtTokenRequest request) {
-        log.info("CheckJwtToken API");
-        Logging.time();
-
         // 확인할 토큰 추출
         String token = request.getToken();
 
+        // 토큰 검사
         Boolean isValidToken = jwtProvider.validateToken(token);
         return new ApiResponse<>(ResponseMessage.MEMBER_CHECK_TOKEN.getCode(), ResponseMessage.MEMBER_CHECK_TOKEN.getMessage(), isValidToken);
     }
@@ -426,9 +389,6 @@ public class MemberController {
      */
     @PostMapping("/check-refresh")
     public ApiResponse<String> generateAccessToken(@RequestBody GenerateAccessTokenRequest request) {
-        log.info("GenerateAccessToken API");
-        Logging.time();
-
         // refreshToken 추출
         String refreshToken = request.getRefreshToken();
 

@@ -37,10 +37,8 @@ public class TicketController {
      */
     @GetMapping
     public ApiResponse<GetMyTicketsEventResponse> getEvents() {
-        log.info("GetTickets request");
-        Logging.time();
-
         try {
+            // 본인이 구매한 티켓의 이벤트들 조회
             List<TicketEventDto> ticketEventInfos = ticketService.getEvents();
             GetMyTicketsEventResponse result = new GetMyTicketsEventResponse(ticketEventInfos);
 
@@ -60,9 +58,6 @@ public class TicketController {
      */
     @PostMapping("/event-tickets")
     public ApiResponse<GetEventTicketsResponse> getEventTickets(@RequestBody GetEventTicketsRequest request) {
-        log.info("GetEventTickets request={}", request);
-        Logging.time();
-
         // 요청 값 추출
         Long eventId = request.getEventId();
         String paymentCode = request.getPaymentCode();
@@ -91,9 +86,6 @@ public class TicketController {
      */
     @GetMapping("/{participantId}")
     public ApiResponse<GetTicketInfoResponse> getTicketInfo(@PathVariable("participantId") Long participantId) {
-        log.info("GetTicketInfo request");
-        Logging.time();
-
         try {
             // 티켓 1개 상세 조회
             GetTicketInfoResponse result = ticketService.getTicketInfo(participantId);
@@ -118,9 +110,6 @@ public class TicketController {
      */
     @PostMapping
     public ApiResponse cancelTickets(@RequestBody CancelTicketsRequest request) {
-        log.info("CancelTicket request: request={}", request);
-        Logging.time();
-
         // 취소할 티켓 리스트
         List<Long> ticketIds = request.getTicketIds();
         String cancelReason = request.getCancelReason();
@@ -150,10 +139,8 @@ public class TicketController {
      */
     @GetMapping("/customer-key")
     public ApiResponse<String> getCustomerKey() {
-        log.info("getCustomerKey request");
-        Logging.time();
-
         try {
+            // 고객 키 조회
             String customerKey = ticketService.getCustomerKey();
             return new ApiResponse<>(ResponseMessage.TICKET_GET_CUSTOMER_KEY_SUCCESS.getCode(), ResponseMessage.TICKET_GET_CUSTOMER_KEY_SUCCESS.getMessage(), customerKey);
         } catch (IllegalArgumentException e) {
