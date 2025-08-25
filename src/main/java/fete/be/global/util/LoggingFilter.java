@@ -28,7 +28,15 @@ public class LoggingFilter implements Filter {
         String uri = httpRequest.getRequestURI();
         int status = httpResponse.getStatus();
 
-        log.info("[API] {} {} - {} ({}ms)", method, uri, status, duration);
-        log.info("Time: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        // 응답 시간이 500ms를 초과하는 경우 모니터링 대상
+        if (duration > 500) {
+            log.warn("[SLOW API] {} {} - {} ({}ms) at {}",
+                    method, uri, status, duration,
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        }
+
+        // 일반 API 로깅 - 현재는 500ms 초과만 모니터링
+//        log.info("[API] {} {} - {} ({}ms)", method, uri, status, duration);
+//        log.info("Time: {}", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
     }
 }
