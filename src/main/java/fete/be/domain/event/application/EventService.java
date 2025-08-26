@@ -6,6 +6,7 @@ import fete.be.domain.event.application.dto.request.CheckTicketsQuantityRequest;
 import fete.be.domain.event.exception.*;
 import fete.be.domain.event.persistence.Event;
 import fete.be.domain.event.persistence.Ticket;
+import fete.be.domain.event.persistence.TicketRepository;
 import fete.be.domain.payment.application.TossService;
 import fete.be.domain.payment.application.dto.request.TossPaymentRequest;
 import fete.be.domain.payment.persistence.PaymentRepository;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -43,6 +45,7 @@ public class EventService {
 
     private final ParticipantRepository participantRepository;
     private final PaymentRepository paymentRepository;
+    private final TicketRepository ticketRepository;
 
 
     @Transactional
@@ -60,6 +63,12 @@ public class EventService {
 
         // 실제 DB의 티켓 정보
         List<Ticket> tickets = poster.getEvent().getTickets();
+
+        // 변경사항이 발생할 티켓 id 리스트
+        List<Long> ticketIds = poster.getEvent().getTickets()
+                .stream()
+                .map(Ticket::getTicketId)
+                .collect(Collectors.toList());
 
         // 결제 정보 검증
         List<BuyTicketDto> requestTickets = buyTicketRequest.getTickets();
@@ -86,11 +95,12 @@ public class EventService {
             throw new AlreadyPaymentStateException(ResponseMessage.EVENT_ALREADY_PAYMENT_STATE.getMessage());
         }
 
+        // 판매된 티켓 개수 업데이트
+        updateSoldTicketCount(ticketIds, requestTickets);
+//        updateSoldTicketCount(tickets, requestTickets);
+
         // 결제 시스템 실행
         qrCodes = paymentSystem(requestAmount, participants, buyTicketRequest.getTossPaymentRequest(), qrCodes);
-
-        // 판매된 티켓 개수 업데이트
-        updateSoldTicketCount(tickets, requestTickets);
 
         return qrCodes;
     }
@@ -184,21 +194,42 @@ public class EventService {
     }
 
     /**
-     * 판매된 티켓 개수 업데이트
+     * 판매된 티켓 개수 업데이트 (비관적 락 적용)
      */
-    public void updateSoldTicketCount(List<Ticket> tickets, List<BuyTicketDto> requestTickets) {
-        for (BuyTicketDto requestTicket : requestTickets) {
-            int ticketNumber = requestTicket.getTicketNumber();
-            String ticketType = requestTicket.getTicketType();
+    public void updateSoldTicketCount(List<Long> ticketIds, List<BuyTicketDto> requestTickets) {
+        for (Long ticketId : ticketIds) {
+            // 비관적 락으로 티켓 조회
+            Ticket ticket = ticketRepository.findByIdForUpdate(ticketId)
+                    .orElseThrow(() -> new NotFoundTicketException(ResponseMessage.TICKET_NO_EXIST.getMessage()));
 
-            // 판매된 티켓 개수만큼 업데이트
-            for (Ticket ticket : tickets) {
+            for (BuyTicketDto requestTicket : requestTickets) {
+                int ticketNumber = requestTicket.getTicketNumber();
+                String ticketType = requestTicket.getTicketType();
+
+                // 판매된 티켓 개수만큼 업데이트
                 if (ticket.getTicketType().equals(ticketType)) {
                     Ticket.updateSoldTicketCount(ticket, ticketNumber);
                 }
             }
         }
     }
+
+    /**
+     * 판매된 티켓 개수 업데이트 (old 버전)
+     */
+//    public void updateSoldTicketCount(List<Ticket> tickets, List<BuyTicketDto> requestTickets) {
+//        for (BuyTicketDto requestTicket : requestTickets) {
+//            int ticketNumber = requestTicket.getTicketNumber();
+//            String ticketType = requestTicket.getTicketType();
+//
+//            // 판매된 티켓 개수만큼 업데이트
+//            for (Ticket ticket : tickets) {
+//                if (ticket.getTicketType().equals(ticketType)) {
+//                    Ticket.updateSoldTicketCount(ticket, ticketNumber);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * 이벤트 참여 객체 생성해주는 메서드
