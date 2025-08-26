@@ -67,6 +67,8 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (InvalidTossResponseException e) {
             return new ApiResponse<>(ResponseMessage.INVALID_TOSS_PAYMENT_API_RESPONSE.getCode(), e.getMessage());
+        } catch (NotFoundTicketException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NO_EXIST.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         }
