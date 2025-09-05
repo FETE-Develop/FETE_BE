@@ -67,4 +67,5 @@ https://play.google.com/store/apps/details?id=com.kr.fete&hl=ko
 
 ERD
 ---
-<img src="https://github.com/user-attachments/assets/59d2401a-e8c6-4804-a80b-0cf2e5a42473" alt="FETE_ERD" width="700"/>
+<img src="https://github.com/user-attachments/assets/7955bed6-719c-46d4-8b39-c5f1809c4bb9" alt="FETE_ERD" width="700"/>
+
