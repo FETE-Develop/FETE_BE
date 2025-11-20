@@ -49,7 +49,7 @@ public class EventService {
 
 
     @Transactional
-    public List<String> buyTicket(Long posterId, BuyTicketRequest buyTicketRequest) throws Exception {
+    public List<String> buyTicket(Long posterId, BuyTicketRequest buyTicketRequest) {
         // QR 코드 리스트 선언
         List<String> qrCodes = new ArrayList<>();
         // Participant 객체 생성
@@ -97,10 +97,14 @@ public class EventService {
 
         // 판매된 티켓 개수 업데이트
         updateSoldTicketCount(ticketIds, requestTickets);
-//        updateSoldTicketCount(tickets, requestTickets);
 
-        // 결제 시스템 실행
-        qrCodes = paymentSystem(requestAmount, participants, buyTicketRequest.getTossPaymentRequest(), qrCodes);
+        try {
+            // 결제 시스템 실행
+            qrCodes = paymentSystem(requestAmount, participants, buyTicketRequest.getTossPaymentRequest(), qrCodes);
+        } catch (Exception e) {
+            // 토스 페이먼츠 결제 승인 API에서 장애 발생 시
+            throw new TossPaymentException(ResponseMessage.TOSS_PAYMENT_FAILURE.getMessage());
+        }
 
         return qrCodes;
     }
