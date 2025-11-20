@@ -20,7 +20,8 @@ COPY src/main/resources/application-docker.yml src/main/resources/application.ym
 RUN ./gradlew build --no-daemon -x test
 
 # Stage 2: Run the application
-FROM openjdk:17-jdk-slim
+#FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
