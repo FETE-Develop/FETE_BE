@@ -90,6 +90,12 @@ public class EventService {
             }
         }
 
+        // 현재 DB에 중복되는 orderId가 있는지 확인
+        String orderId = buyTicketRequest.getTossPaymentRequest().getOrderId();
+        if (paymentRepository.findByOrderId(orderId).isPresent()) {
+            isInitialPayment = false;
+        }
+
         // 이미 결제된 상태일 경우
         if (!isInitialPayment) {
             throw new AlreadyPaymentStateException(ResponseMessage.EVENT_ALREADY_PAYMENT_STATE.getMessage());
