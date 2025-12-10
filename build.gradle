@@ -62,6 +62,9 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.23.1'
+
     // Apple login
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 

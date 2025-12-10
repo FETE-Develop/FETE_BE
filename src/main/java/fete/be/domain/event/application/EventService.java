@@ -22,11 +22,14 @@ import fete.be.global.util.ResponseMessage;
 import fete.be.global.util.UUIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -46,6 +49,8 @@ public class EventService {
     private final ParticipantRepository participantRepository;
     private final PaymentRepository paymentRepository;
     private final TicketRepository ticketRepository;
+
+    private final RedissonClient redissonClient;
 
 
     @Transactional
@@ -91,9 +96,11 @@ public class EventService {
         }
 
         // 현재 DB에 중복되는 orderId가 있는지 확인
-        String orderId = buyTicketRequest.getTossPaymentRequest().getOrderId();
-        if (paymentRepository.findByOrderId(orderId).isPresent()) {
-            isInitialPayment = false;
+        if (buyTicketRequest.getTossPaymentRequest() != null) {
+            String orderId = buyTicketRequest.getTossPaymentRequest().getOrderId();
+            if (paymentRepository.findByOrderId(orderId).isPresent()) {
+                isInitialPayment = false;
+            }
         }
 
         // 이미 결제된 상태일 경우
@@ -101,8 +108,8 @@ public class EventService {
             throw new AlreadyPaymentStateException(ResponseMessage.EVENT_ALREADY_PAYMENT_STATE.getMessage());
         }
 
-        // 판매된 티켓 개수 업데이트
-        updateSoldTicketCount(ticketIds, requestTickets);
+        // 판매할 티켓 개수 업데이트 - Redisson 분산락 이용
+        updateSoldTicketCountWithLock(ticketIds, requestTickets);
 
         try {
             // 결제 시스템 실행
@@ -201,6 +208,60 @@ public class EventService {
         }
 
         return amount;
+    }
+
+    /**
+     * 판매된 티켓 개수 업데이트 (Redisson 분산 락 적용)
+     */
+    public void updateSoldTicketCountWithLock(List<Long> ticketIds, List<BuyTicketDto> requestTickets) {
+        for (Long ticketId : ticketIds) {
+            // 락 키 생성
+            String lockKey = "ticket_lock:" + ticketId;
+            RLock lock = redissonClient.getLock(lockKey);
+
+            boolean isLocked = false;
+
+            try {
+                // 최대 5초 대기, 최소 3초 락 유지
+                isLocked = lock.tryLock(5, 3, TimeUnit.SECONDS);
+                log.info("[LOCK] {} : {}", lockKey, isLocked);
+
+                // 락을 획득하지 못한 경우, 예외 발생 시키기
+                if (!isLocked) {
+                    throw new TooManyRequestException(ResponseMessage.TOO_MANY_TICKET_REQUEST.getMessage());
+                }
+
+                try {
+                    // 티켓 조회
+                    Ticket ticket = ticketRepository.findById(ticketId)
+                            .orElseThrow(() -> new NotFoundTicketException(ResponseMessage.TICKET_NO_EXIST.getMessage()));
+
+                    for (BuyTicketDto requestTicket : requestTickets) {
+                        int ticketNumber = requestTicket.getTicketNumber();
+                        String ticketType = requestTicket.getTicketType();
+
+                        // 판매할 티켓 개수에 대한 재고 체크 이후, 티켓 수량 업데이트
+                        if (ticket.getTicketType().equals(ticketType)) {
+                            // 재고 부족할 경우
+                            if (!Ticket.canBuyTicket(ticket, ticketNumber)) {
+                                throw new OutOfStockException(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getMessage());
+                            }
+                            // 티켓 수량 업데이트
+                            Ticket.updateSoldTicketCount(ticket, ticketNumber);
+                        }
+                    }
+                } finally {
+                    // 락 획득을 못 했는데 unlock 시도하면 IllegalMonitorStateException 발생함
+                    if (isLocked && lock.isHeldByCurrentThread()) {
+                        log.info("[UNLOCK] {}", lockKey);
+                        lock.unlock();
+                    }
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new RedissonException(ResponseMessage.REDISSON_EXCEPTION.getMessage());
+            }
+        }
     }
 
     /**

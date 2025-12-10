@@ -60,7 +60,7 @@ public class EventController {
         } catch (IncorrectTicketTypeException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (InsufficientTicketsException e) {
-            return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
         } catch (IllegalArgumentException e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         } catch (AlreadyPaymentStateException e) {
@@ -71,6 +71,12 @@ public class EventController {
             return new ApiResponse<>(ResponseMessage.TICKET_NO_EXIST.getCode(), e.getMessage());
         } catch (TossPaymentException e) {
             return new ApiResponse<>(ResponseMessage.TOSS_PAYMENT_FAILURE.getCode(), e.getMessage());
+        } catch (TooManyRequestException e) {
+            return new ApiResponse<>(ResponseMessage.TOO_MANY_TICKET_REQUEST.getCode(), e.getMessage());
+        } catch (OutOfStockException e) {
+            return new ApiResponse<>(ResponseMessage.TICKET_NOT_ENOUGH_QUANTITY.getCode(), e.getMessage());
+        } catch (RedissonException e) {
+            return new ApiResponse<>(ResponseMessage.REDISSON_EXCEPTION.getCode(), e.getMessage());
         } catch (Exception e) {
             return new ApiResponse<>(ResponseMessage.EVENT_QR_FAILURE.getCode(), e.getMessage());
         }
