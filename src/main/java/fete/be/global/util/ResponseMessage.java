@@ -101,6 +101,8 @@ public enum ResponseMessage {
     TICKET_INVALID_TYPE(1213, "티켓의 종류가 올바르지 않습니다."),
     TICKET_ALREADY_USED(1214, "이미 사용된 티켓입니다."),
     TOSS_PAYMENT_FAILURE(1215, "토스 페이먼츠 API에 장애가 발생하였습니다."),
+    TOO_MANY_TICKET_REQUEST(1216, "현재 티켓 구매 요청이 몰려, 잠시 후 다시 시도해 주시길 바랍니다."),
+    REDISSON_EXCEPTION(1217, "Redisson 분산 락에 예외가 발생하였습니다."),
 
     // LIKE
     LIKE_SUCCESS(1300, "관심 등록 API 요청이 성공하였습니다."),
