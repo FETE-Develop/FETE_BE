@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fete.be.domain.banner.persistence.BannerQueryMapper">
+    <select id="findActiveBanners" resultType="fete.be.domain.banner.application.dto.response.BannerDto">
+        SELECT b.banner_id AS bannerId,
+               b.title     AS title,
+               b.content   AS content,
+               b.image_url AS imageUrl,
+               p.poster_id AS posterId
+        FROM banner b
+                 JOIN poster p ON b.banner_id = p.banner_id
+        WHERE p.status IN ('ACTIVE', 'BANNER')
+    </select>
+</mapper>
