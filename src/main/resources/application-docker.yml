@@ -76,5 +76,9 @@ aws:
 firebase:
   service-account: ${FIREBASE_SERVICE_ACCOUNT}
 
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: fete.be.domain
+
 logging.level:
   org.hibernate.SQL: info

@@ -1,5 +1,6 @@
 package fete.be.domain.banner.web;
 
+import fete.be.domain.banner.application.BannerQueryService;
 import fete.be.domain.banner.application.BannerService;
 import fete.be.domain.banner.application.dto.response.BannerDto;
 import fete.be.domain.banner.application.dto.response.GetBannersResponse;
@@ -21,18 +22,37 @@ import java.util.List;
 public class BannerController {
 
     private final BannerService bannerService;
+    private final BannerQueryService bannerQueryService;
 
 
     /**
-     * 배너 전체 조회 API
+     * 배너 전체 조회 API (old) - JPA 방식
+     *
+     * @return ApiResponse<GetBannersResponse>
+     */
+    @GetMapping("/old")
+    public ApiResponse<GetBannersResponse> getBannersV1() {
+        try {
+            // 배너 전체 조회 (페이징 없이)
+            List<BannerDto> banners = bannerService.getBanners();
+            GetBannersResponse result = new GetBannersResponse(banners);
+
+            return new ApiResponse<>(ResponseMessage.BANNER_GET_BANNERS.getCode(), ResponseMessage.BANNER_GET_BANNERS.getMessage(), result);
+        } catch (IllegalArgumentException e) {
+            return new ApiResponse<>(ResponseMessage.BANNER_GET_BANNERS_FAIL.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * 배너 전체 조회 API - MyBatis 방식
      *
      * @return ApiResponse<GetBannersResponse>
      */
     @GetMapping
-    public ApiResponse<GetBannersResponse> getBanners() {
+    public ApiResponse<GetBannersResponse> getBannerV2() {
         try {
             // 배너 전체 조회 (페이징 없이)
-            List<BannerDto> banners = bannerService.getBanners();
+            List<BannerDto> banners = bannerQueryService.getBanners();
             GetBannersResponse result = new GetBannersResponse(banners);
 
             return new ApiResponse<>(ResponseMessage.BANNER_GET_BANNERS.getCode(), ResponseMessage.BANNER_GET_BANNERS.getMessage(), result);
