@@ -1,5 +1,6 @@
 package fete.be.domain.category.web;
 
+import fete.be.domain.category.application.CategoryQueryService;
 import fete.be.domain.category.application.CategoryService;
 import fete.be.domain.category.application.dto.response.CategoryDto;
 import fete.be.domain.category.application.dto.response.EndedCategoryResponse;
@@ -23,15 +24,16 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final CategoryQueryService categoryQueryService;
 
 
     /**
-     * 카테고리 전체 조회 API
+     * 카테고리 전체 조회 API - JPA
      *
      * @return ApiResponse<GetCategoriesResponse>
      */
-    @GetMapping
-    public ApiResponse<GetCategoriesResponse> getCategories() {
+    @GetMapping("/a1")
+    public ApiResponse<GetCategoriesResponse> getCategoriesV1() {
         try {
             // 카테고리 전체 조회 (페이징 없이)
             List<CategoryDto> categories = categoryService.getCategories();
@@ -49,13 +51,13 @@ public class CategoryController {
 
 
     /**
-     * 종료된 이벤트 카테고리 조회 API
+     * 종료된 이벤트 카테고리 조회 API - JPA
      * - 7일 이내로 종료된 프스터만 조회
      *
      * @return ApiResponse<EndedCategoryResponse>
      */
-    @GetMapping("/end")
-    public ApiResponse<EndedCategoryResponse> getEndedCategory() {
+    @GetMapping("/b1")
+    public ApiResponse<EndedCategoryResponse> getEndedCategoryV1() {
         try {
             // 종료된 이벤트 카테고리 조회 (페이징 X)
             EndedCategoryResponse result = categoryService.getEndedCategory();
@@ -64,6 +66,27 @@ public class CategoryController {
         } catch (GuestUserException e) {
             // 게스트용 종료된 이벤트 카테고리 조회 (페이징 X)
             EndedCategoryResponse result = categoryService.getGuestEndedCategory();
+
+            return new ApiResponse<>(ResponseMessage.GET_END_CATEGORY.getCode(), ResponseMessage.GET_END_CATEGORY.getMessage(), result);
+        }
+    }
+
+    /**
+     * 종료된 이벤트 카테고리 조회 API - MyBatis
+     * - 7일 이내로 종료된 프스터만 조회
+     *
+     * @return ApiResponse<EndedCategoryResponse>
+     */
+    @GetMapping("/end")
+    public ApiResponse<EndedCategoryResponse> getEndedCategoryV2() {
+        try {
+            // 종료된 이벤트 카테고리 조회 (페이징 X)
+            EndedCategoryResponse result = categoryQueryService.getEndedCategory();
+
+            return new ApiResponse<>(ResponseMessage.GET_END_CATEGORY.getCode(), ResponseMessage.GET_END_CATEGORY.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 종료된 이벤트 카테고리 조회 (페이징 X)
+            EndedCategoryResponse result = categoryQueryService.getGuestEndedCategory();
 
             return new ApiResponse<>(ResponseMessage.GET_END_CATEGORY.getCode(), ResponseMessage.GET_END_CATEGORY.getMessage(), result);
         }
