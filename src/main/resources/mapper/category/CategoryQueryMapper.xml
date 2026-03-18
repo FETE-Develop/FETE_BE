@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="fete.be.domain.category.persistence.CategoryQueryMapper">
+    <select id="findActiveCategoryPosters" resultType="fete.be.domain.category.application.dto.response.CategoryFlatDto">
+        SELECT
+            c.category_id AS categoryId,
+            c.category_name AS categoryName,
+
+            p.poster_id AS posterId,
+            e.event_name AS eventName,
+            COALESCE(pi.image_url, '') AS posterImage,
+            p.manager AS manager,
+            e.start_date AS startDate,
+            e.end_date AS endDate,
+            e.address AS address,
+            e.simple_address AS simpleAddress,
+            e.moods AS moods,
+            e.genres AS genres,
+
+            CASE WHEN pl.poster_id IS NOT NULL THEN true ELSE false END AS isLike
+
+        FROM category c
+                 JOIN poster p ON p.category_id = c.category_id
+                 JOIN event e ON e.poster_id = p.poster_id
+
+            -- 대표 이미지 1개
+                 LEFT JOIN (
+            SELECT pi1.poster_id, pi1.image_url
+            FROM poster_image pi1
+            WHERE pi1.poster_image_id = (
+                SELECT pi2.poster_image_id
+                FROM poster_image pi2
+                WHERE pi2.poster_id = pi1.poster_id
+                ORDER BY pi2.poster_image_id ASC
+                LIMIT 1
+        )
+            ) pi ON p.poster_id = pi.poster_id
+
+            -- 좋아요 여부
+            LEFT JOIN poster_like pl
+            ON pl.poster_id = p.poster_id
+            AND pl.member_id = #{memberId}
+
+        WHERE p.status = 'ACTIVE'
+    </select>
+
+    <select id="findGuestActiveCategoryPosters" resultType="fete.be.domain.category.application.dto.response.CategoryFlatDto">
+        SELECT
+            c.category_id AS categoryId,
+            c.category_name AS categoryName,
+
+            p.poster_id AS posterId,
+            e.event_name AS eventName,
+            COALESCE(pi.image_url, '') AS posterImage,
+            p.manager AS manager,
+            e.start_date AS startDate,
+            e.end_date AS endDate,
+            e.address AS address,
+            e.simple_address AS simpleAddress,
+            e.moods AS moods,
+            e.genres AS genres,
+            false AS isLike
+
+        FROM category c
+                 JOIN poster p ON p.category_id = c.category_id
+                 JOIN event e ON e.poster_id = p.poster_id
+
+            -- 대표 이미지 1개
+                 LEFT JOIN (
+            SELECT pi1.poster_id, pi1.image_url
+            FROM poster_image pi1
+            WHERE pi1.poster_image_id = (
+                SELECT pi2.poster_image_id
+                FROM poster_image pi2
+                WHERE pi2.poster_id = pi1.poster_id
+                ORDER BY pi2.poster_image_id ASC
+                LIMIT 1
+        )
+            ) pi ON p.poster_id = pi.poster_id
+
+        WHERE p.status = 'ACTIVE'
+    </select>
+</mapper>
