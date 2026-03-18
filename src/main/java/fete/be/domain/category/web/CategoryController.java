@@ -49,6 +49,28 @@ public class CategoryController {
         }
     }
 
+    /**
+     * 카테고리 전체 조회 API - MyBatis
+     *
+     * @return ApiResponse<GetCategoriesResponse>
+     */
+    @GetMapping
+    public ApiResponse<GetCategoriesResponse> getCategoriesV2() {
+        try {
+            // 카테고리 전체 조회 (페이징 없이)
+            List<CategoryDto> categories = categoryQueryService.getCategories();
+            GetCategoriesResponse result = new GetCategoriesResponse(categories);
+
+            return new ApiResponse<>(ResponseMessage.CATEGORY_GET_CATEGORIES.getCode(), ResponseMessage.CATEGORY_GET_CATEGORIES.getMessage(), result);
+        } catch (GuestUserException e) {
+            // 게스트용 카테고리 전체 조회 (페이징 없이)
+            List<CategoryDto> categories = categoryQueryService.getGuestCategories();
+            GetCategoriesResponse result = new GetCategoriesResponse(categories);
+
+            return new ApiResponse<>(ResponseMessage.CATEGORY_GET_CATEGORIES.getCode(), ResponseMessage.CATEGORY_GET_CATEGORIES.getMessage(), result);
+        }
+    }
+
 
     /**
      * 종료된 이벤트 카테고리 조회 API - JPA
